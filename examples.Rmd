@@ -8,6 +8,7 @@ date: "2024-01-13"
 knitr::opts_chunk$set(echo = TRUE)
 library(usedist)
 library(igraph)
+source("R/1D_mapper.R")
 ```
 
 ## Noisy Circle
