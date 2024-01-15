@@ -93,7 +93,6 @@ get_bin_vector <- function(clustered_data) {
       clusters_and_bins = append(clusters_and_bins, i)
     }
   }
-  print(clusters_and_bins)
   return(clusters_and_bins)
 }
 
@@ -132,45 +131,26 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
 
   # construct mapper graph
   amat = construct_graph(clustered_data)
+  mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
 
-  return(list(clustered_data, amat))
+  return(list(clustered_data, mapper_graph))
 }
 
 visualize_mapper_data <- function(mapper_data) {
   clustered_data = mapper_data[[1]]
-  amat = mapper_data[[2]]
+  mapper_graph = mapper_data[[2]]
 
-  num_vertices = nrow(amat)
+  num_vertices = gorder(mapper_graph)
   bin_vector = get_bin_vector(clustered_data)
+  cygraph = set_vertex_attr(mapper_graph, "cluster", value = bin_vector)
+  print(get.vertex.attribute(cygraph, "cluster"))
 
-  sourcevec = c()
-  targetvec = c()
-
-  for (i in 1:(num_vertices - 1)) {
-    for (j in i:num_vertices) {
-      if (amat[i, j] == 1) {
-        sourcevec = append(sourcevec, c(i,j))
-        targetvec = append(targetvec, c(j,i))
-      }
-    }
-  }
-
-  print(sourcevec)
-  print(targetvec)
-
-  nodes <- data.frame(id = 1:num_vertices,
-                      group = bin_vector)
-  edges <- data.frame(source = sourcevec,
-                      target = targetvec)
-
-  createNetworkFromDataFrames(nodes, edges, title = "mapper graph", collection = "example")
+  createNetworkFromIgraph(cygraph)
 }
 
-circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
-circle.dist = dist(circle.data)
-visualize_mapper_data(get_mapper_data(circle.data, circle.data$x, circle.dist, 5, 10, "single"))
-
-
+cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
+  visualize_mapper_data(get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method))
+}
 
 
 
