@@ -13,7 +13,7 @@ source("R/1D_mapper.R")
 
 ## Noisy Circle
 
-```{r noisy circle, echo=FALSE}
+```{r, echo=FALSE}
 circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
 circle.dist = dist(circle.data)
 
@@ -23,7 +23,7 @@ plot(mapper(circle.data, circle.data$x, circle.dist, 5, 10, "single"))
 
 ## Noisy Clover
 
-```{r noisy clover, echo=FALSE}
+```{r, echo=FALSE}
 clover.data = data.frame( x= sapply(1:1000, function(x) sin(2*x)*cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(2*x)*sin(x)) + rnorm(100, 0, 0.03))
 clover.dist = dist(clover.data)
 

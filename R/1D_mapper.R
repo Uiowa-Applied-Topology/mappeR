@@ -78,7 +78,7 @@ get_clusters <- function(bins, dists, method) {
   cluster_count = 0
 
   for (i in 1:length(bins)){
-    d = dist_subset(dists, rownames(bins[[i]])) # assuming your data has identifiers!!
+    d = dist_subset(dists, rownames(bins[[i]])) # assuming your data has identifiers! also I am not sure of this function's behavior on non-dissimilarity matrices.
     clust = switch(tolower(method), "single" = get_single_linkage_clusters(d), stop("please tell george to do more clustering methods"))
     clustered_data = append(clustered_data, clust + cluster_count)
     cluster_count = cluster_count + max(clust) # update the total
@@ -116,7 +116,7 @@ mapper <- function(data, filtered_data, dists, num_bins, percent_overlap, cluste
   # cluster data
   clustered_data = get_clusters(binned_data, dists, clustering_method)
 
-  # construct and plot mapper graph
+  # construct and return mapper graph
   amat = construct_graph(clustered_data)
   return(graph_from_adjacency_matrix(amat, mode="max"))
 }
