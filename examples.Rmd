@@ -8,17 +8,19 @@ date: "2024-01-13"
 knitr::opts_chunk$set(echo = TRUE)
 library(usedist)
 library(igraph)
+library(RCy3)
 source("R/1D_mapper.R")
 ```
 
 ## Noisy Circle
 
 ```{r, echo=FALSE}
+# make sure cytoscape is open and running!
 circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
 circle.dist = dist(circle.data)
 
 plot(circle.data$x, circle.data$y, pch=20)
-plot(mapper(circle.data, circle.data$x, circle.dist, 5, 10, "single"))
+cymapper(circle.data, circle.data$x, circle.dist, 5, 10, "single")
 ```
 
 ## Noisy Clover
@@ -28,5 +30,5 @@ clover.data = data.frame( x= sapply(1:1000, function(x) sin(2*x)*cos(x)) + rnorm
 clover.dist = dist(clover.data)
 
 plot(clover.data$x, clover.data$y, pch=20)
-plot(mapper(clover.data, clover.data$x, clover.dist, 5, 10, "single"))
+cymapper(clover.data, clover.data$x, clover.dist, 5, 10, "single")
 ```

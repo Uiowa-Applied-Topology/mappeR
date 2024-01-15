@@ -80,23 +80,36 @@ get_clusters <- function(bins, dists, method) {
   for (i in 1:length(bins)){
     d = dist_subset(dists, rownames(bins[[i]])) # assuming your data has identifiers! also I am not sure of this function's behavior on non-dissimilarity matrices.
     clust = switch(tolower(method), "single" = get_single_linkage_clusters(d), stop("please tell george to do more clustering methods"))
-    clustered_data = append(clustered_data, clust + cluster_count)
+    clustered_data[[i]] = clust + cluster_count
     cluster_count = cluster_count + max(clust) # update the total
   }
-  return(append(clustered_data, cluster_count))
+  return(clustered_data)
+}
+
+get_bin_vector <- function(clustered_data) {
+  clusters_and_bins = c()
+  for (i in 1:length(clustered_data)) {
+    for (j in unique(clustered_data[[i]])) {
+      clusters_and_bins = append(clusters_and_bins, i)
+    }
+  }
+  return(clusters_and_bins)
 }
 
 # constructs an abstract graph with clusters as vertices and nonempty intersections between clusters as edges.
 construct_graph <- function(clustered_data) {
-  num_vertices = as.numeric(clustered_data[[length(clustered_data)]])
+  num_vertices = max(clustered_data[[length(clustered_data)]]) # I don't know why this works
+
+  flattened_data = unlist(clustered_data)
+
   amat = matrix(, nrow = num_vertices, ncol = num_vertices)
   for (i in 1:(num_vertices-1)) {
     for (j in i:num_vertices) {
       if (i == j) {
         amat[i, j] = 0
       } else {
-        my_cluster = clustered_data[clustered_data == i] # get the datapoints in the ith cluster
-        compare_cluster = clustered_data[clustered_data == j] # get the datapoints in the jth cluster
+        my_cluster = flattened_data[flattened_data == i] # get the datapoints in the ith cluster
+        compare_cluster = flattened_data[flattened_data == j] # get the datapoints in the jth cluster
         if (length((intersect(names(my_cluster), names(compare_cluster)))) != 0) {
           amat[i, j] = 1
         } else {
@@ -108,17 +121,35 @@ construct_graph <- function(clustered_data) {
   return(amat)
 }
 
-# runner function for 1D mapper; outputs an adjacency matrix
-mapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
+# runner function for 1D mapper; outputs bins, clusters, and the mapper graph.
+get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   # bin data according to filter values
   binned_data = make_bins(data, filtered_data, get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap))
 
   # cluster data
   clustered_data = get_clusters(binned_data, dists, clustering_method)
 
-  # construct and return mapper graph
+  # construct mapper graph
   amat = construct_graph(clustered_data)
-  return(graph_from_adjacency_matrix(amat, mode="max"))
+  mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
+
+  return(list(clustered_data, mapper_graph))
+}
+
+visualize_mapper_data <- function(mapper_data) {
+  clustered_data = mapper_data[[1]]
+  mapper_graph = mapper_data[[2]]
+
+  num_vertices = gorder(mapper_graph)
+  bin_vector = get_bin_vector(clustered_data)
+  cygraph = set_vertex_attr(mapper_graph, "cluster", value = bin_vector)
+  print(get.vertex.attribute(cygraph, "cluster"))
+
+  createNetworkFromIgraph(cygraph)
+}
+
+cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
+  visualize_mapper_data(get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method))
 }
 
 
