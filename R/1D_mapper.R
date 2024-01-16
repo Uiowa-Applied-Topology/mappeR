@@ -193,7 +193,9 @@ visualize_mapper_data <- function(mapper_data) {
   print("resizing nodes...")
   setNodeSizeMapping("cluster", 1:num_vertices, sizes = size_vector)
   print("resizing edge widths...")
-  setEdgeLineWidthMapping("overlap", 1:num_edges, widths = edge_weights)
+  if (length(edge_weights) != 0) {
+    setEdgeLineWidthMapping("overlap", 1:num_edges, widths = edge_weights)
+  }
 }
 
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
