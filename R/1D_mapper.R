@@ -141,11 +141,25 @@ visualize_mapper_data <- function(mapper_data) {
   mapper_graph = mapper_data[[2]]
 
   num_vertices = gorder(mapper_graph)
+  num_bins = length(clustered_data)
   bin_vector = get_bin_vector(clustered_data)
-  cygraph = set_vertex_attr(mapper_graph, "cluster", value = bin_vector)
-  print(get.vertex.attribute(cygraph, "cluster"))
+  cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
+  # cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
 
   createNetworkFromIgraph(cygraph)
+
+  # size_vector = c()
+
+  # flattened_data = unlist(clustered_data)
+
+  # for (i in 1:num_vertices) {
+  #   my_cluster = flattened_data[flattened_data == i]
+  #   size_vector = append(size_vector, length(my_cluster))
+  # }
+  # size_vector = (size_vector/sqrt(sum(size_vector^2)))*150
+  setNodeColorMapping("bin", c(1, num_bins/2, num_bins), c("#0000FF", "#FFFFFF", "#FF0000"))
+  # setNodeSizeMapping("cluster", 1:num_vertices, sizes = size_vector)
+
 }
 
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
