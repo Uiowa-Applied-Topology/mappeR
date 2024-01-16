@@ -30,5 +30,5 @@ clover.data = data.frame( x= sapply(1:1000, function(x) cos(x)*sin(2*x)) + rnorm
 clover.dist = dist(clover.data)
 
 plot(clover.data$x, clover.data$y, pch=20)
-cymapper(clover.data, clover.data$y, clover.dist, 10, 15, "single")
+cymapper(clover.data, clover.data$x, clover.dist, 10, 15, "single")
 ```

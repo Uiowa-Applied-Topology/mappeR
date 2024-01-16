@@ -172,7 +172,7 @@ visualize_mapper_data <- function(mapper_data) {
   }
   size_vector = (size_vector/sqrt(sum(size_vector^2)))*200
   edge_weights = (edge_weights/sqrt(sum(edge_weights^2)))*25
-  setNodeColorMapping("bin", c(1, num_bins/2, num_bins), c("#91bfdb", "#ffffbf", "#fc8d59"))
+  setNodeColorMapping("bin", c(1, num_bins/2, num_bins), c("#998ec3", "#f7f7f7", "#f1a340"))
   setNodeSizeMapping("cluster", 1:num_vertices, sizes = size_vector)
   setEdgeLineWidthMapping("overlap", 1:num_edges, widths = edge_weights)
 }
