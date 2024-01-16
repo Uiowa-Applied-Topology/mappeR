@@ -20,15 +20,21 @@ circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500
 circle.dist = dist(circle.data)
 
 plot(circle.data$x, circle.data$y, pch=20)
-cymapper(circle.data, circle.data$x, circle.dist, 5, 10, "single")
+cymapper(circle.data, circle.data$y, circle.dist, 10, 15, "single")
 ```
 
 ## Noisy Clover
 
 ```{r, echo=FALSE}
-clover.data = data.frame( x= sapply(1:1000, function(x) sin(2*x)*cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(2*x)*sin(x)) + rnorm(100, 0, 0.03))
+clover.data = data.frame( x= sapply(1:1000, function(x) cos(x)*sin(2*x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(2*x)*sin(x)) + rnorm(100, 0, 0.03))
 clover.dist = dist(clover.data)
 
 plot(clover.data$x, clover.data$y, pch=20)
-cymapper(clover.data, clover.data$x, clover.dist, 5, 10, "single")
+cymapper(clover.data, clover.data$x, clover.dist, 10, 15, "single")
+```
+```{r, echo=FALSE}
+car_data = mtcars
+car_data.dists = dist(car_data, method = "max")
+cymapper(car_data, car_data$qsec, car_data.dists, 5, 40, "single")
+
 ```
