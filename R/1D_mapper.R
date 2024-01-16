@@ -86,16 +86,6 @@ get_clusters <- function(bins, dists, method) {
   return(clustered_data)
 }
 
-get_bin_vector <- function(clustered_data) {
-  clusters_and_bins = c()
-  for (i in 1:length(clustered_data)) {
-    for (j in unique(clustered_data[[i]])) {
-      clusters_and_bins = append(clusters_and_bins, i)
-    }
-  }
-  return(clusters_and_bins)
-}
-
 # constructs an abstract graph with clusters as vertices and nonempty intersections between clusters as edges.
 construct_graph <- function(clustered_data) {
   num_vertices = max(clustered_data[[length(clustered_data)]]) # I don't know why this works
@@ -103,22 +93,31 @@ construct_graph <- function(clustered_data) {
   flattened_data = unlist(clustered_data)
 
   amat = matrix(, nrow = num_vertices, ncol = num_vertices)
+
+  overlap_vector = c()
+
   for (i in 1:(num_vertices-1)) {
     for (j in i:num_vertices) {
       if (i == j) {
         amat[i, j] = 0
       } else {
         my_cluster = flattened_data[flattened_data == i] # get the datapoints in the ith cluster
+        my_cluster.length = length(my_cluster)
         compare_cluster = flattened_data[flattened_data == j] # get the datapoints in the jth cluster
-        if (length((intersect(names(my_cluster), names(compare_cluster)))) != 0) {
+        compare_cluster.length = length(compare_cluster)
+        overlap = intersect(names(my_cluster), names(compare_cluster))
+        overlap.length = length(overlap)
+        avg_overlap = .5*(overlap.length*(my_cluster.length + compare_cluster.length)/(my_cluster.length * compare_cluster.length))
+        if (length(overlap) != 0) {
           amat[i, j] = 1
+          overlap_vector = append(overlap_vector, avg_overlap)
         } else {
           amat[i, j] = 0
         }
       }
     }
   }
-  return(amat)
+  return(list(amat, overlap_vector))
 }
 
 # runner function for 1D mapper; outputs bins, clusters, and the mapper graph.
@@ -130,21 +129,36 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
   clustered_data = get_clusters(binned_data, dists, clustering_method)
 
   # construct mapper graph
-  amat = construct_graph(clustered_data)
+  graph_data = construct_graph(clustered_data)
+  amat = graph_data[[1]]
+  edge_overlaps = graph_data[[2]]
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
 
-  return(list(clustered_data, mapper_graph))
+  return(list(clustered_data, mapper_graph, edge_overlaps))
+}
+
+get_bin_vector <- function(clustered_data) {
+  clusters_and_bins = c()
+  for (i in 1:length(clustered_data)) {
+    for (j in unique(clustered_data[[i]])) {
+      clusters_and_bins = append(clusters_and_bins, i)
+    }
+  }
+  return(clusters_and_bins)
 }
 
 visualize_mapper_data <- function(mapper_data) {
   clustered_data = mapper_data[[1]]
   mapper_graph = mapper_data[[2]]
+  edge_weights = mapper_data[[3]]*20
 
   num_vertices = gorder(mapper_graph)
+  num_edges = gsize(mapper_graph)
   num_bins = length(clustered_data)
   bin_vector = get_bin_vector(clustered_data)
   cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
   cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
+  cygraph = set_edge_attr(cygraph, "overlap", value = edge_weights)
 
   createNetworkFromIgraph(cygraph)
 
@@ -159,11 +173,12 @@ visualize_mapper_data <- function(mapper_data) {
   size_vector = (size_vector/sqrt(sum(size_vector^2)))*150
   setNodeColorMapping("bin", c(1, num_bins/2, num_bins), c("#0000FF", "#FFFFFF", "#FF0000"))
   setNodeSizeMapping("cluster", 1:num_vertices, sizes = size_vector)
-
+  setEdgeLineWidthMapping("overlap", 1:num_edges, widths = edge_weights)
 }
 
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   visualize_mapper_data(get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method))
+  return(invisible(NULL))
 }
 
 

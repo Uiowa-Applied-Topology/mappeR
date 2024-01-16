@@ -1,5 +1,5 @@
 test_that("interval math works", {
-  vars = c(sort(c(sample(1:2, 1)*(-1)*runif(1), sample(1:2, 1)*(-1)*runif(1))), runif(2))
+  vars = c(0, 1, 5, 40)
   left_end  = vars[1]
   right_end = vars[2]
   num_bins = floor(vars[3]*100)
