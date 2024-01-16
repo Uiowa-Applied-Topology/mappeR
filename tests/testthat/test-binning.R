@@ -1,10 +1,4 @@
-test_that("interval math works", {
-  vars = c(sort(c(sample(1:2, 1)*(-1)*runif(1), sample(1:2, 1)*(-1)*runif(1))), runif(2))
-  left_end  = vars[1]
-  right_end = vars[2]
-  num_bins = floor(vars[3]*100)
-  percent_overlap = vars[4]*100
-
+test_interval_math <- function(left_end, right_end, num_bins, percent_overlap) {
   bins = get_width_balanced_endpoints(left_end, right_end, num_bins, percent_overlap)
 
   expect_equal(nrow(bins), num_bins) # output should contain correct number of bins
@@ -25,6 +19,19 @@ test_that("interval math works", {
 
   expect_equal(as.numeric(100*abs(bins[1, 2] - bins[2, 1])/bin_length), percent_overlap) # first bin overlap is correct
   expect_equal(as.numeric(100*abs(bins[nrow(bins), 1] - bins[nrow(bins)-1, 2])/bin_length), percent_overlap) # last bin overlap is correct
+}
+
+test_that("interval math works", {
+  # random case
+  vars = c(sort(c(sample(1:2, 1)*(-1)*runif(1), sample(1:2, 1)*(-1)*runif(1))), runif(2))
+  left_end  = vars[1]
+  right_end = vars[2]
+  num_bins = floor(vars[3]*100)
+  percent_overlap = vars[4]*100
+  test_interval_math(left_end, right_end, num_bins, percent_overlap)
+
+  # case that broke ethan's code
+  test_interval_math(0, 1, 5, 40)
 })
 
 # idea from https://stackoverflow.com/questions/32345484/does-vector-exist-in-matrix
