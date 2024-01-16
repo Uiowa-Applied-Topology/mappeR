@@ -102,15 +102,15 @@ construct_graph <- function(clustered_data) {
         amat[i, j] = 0
       } else {
         my_cluster = flattened_data[flattened_data == i] # get the datapoints in the ith cluster
-        my_cluster.length = length(my_cluster)
+        # my_cluster.length = length(my_cluster)
         compare_cluster = flattened_data[flattened_data == j] # get the datapoints in the jth cluster
-        compare_cluster.length = length(compare_cluster)
+        # compare_cluster.length = length(compare_cluster)
         overlap = intersect(names(my_cluster), names(compare_cluster))
         overlap.length = length(overlap)
-        avg_overlap = .5*(overlap.length*(my_cluster.length + compare_cluster.length)/(my_cluster.length * compare_cluster.length))
+        # avg_overlap = .5*(overlap.length*(my_cluster.length + compare_cluster.length)/(my_cluster.length * compare_cluster.length))
         if (length(overlap) != 0) {
           amat[i, j] = 1
-          overlap_vector = append(overlap_vector, avg_overlap)
+          overlap_vector = append(overlap_vector, overlap.length)
         } else {
           amat[i, j] = 0
         }
@@ -150,7 +150,7 @@ get_bin_vector <- function(clustered_data) {
 visualize_mapper_data <- function(mapper_data) {
   clustered_data = mapper_data[[1]]
   mapper_graph = mapper_data[[2]]
-  edge_weights = mapper_data[[3]]*20
+  edge_weights = mapper_data[[3]]
 
   num_vertices = gorder(mapper_graph)
   num_edges = gsize(mapper_graph)
@@ -170,8 +170,9 @@ visualize_mapper_data <- function(mapper_data) {
     my_cluster = flattened_data[flattened_data == i]
     size_vector = append(size_vector, length(my_cluster))
   }
-  size_vector = (size_vector/sqrt(sum(size_vector^2)))*150
-  setNodeColorMapping("bin", c(1, num_bins/2, num_bins), c("#0000FF", "#FFFFFF", "#FF0000"))
+  size_vector = (size_vector/sqrt(sum(size_vector^2)))*200
+  edge_weights = (edge_weights/sqrt(sum(edge_weights^2)))*25
+  setNodeColorMapping("bin", c(1, num_bins/2, num_bins), c("#91bfdb", "#ffffbf", "#fc8d59"))
   setNodeSizeMapping("cluster", 1:num_vertices, sizes = size_vector)
   setEdgeLineWidthMapping("overlap", 1:num_edges, widths = edge_weights)
 }
