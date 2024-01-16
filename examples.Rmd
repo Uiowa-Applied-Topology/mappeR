@@ -32,3 +32,9 @@ clover.dist = dist(clover.data)
 plot(clover.data$x, clover.data$y, pch=20)
 cymapper(clover.data, clover.data$x, clover.dist, 10, 15, "single")
 ```
+```{r, echo=FALSE}
+car_data = mtcars
+car_data.dists = dist(car_data, method = "max")
+cymapper(car_data, car_data$qsec, car_data.dists, 5, 40, "single")
+
+```
