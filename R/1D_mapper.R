@@ -163,7 +163,7 @@ get_bin_vector <- function(clustered_data) {
   return(clusters_and_bins)
 }
 
-get_size_vector <- function(clustered_data) {
+get_size_vector <- function(clustered_data, num_vertices) {
   size_vector = c()
 
   flattened_data = unlist(clustered_data)
@@ -178,7 +178,7 @@ get_size_vector <- function(clustered_data) {
   return(size_vector)
 }
 
-get_color_vector <- function(bin_vector) {
+get_color_vector <- function(bin_vector, num_vertices, num_bins) {
   colfun = colorRampPalette(c('#998ec3', '#f7f7f7', '#f1a340'))
   colors = colfun(num_bins)
   color_vector = c()
@@ -203,8 +203,8 @@ visualize_mapper_data <- function(mapper_data) {
   cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
   cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
   cygraph = set_edge_attr(cygraph, "overlap", value = (edge_weights/sqrt(sum(edge_weights^2)))*25)
-  cygraph = set_vertex_attr(cygraph, "cluster_size", value = get_size_vector(clustered_data))
-  cygraph = set_vertex_attr(cygraph, "color", value = get_color_vector(bin_vector))
+  cygraph = set_vertex_attr(cygraph, "cluster_size", value = get_size_vector(clustered_data, num_vertices))
+  cygraph = set_vertex_attr(cygraph, "color", value = get_color_vector(bin_vector, num_vertices, num_bins))
 
   createNetworkFromIgraph(cygraph)
 
