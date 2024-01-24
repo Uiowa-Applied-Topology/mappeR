@@ -10,6 +10,7 @@ library(usedist)
 library(igraph)
 library(RCy3)
 source("R/1D_mapper.R")
+source("R/ballmapper.R")
 ```
 
 ## Noisy Circle
@@ -20,7 +21,7 @@ circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500
 circle.dist = dist(circle.data)
 
 plot(circle.data$x, circle.data$y, pch=20)
-cymapper(circle.data, circle.data$y, circle.dist, 10, 15, "single")
+create_bins(circle.data, circle.dist, .1)
 ```
 
 ## Noisy Clover
