@@ -72,7 +72,7 @@ get_size_vector <- function(clustered_data, num_vertices) {
   return(size_vector)
 }
 
-visualize_mapper_data <- function(mapper_data) {
+visualize_ballmapper_data <- function(mapper_data) {
   clustered_data = mapper_data[[1]]
   mapper_graph = mapper_data[[2]]
   edge_weights = mapper_data[[3]]
@@ -102,6 +102,6 @@ visualize_mapper_data <- function(mapper_data) {
 }
 
 cyballmapper <- function(data, dists, eps) {
-  visualize_mapper_data(get_ballmapper_data(data, dists, eps))
+  visualize_ballmapper_data(get_ballmapper_data(data, dists, eps))
   return(invisible(NULL))
 }
