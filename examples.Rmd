@@ -11,6 +11,7 @@ library(igraph)
 library(RCy3)
 source("R/1D_mapper.R")
 source("R/ballmapper.R")
+source("R/graph_constructor.R")
 ```
 
 ## Noisy Circle
