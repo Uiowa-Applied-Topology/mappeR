@@ -31,7 +31,10 @@ convert_balls <- function(balled_data) {
   res = c()
   names = c()
 
+  print(length(balled_data))
+
   for (i in 1:length(balled_data)) {
+    print(i)
     names = append(names, names(balled_data[[i]])) # collect data ids from this ball
     for (j in 1:length(balled_data[[i]])) {
       res = append(res, i) # each datapoint will get an appropriate cluster membership tag
