@@ -99,40 +99,6 @@ get_clusters <- function(bins, dists, method) {
   return(clustered_data)
 }
 
-# constructs an abstract graph with clusters as vertices and nonempty intersections between clusters as edges.
-construct_graph <- function(clustered_data) {
-  num_vertices = max(clustered_data[[length(clustered_data)]]) # I don't know why this works
-
-  flattened_data = unlist(clustered_data)
-
-  amat = matrix(, nrow = num_vertices, ncol = num_vertices)
-
-  overlap_vector = c()
-
-  for (i in 1:(num_vertices-1)) {
-    for (j in i:num_vertices) {
-      if (i == j) {
-        amat[i, j] = 0
-      } else {
-        my_cluster = flattened_data[flattened_data == i] # get the datapoints in the ith cluster
-        # my_cluster.length = length(my_cluster)
-        compare_cluster = flattened_data[flattened_data == j] # get the datapoints in the jth cluster
-        # compare_cluster.length = length(compare_cluster)
-        overlap = intersect(names(my_cluster), names(compare_cluster))
-        overlap.length = length(overlap)
-        # avg_overlap = .5*(overlap.length*(my_cluster.length + compare_cluster.length)/(my_cluster.length * compare_cluster.length))
-        if (length(overlap) != 0) {
-          amat[i, j] = 1
-          overlap_vector = append(overlap_vector, overlap.length)
-        } else {
-          amat[i, j] = 0
-        }
-      }
-    }
-  }
-  return(list(amat, overlap_vector))
-}
-
 # runner function for 1D mapper; outputs bins, clusters, and the mapper graph.
 get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   # bin data according to filter values
