@@ -41,57 +41,20 @@ convert_balls <- function(balled_data) {
   return(res)
 }
 
-construct_graph <- function(clustered_data) {
-  num_vertices = max(clustered_data[[length(clustered_data)]]) # I don't know why this works
+# gets the ballmapper data: ball membership, graph structure, and cluster overlap information
+get_ballmapper_data <- function(data, dists, eps) {
+  print("making balls...")
+  balled_data = create_balls(data, dists, eps)
+  formatted_balled_data = convert_balls(balled_data)
 
-  flattened_data = unlist(clustered_data)
-
-  amat = matrix(, nrow = num_vertices, ncol = num_vertices)
-
-  overlap_vector = c()
-
-  for (i in 1:(num_vertices-1)) {
-    for (j in i:num_vertices) {
-      if (i == j) {
-        amat[i, j] = 0
-      } else {
-        my_cluster = flattened_data[flattened_data == i] # get the datapoints in the ith cluster
-        # my_cluster.length = length(my_cluster)
-        compare_cluster = flattened_data[flattened_data == j] # get the datapoints in the jth cluster
-        # compare_cluster.length = length(compare_cluster)
-        overlap = intersect(names(my_cluster), names(compare_cluster))
-        overlap.length = length(overlap)
-        # avg_overlap = .5*(overlap.length*(my_cluster.length + compare_cluster.length)/(my_cluster.length * compare_cluster.length))
-        if (length(overlap) != 0) {
-          amat[i, j] = 1
-          overlap_vector = append(overlap_vector, overlap.length)
-        } else {
-          amat[i, j] = 0
-        }
-      }
-    }
-  }
-  return(list(amat, overlap_vector))
-}
-
-# runner function for 1D mapper; outputs bins, clusters, and the mapper graph.
-get_mapper_data <- function(data, dists, eps) {
-  # bin data according to cool epsilon net thing
-  print("binning...")
-  binned_data = create_balls(data, dists, eps)
-
-  # s a n i t i z e
-  print("clustering...")
-  clustered_data = convert_balls(binned_data)
-
-  # construct mapper graph
-  print("making mapper graph...")
-  graph_data = construct_graph(clustered_data)
+  # construct ballmapper graph
+  print("constructing ballmapper graph...")
+  graph_data = construct_graph(formatted_balled_data) # gets adjacency matrix and edge overlaps
   amat = graph_data[[1]]
   edge_overlaps = graph_data[[2]]
-  mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
+  mapper_graph = graph_from_adjacency_matrix(amat, mode="max") # so we only have to record the upper half
 
-  return(list(clustered_data, mapper_graph, edge_overlaps))
+  return(list(formatted_balled_data, mapper_graph, edge_overlaps))
 }
 
 get_size_vector <- function(clustered_data, num_vertices) {
@@ -139,6 +102,6 @@ visualize_mapper_data <- function(mapper_data) {
 }
 
 cyballmapper <- function(data, dists, eps) {
-  visualize_mapper_data(get_mapper_data(data, dists, eps))
+  visualize_mapper_data(get_ballmapper_data(data, dists, eps))
   return(invisible(NULL))
 }
