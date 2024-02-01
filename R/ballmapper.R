@@ -1,22 +1,26 @@
+# greedy epsilon net algorithm from Dłotko
 create_balls <- function(data, dists, eps) {
-  dists = as.matrix(dists) # because I am stupid and usedists isn't working
+  dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
   balls = list()
-  marked = rep(FALSE, nrow(data))
-  names(marked) = rownames(dists)
-  while (FALSE %in% marked) {
+  marked = rep(FALSE, nrow(data)) # keep track of which points we've covered
+  names(marked) = rownames(dists) # actually keep track of the data
+  datanames = rownames(data) # for easy grabbing of unmarked points
+
+  while (FALSE %in% marked) { # keep going until we have covered all the data
     current_ball_center = NULL
+
+    # find a ball center
     if (length(which(marked)) == 0) {
       current_ball_center = sample(rownames(data), 1) # pick a random point if no points are marked
-
     } else {
-      datanames = rownames(data)
       unmarked_points = datanames[which(!marked)]
-      current_ball_center = sample(unmarked_points, 1)
+      current_ball_center = sample(unmarked_points, 1) # otherwise pick from the set of unmarked points
     }
-    all_dists = dists[current_ball_center,] # all distances away from ball center
-    balled_dists = all_dists[all_dists < eps] # now restrict to in the ball
+
+    all_dists = dists[current_ball_center,] # get all distances away from ball center
+    balled_dists = all_dists[all_dists < eps] # restrict to within the (open???) ball
     marked[names(balled_dists)] = TRUE # mark points inside the ball as covered
-    balls = append(balls, list(balled_dists)) # add to our bin list
+    balls = append(balls, list(balled_dists)) # add the ball to our big list of balls
   }
   return(balls)
 }
