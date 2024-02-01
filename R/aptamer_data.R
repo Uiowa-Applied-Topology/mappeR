@@ -15,10 +15,12 @@ for (i in 1:nrow(m)) {
     if (i == j) {
       amat[i,j] = 0
     } else {
-      amat[i,j] = stringdist(sequences[i], sequences[j], method = "lv")
+      dist = stringdist(sequences[i], sequences[j], method = "lv")
+      amat[i,j] = dist
+      amat[j,i] = dist
     }
   }
 }
 
 dists = as.dist(amat)
-cyballmapper(m, dists, 12)
+cyballmapper(m, dists, 8)
