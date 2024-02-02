@@ -1,3 +1,6 @@
+source("R/combomapper.R")
+library(igraph)
+
 visualize_combomapper_data <- function(mapper_data, dists) {
   # get all of our data
   binclust_data = mapper_data[[1]]
@@ -40,7 +43,7 @@ visualize_combomapper_data <- function(mapper_data, dists) {
 }
 
 cycombomapper <- function(data, dist1, dist2, eps) {
-  visualize_mapper_data(get_combomapper_data(data, dist1, dist2, eps))
+  visualize_combomapper_data(get_combomapper_data(data, dist1, dist2, eps), dist2)
 
   return(invisible(NULL))
 }

@@ -1,6 +1,7 @@
 source("R/graph_constructor.R")
 
 # greedy epsilon net algorithm from Dłotko
+# output is a list of bins, each containing names of datapoints.
 create_balls <- function(data, dists, eps) {
   dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
   balls = list()
@@ -19,7 +20,6 @@ create_balls <- function(data, dists, eps) {
       unmarked_points = datanames[which(!marked)]
       current_ball_center = sample(unmarked_points, 1) # otherwise pick from the set of unmarked points
     }
-
     all_dists = dists[current_ball_center,] # get all distances away from ball center
     balled_data_names = datanames[which(all_dists < eps)] # restrict to within the (open???) ball
     marked[balled_data_names] = TRUE # mark points inside the ball as covered
