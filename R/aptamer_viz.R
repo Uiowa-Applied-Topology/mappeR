@@ -41,4 +41,6 @@ row.names(tree_amat) = rev(node_data[,1])
 colnames(tree_amat) = rev(node_data[,1])
 row.names(node_data) = rev(node_data[,1])
 
-cycombomapper(node_data, tree_amat, edit_amat, 15) # bin by tree distance, cluster by edit distance
+cycombomapper(node_data, tree_amat, edit_amat, 20) # bin by tree distance, cluster by edit distance
+
+
