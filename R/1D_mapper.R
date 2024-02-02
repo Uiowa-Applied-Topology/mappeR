@@ -1,3 +1,5 @@
+source("R/graph_constructor.R")
+
 # given an interval, calculates endpoints of a fixed number of evenly spaced, equal length, overlapping subintervals with a fixed percent overlap.
 get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_overlap) {
 
@@ -77,26 +79,27 @@ get_single_linkage_clusters <- function(dists) {
 }
 
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
+# output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
 get_clusters <- function(bins, dists, method) {
-  clustered_data = list()
+  binclust_data = list()
   cluster_count = 0
 
   for (i in 1:length(bins)){
     if (length(bins[[i]]) == 0) {
-      clustered_data[[i]] = list()
+      binclust_data[[i]] = list()
       next
     }
     if (nrow(bins[[i]]) == 1) {
-      clustered_data[[i]] = setNames(1, rownames(bins[[i]])) + cluster_count
+      binclust_data[[i]] = setNames(1, rownames(bins[[i]])) + cluster_count
       cluster_count = cluster_count + 1
       next
     }
     d = dist_subset(dists, rownames(bins[[i]])) # assuming your data has identifiers! also I am not sure of this function's behavior on non-dissimilarity matrices.
     clust = switch(tolower(method), "single" = get_single_linkage_clusters(d), stop("please tell george to do more clustering methods"))
-    clustered_data[[i]] = clust + cluster_count
+    binclust_data[[i]] = clust + cluster_count
     cluster_count = cluster_count + max(clust) # update the total
   }
-  return(clustered_data)
+  return(binclust_data)
 }
 
 # runner function for 1D mapper; outputs bins, clusters, and the mapper graph.
@@ -107,93 +110,14 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
 
   # cluster data
   print("clustering...")
-  clustered_data = get_clusters(binned_data, dists, clustering_method)
+  binclust_data = get_clusters(binned_data, dists, clustering_method)
 
   # construct mapper graph
   print("making mapper graph...")
-  graph_data = construct_graph(clustered_data)
+  graph_data = construct_graph()
   amat = graph_data[[1]]
   edge_overlaps = graph_data[[2]]
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
 
-  return(list(clustered_data, mapper_graph, edge_overlaps))
+  return(list(binclust_data, mapper_graph, edge_overlaps))
 }
-
-get_bin_vector <- function(clustered_data) {
-  clusters_and_bins = c()
-  for (i in 1:length(clustered_data)) {
-    for (j in unique(clustered_data[[i]])) {
-      clusters_and_bins = append(clusters_and_bins, i)
-    }
-  }
-  return(clusters_and_bins)
-}
-
-get_size_vector <- function(clustered_data, num_vertices) {
-  size_vector = c()
-
-  flattened_data = unlist(clustered_data)
-
-  for (i in 1:num_vertices) {
-    my_cluster = flattened_data[flattened_data == i]
-    size_vector = append(size_vector, length(my_cluster))
-  }
-
-  size_vector = (size_vector/sqrt(sum(size_vector^2)))*200
-
-  return(size_vector)
-}
-
-get_color_vector <- function(bin_vector, num_vertices, num_bins) {
-  colfun = colorRampPalette(c('#998ec3', '#f7f7f7', '#f1a340'))
-  colors = colfun(num_bins)
-  color_vector = c()
-
-  for (i in 1:num_vertices) {
-    color_vector = append(color_vector, colors[bin_vector[i]])
-  }
-
-  return(color_vector)
-}
-
-visualize_mapper_data <- function(mapper_data) {
-  clustered_data = mapper_data[[1]]
-  mapper_graph = mapper_data[[2]]
-  edge_weights = mapper_data[[3]]
-
-  num_vertices = gorder(mapper_graph)
-  num_edges = gsize(mapper_graph)
-  num_bins = length(clustered_data)
-  bin_vector = get_bin_vector(clustered_data)
-
-  cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
-  cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
-  cygraph = set_edge_attr(cygraph, "overlap", value = (edge_weights/sqrt(sum(edge_weights^2)))*25)
-  cygraph = set_vertex_attr(cygraph, "cluster_size", value = get_size_vector(clustered_data, num_vertices))
-  cygraph = set_vertex_attr(cygraph, "color", value = get_color_vector(bin_vector, num_vertices, num_bins))
-
-  createNetworkFromIgraph(cygraph)
-
-  style.name = "mapperstyle"
-  defaults <- list(NODE_SHAPE = "ellipse",
-                   EDGE_TRANSPARENCY = 120)
-
-  nodeLabels <- mapVisualProperty('node label', 'cluster', 'p')
-  nodeSizes <- mapVisualProperty('node size', 'cluster_size', 'p')
-  edgeWidth <- mapVisualProperty('edge width', 'overlap', 'p')
-
-  createVisualStyle(style.name, defaults, list(nodeLabels, nodeSizes, edgeWidth))
-
-  setVisualStyle(style.name)
-
-  setNodeColorMapping("bin", c(1, num_bins/2, num_bins), c("#998ec3", "#f7f7f7", "#f1a340"), style.name = style.name)
-}
-
-cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
-  visualize_mapper_data(get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method))
-  return(invisible(NULL))
-}
-
-
-
-

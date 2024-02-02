@@ -9,9 +9,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(usedist)
 library(igraph)
 library(RCy3)
-source("R/1D_mapper.R")
-source("R/ballmapper.R")
-source("R/graph_constructor.R")
+source("R/1D_mapper_viz.R")
+source("R/ballmapper_viz.R")
 ```
 
 ## Noisy Circle
