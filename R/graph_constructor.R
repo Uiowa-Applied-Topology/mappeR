@@ -1,3 +1,4 @@
+# expects a list of named lists with names of data and values cluster numbers
 construct_graph <- function(clustered_data) {
   num_vertices = max(clustered_data[[length(clustered_data)]]) # I don't know why this works
 

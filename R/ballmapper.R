@@ -1,26 +1,28 @@
 # greedy epsilon net algorithm from Dłotko
+# outputs a list of
 create_balls <- function(data, dists, eps) {
   dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
   balls = list()
   marked = rep(FALSE, nrow(data)) # keep track of which points we've covered
-  names(marked) = rownames(dists) # actually keep track of the data
-  datanames = rownames(data) # for easy grabbing of unmarked points
+  datanames = rownames(data) # actually keep track of the data
+
+  names(marked) = datanames
 
   while (FALSE %in% marked) { # keep going until we have covered all the data
     current_ball_center = NULL
 
     # find a ball center
     if (length(which(marked)) == 0) {
-      current_ball_center = sample(rownames(data), 1) # pick a random point if no points are marked
+      current_ball_center = sample(datanames, 1) # pick a random point if no points are marked
     } else {
       unmarked_points = datanames[which(!marked)]
       current_ball_center = sample(unmarked_points, 1) # otherwise pick from the set of unmarked points
     }
 
     all_dists = dists[current_ball_center,] # get all distances away from ball center
-    balled_dists = all_dists[all_dists < eps] # restrict to within the (open???) ball
-    marked[names(balled_dists)] = TRUE # mark points inside the ball as covered
-    balls = append(balls, list(balled_dists)) # add the ball to our big list of balls
+    balled_data_names = datanames[which(all_dists < eps)] # restrict to within the (open???) ball
+    marked[balled_data_names] = TRUE # mark points inside the ball as covered
+    balls = append(balls, list(balled_data_names)) # add the ball to our big list of balls
   }
   return(balls)
 }
@@ -32,8 +34,9 @@ convert_balls <- function(balled_data) {
   names = c()
 
   for (i in 1:length(balled_data)) {
-    names = append(names, names(balled_data[[i]])) # collect data ids from this ball
-    for (j in 1:length(balled_data[[i]])) {
+    current_ball = balled_data[[i]]
+    names = append(names, current_ball) # collect data ids from this ball
+    for (j in 1:length(current_ball)) {
       res = append(res, i) # each datapoint will get an appropriate cluster membership tag
     }
   }
