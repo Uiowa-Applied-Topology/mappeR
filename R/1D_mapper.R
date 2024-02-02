@@ -81,25 +81,25 @@ get_single_linkage_clusters <- function(dists) {
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
 # output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
 get_clusters <- function(bins, dists, method) {
-  clustered_data = list()
+  binclust_data = list()
   cluster_count = 0
 
   for (i in 1:length(bins)){
     if (length(bins[[i]]) == 0) {
-      clustered_data[[i]] = list()
+      binclust_data[[i]] = list()
       next
     }
     if (nrow(bins[[i]]) == 1) {
-      clustered_data[[i]] = setNames(1, rownames(bins[[i]])) + cluster_count
+      binclust_data[[i]] = setNames(1, rownames(bins[[i]])) + cluster_count
       cluster_count = cluster_count + 1
       next
     }
     d = dist_subset(dists, rownames(bins[[i]])) # assuming your data has identifiers! also I am not sure of this function's behavior on non-dissimilarity matrices.
     clust = switch(tolower(method), "single" = get_single_linkage_clusters(d), stop("please tell george to do more clustering methods"))
-    clustered_data[[i]] = clust + cluster_count
+    binclust_data[[i]] = clust + cluster_count
     cluster_count = cluster_count + max(clust) # update the total
   }
-  return(clustered_data)
+  return(binclust_data)
 }
 
 # runner function for 1D mapper; outputs bins, clusters, and the mapper graph.
@@ -110,14 +110,14 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
 
   # cluster data
   print("clustering...")
-  clustered_data = get_clusters(binned_data, dists, clustering_method)
+  binclust_data = get_clusters(binned_data, dists, clustering_method)
 
   # construct mapper graph
   print("making mapper graph...")
-  graph_data = construct_graph(clustered_data)
+  graph_data = construct_graph()
   amat = graph_data[[1]]
   edge_overlaps = graph_data[[2]]
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
 
-  return(list(clustered_data, mapper_graph, edge_overlaps))
+  return(list(binclust_data, mapper_graph, edge_overlaps))
 }
