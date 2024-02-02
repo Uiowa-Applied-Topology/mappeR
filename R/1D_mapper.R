@@ -77,6 +77,7 @@ get_single_linkage_clusters <- function(dists) {
 }
 
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
+# output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
 get_clusters <- function(bins, dists, method) {
   clustered_data = list()
   cluster_count = 0
