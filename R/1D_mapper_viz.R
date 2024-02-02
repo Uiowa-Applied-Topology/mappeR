@@ -1,5 +1,32 @@
 source("R/1D_mapper.R")
 
+get_cluster_tightness_vector <- function(dists, binclust_data, num_vertices) {
+  flattened_data = unlist(binclust_data) # we don't care about bins here
+  res = c()
+
+  # there is some lapply way to do this but i actually don't know how to code
+  for (i in 1:num_vertices) {
+    min = Inf
+    min_name = NULL
+    my_cluster = flattened_data[flattened_data == i] # find all the points with the same cluster number
+    for (datapoint in names(my_cluster)) {
+      these_dists = dists[datapoint,]
+      dist_sum = sum(these_dists)
+      if (dist_sum < min) {
+        min = dist_sum
+        min_name = datapoint
+      }
+    }
+    close_datapoint_dists = dists[min_name,]
+    n = length(close_datapoint_dists)
+    min_dist = sort(close_datapoint_dists, partial=n-1)[n-1]
+    dist_sums = sum(close_datapoint_dists)
+    closeness_factor = length(my_cluster)*min_dist/dist_sums
+    res = append(res, closeness_factor)
+  }
+  return(res)
+}
+
 # categorizes clusters by bin. returns a vector of bin numbers corresponding to each cluster.
 get_bin_vector <- function(binclust_data) {
   clusters_and_bins = c()
@@ -24,14 +51,14 @@ get_size_vector <- function(binclust_data, num_vertices) {
     size_vector = append(size_vector, length(my_cluster)) # record that cluster's length
   }
 
-  scale_factor = 200 # change according to your eyeballs/monitor
+  scale_factor = 1000 # change according to your eyeballs/monitor
 
   size_vector = (size_vector/sqrt(sum(size_vector^2)))*scale_factor
 
   return(size_vector)
 }
 
-visualize_mapper_data <- function(mapper_data) {
+visualize_mapper_data <- function(mapper_data, dists) {
   # get all of our data
   binclust_data = mapper_data[[1]]
   mapper_graph = mapper_data[[2]]
@@ -41,9 +68,11 @@ visualize_mapper_data <- function(mapper_data) {
   num_edges = gsize(mapper_graph)
   num_bins = length(binclust_data)
   bin_vector = get_bin_vector(binclust_data)
+  tightness_vector = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
 
   cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
   cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
+  cygraph = set_vertex_attr(cygraph, "cluster_tightness", value = tightness_vector)
   cygraph = set_edge_attr(cygraph, "overlap", value = (edge_weights/sqrt(sum(edge_weights^2)))*25)
   cygraph = set_vertex_attr(cygraph, "cluster_size", value = get_size_vector(binclust_data, num_vertices))
 
@@ -66,11 +95,11 @@ visualize_mapper_data <- function(mapper_data) {
 
 
   setNodeBorderWidthDefault(10, style.name = style.name)
-  setNodeBorderColorMapping("bin", c(1, num_bins/2, num_bins), c("#0f62fe", "#0072c3", "#004144"), style.name = style.name)
-  # setNodeBorderColorMapping("bin", colors = t(get_color_vector(bin_vector, num_vertices, num_bins)))
+  setNodeBorderColorMapping("bin", c(1, num_bins/2, num_bins), c("#a50026", "#ffffbf", "#313695"), style.name = style.name)
+  setNodeColorMapping("cluster_tightness", c(0,.5,1), c("#ffffff", "#8d8d8d", "#000000"), style.name = style.name)
 }
 
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
-  visualize_mapper_data(get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method))
+  visualize_mapper_data(get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method), dists)
   return(invisible(NULL))
 }
