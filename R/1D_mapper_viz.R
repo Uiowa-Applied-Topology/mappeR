@@ -10,18 +10,18 @@ get_cluster_tightness_vector <- function(dists, binclust_data, num_vertices) {
     min_name = NULL
     my_cluster = flattened_data[flattened_data == i] # find all the points with the same cluster number
     for (datapoint in names(my_cluster)) {
-      these_dists = dists[datapoint,]
+      these_dists = dists[datapoint,names(my_cluster)]
       dist_sum = sum(these_dists)
       if (dist_sum < min) {
         min = dist_sum
         min_name = datapoint
       }
     }
-    close_datapoint_dists = dists[min_name,]
+    close_datapoint_dists = dists[min_name,names(my_cluster)]
     n = length(close_datapoint_dists)
-    min_dist = sort(close_datapoint_dists, partial=n-1)[n-1]
+    min_dist = min(close_datapoint_dists[close_datapoint_dists > 0])
     dist_sums = sum(close_datapoint_dists)
-    closeness_factor = length(my_cluster)*min_dist/dist_sums
+    closeness_factor = (length(my_cluster)-1)*min_dist/dist_sums
     res = append(res, closeness_factor)
   }
   return(res)
@@ -92,7 +92,6 @@ visualize_mapper_data <- function(mapper_data, dists) {
   createVisualStyle(style.name, defaults, list(nodeLabels, nodeSizes, edgeWidth))
 
   setVisualStyle(style.name)
-
 
   setNodeBorderWidthDefault(10, style.name = style.name)
   setNodeBorderColorMapping("bin", c(1, num_bins/2, num_bins), c("#a50026", "#ffffbf", "#313695"), style.name = style.name)

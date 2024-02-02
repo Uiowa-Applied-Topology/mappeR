@@ -114,7 +114,7 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
 
   # construct mapper graph
   print("making mapper graph...")
-  graph_data = construct_graph()
+  graph_data = construct_graph(binclust_data)
   amat = graph_data[[1]]
   edge_overlaps = graph_data[[2]]
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
