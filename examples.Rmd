@@ -21,8 +21,8 @@ circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500
 circle.dist = dist(circle.data)
 
 plot(circle.data$x, circle.data$y, pch=20)
-# cyballmapper(circle.data, circle.dist, .5)
-cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
+cyballmapper(circle.data, circle.dist, .5)
+# cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
 ```
 
 ## Noisy Clover

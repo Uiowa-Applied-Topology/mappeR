@@ -9,20 +9,24 @@ get_cluster_tightness_vector <- function(dists, binclust_data, num_vertices) {
     min = Inf
     min_name = NULL
     my_cluster = flattened_data[flattened_data == i] # find all the points with the same cluster number
-    for (datapoint in names(my_cluster)) {
-      these_dists = dists[datapoint,names(my_cluster)]
-      dist_sum = sum(these_dists)
-      if (dist_sum < min) {
-        min = dist_sum
-        min_name = datapoint
+    if (length(my_cluster) == 1) { # trivially tight cluster
+      res = append(res, 1)
+    } else {
+      for (datapoint in names(my_cluster)) {
+        these_dists = dists[datapoint,names(my_cluster)]
+        dist_sum = sum(these_dists)
+        if (dist_sum < min) {
+          min = dist_sum
+          min_name = datapoint
+        }
       }
+      close_datapoint_dists = dists[min_name,names(my_cluster)]
+      n = length(close_datapoint_dists)
+      min_dist = min(close_datapoint_dists[close_datapoint_dists > 0])
+      dist_sums = sum(close_datapoint_dists)
+      closeness_factor = (length(my_cluster)-1)*min_dist/dist_sums
+      res = append(res, closeness_factor)
     }
-    close_datapoint_dists = dists[min_name,names(my_cluster)]
-    n = length(close_datapoint_dists)
-    min_dist = min(close_datapoint_dists[close_datapoint_dists > 0])
-    dist_sums = sum(close_datapoint_dists)
-    closeness_factor = (length(my_cluster)-1)*min_dist/dist_sums
-    res = append(res, closeness_factor)
   }
   return(res)
 }
