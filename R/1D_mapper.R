@@ -83,7 +83,6 @@ get_single_linkage_clusters <- function(dists) {
 get_clusters <- function(bins, dists, method) {
   binclust_data = list()
   cluster_count = 0
-  print(length(bins))
 
   for (i in 1:length(bins)){
     if (length(bins[[i]]) == 0) {
