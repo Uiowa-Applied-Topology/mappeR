@@ -52,7 +52,7 @@ visualize_mapper_data <- function(mapper_data) {
   style.name = "mapperstyle"
   defaults <- list(NODE_SHAPE = "ellipse",
                    NODE_FILL_COLOR = "#FFFFFF",
-                   NODE_BORDER_WIDTH = 100,
+                   NODE_BORDER_WIDTH = 10,
                    NODE_BORDER_TRANSPARENCY = 0,
                    EDGE_TRANSPARENCY = 120)
 
@@ -65,8 +65,8 @@ visualize_mapper_data <- function(mapper_data) {
   setVisualStyle(style.name)
 
 
-  setNodeBorderWidthDefault(100, style.name = style.name)
-  setNodeBorderColorMapping("bin", c(1, num_bins/2, num_bins), c("#998ec3", "#f7f7f7", "#f1a340"), style.name = style.name)
+  setNodeBorderWidthDefault(10, style.name = style.name)
+  setNodeBorderColorMapping("bin", c(1, num_bins/2, num_bins), c("#0f62fe", "#0072c3", "#004144"), style.name = style.name)
   # setNodeBorderColorMapping("bin", colors = t(get_color_vector(bin_vector, num_vertices, num_bins)))
 }
 
