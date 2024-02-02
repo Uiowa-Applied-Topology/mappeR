@@ -1,3 +1,5 @@
+source("R/1D_mapper.R")
+
 get_size_vector <- function(clustered_data, num_vertices) {
   size_vector = c()
 

@@ -1,3 +1,5 @@
+source("R/graph_constructor.R")
+
 # given an interval, calculates endpoints of a fixed number of evenly spaced, equal length, overlapping subintervals with a fixed percent overlap.
 get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_overlap) {
 

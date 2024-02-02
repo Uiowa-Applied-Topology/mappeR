@@ -1,3 +1,5 @@
+source("R/graph_constructor.R")
+
 # greedy epsilon net algorithm from Dłotko
 create_balls <- function(data, dists, eps) {
   dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
