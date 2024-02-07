@@ -6,6 +6,6 @@ Make sure Cytoscape is open, then you can run the examples in the R Markdown fil
 
 Basic examples:
 
-Noisy circle data, 10 bins, 15% overlap, single linkage clustering: ![noisy circle](noisycircle.png) ![mappercircle](mappercircle.png)
+Noisy circle data, 10 bins, 15% overlap, single linkage clustering: ![noisy circle](images/noisycircle.png) ![mappercircle](images/mappercircle.png)
 
-Noisy clover data, 5 bins, 15% overlap, single linkage clustering: ![noisy clover](noisyclover.png) ![mapperclover](mapperclover.png)
+Noisy clover data, 5 bins, 15% overlap, single linkage clustering: ![noisy clover](images/noisyclover.png) ![mapperclover](images/mapperclover.png)
