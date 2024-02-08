@@ -1,9 +1,9 @@
 source("R/ballmapper_viz.R")
 source("R/combomapper_viz.R")
 
-edit_dist_data = as.matrix(read.csv("edit_dist_edges.csv"))
-tree_dist_data = as.matrix(read.csv("tree_dist_edges.csv"))
-node_data = as.matrix(read.csv("aptamer-data-raw.csv"))
+edit_dist_data = as.matrix(read.csv("aptamer-data/edit_dist_edges.csv"))
+tree_dist_data = as.matrix(read.csv("aptamer-data/tree_dist_edges.csv"))
+node_data = as.matrix(read.csv("aptamer-data/aptamer-data-raw.csv"))
 
 num_datapoints = nrow(node_data)
 
