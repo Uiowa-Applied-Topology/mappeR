@@ -11,8 +11,6 @@ get_size_vector <- function(binclust_data, num_vertices) {
     size_vector = append(size_vector, length(my_cluster))
   }
 
-  size_vector = (size_vector/sqrt(sum(size_vector^2)))*200
-
   return(size_vector)
 }
 

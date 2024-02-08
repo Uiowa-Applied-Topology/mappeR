@@ -11,6 +11,7 @@ library(igraph)
 library(RCy3)
 source("R/1D_mapper_viz.R")
 source("R/ballmapper_viz.R")
+source("R/combomapper_viz.R")
 ```
 
 ## Noisy Circle
@@ -41,4 +42,23 @@ cymapper(clover.data, clover.data$x, clover.dist, 5, 15, "single")
 car_data = mtcars
 car_data.dists = dist(car_data, method = "max")
 cymapper(car_data, car_data$qsec, car_data.dists, 5, 40, "single")
+```
+
+## flares
+```{r, echo=FALSE}
+# create data set with 7 flares.
+
+flare.data = data.frame(x = c(runif(200, -30,30), runif(200, -6,30), runif(200, -6,-5), runif(200, 5,6), runif(200, -6,6)), y = c(runif(200, 5,6), runif(200, -6,-5), runif(200, -20,20), runif(200, -20,20), runif(200, -6,6)))
+
+plot(flare.data$x, flare.data$y, pch=20)
+# cymapper(flare.data, flare.data$x, dist(flare.data), 10, 15, "single")
+cyballmapper(flare.data, dist(flare.data), 3)
+```
+
+```{r, echo=FALSE}
+
+spiral.data = data.frame( x= sapply((seq(0,6*pi,by=.1), function(x) 3*x*cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) x*sin(x)) + rnorm(100, 0, 0.03))
+
+plot(spiral.data$x, spiral.data$y, pch=20)
+# cyballmapper(spiral.data, dist(spiral.data), 50)
 ```
