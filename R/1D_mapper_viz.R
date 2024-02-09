@@ -1,4 +1,5 @@
 source("R/1D_mapper.R")
+source("R/combomapper_viz.R")
 
 get_cluster_tightness_vector <- function(dists, binclust_data, num_vertices) {
   flattened_data = unlist(binclust_data) # we don't care about bins here
@@ -55,10 +56,6 @@ get_size_vector <- function(binclust_data, num_vertices) {
     size_vector = append(size_vector, length(my_cluster)) # record that cluster's length
   }
 
-  scale_factor = 1000 # change according to your eyeballs/monitor
-
-  size_vector = (size_vector/sqrt(sum(size_vector^2)))*scale_factor
-
   return(size_vector)
 }
 
@@ -73,33 +70,31 @@ visualize_mapper_data <- function(mapper_data, dists) {
   num_bins = length(binclust_data)
   bin_vector = get_bin_vector(binclust_data)
   tightness_vector = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
+  cluster_sizes = get_size_vector(binclust_data, num_vertices)
 
   cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
   cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
   cygraph = set_vertex_attr(cygraph, "cluster_tightness", value = tightness_vector)
-  cygraph = set_edge_attr(cygraph, "overlap", value = (edge_weights/sqrt(sum(edge_weights^2)))*25)
-  cygraph = set_vertex_attr(cygraph, "cluster_size", value = get_size_vector(binclust_data, num_vertices))
+  cygraph = set_edge_attr(cygraph, "overlap", value = get_edge_weights(edge_weights, cluster_sizes, ends(mapper_graph, E(mapper_graph)))*20)
+  cygraph = set_vertex_attr(cygraph, "cluster_size", value = cluster_sizes/sqrt(sum(cluster_sizes^2))*200)
 
   createNetworkFromIgraph(cygraph)
 
   style.name = "mapperstyle"
   defaults <- list(NODE_SHAPE = "ellipse",
-                   NODE_FILL_COLOR = "#FFFFFF",
                    NODE_BORDER_WIDTH = 10,
-                   NODE_BORDER_TRANSPARENCY = 0,
-                   EDGE_TRANSPARENCY = 120)
+                   EDGE_TRANSPARENCY = 255)
 
-  nodeLabels <- mapVisualProperty('node label', 'cluster', 'p')
   nodeSizes <- mapVisualProperty('node size', 'cluster_size', 'p')
   edgeWidth <- mapVisualProperty('edge width', 'overlap', 'p')
 
-  createVisualStyle(style.name, defaults, list(nodeLabels, nodeSizes, edgeWidth))
+  createVisualStyle(style.name, defaults, list(nodeSizes, edgeWidth))
 
   setVisualStyle(style.name)
 
   setNodeBorderWidthDefault(10, style.name = style.name)
-  setNodeBorderColorMapping("bin", c(1, num_bins/2, num_bins), c("#a50026", "#ffffbf", "#313695"), style.name = style.name)
-  setNodeColorMapping("cluster_tightness", c(0,.5,1), c("#ffffff", "#8d8d8d", "#000000"), style.name = style.name)
+  setNodeBorderColorMapping("bin", c(1, num_bins/2, num_bins), c("#0fffff", "#008d89", "#081a1c"), style.name = style.name)
+  setNodeColorMapping("cluster_tightness", c(0,.5,1), c("#ffffff", "#efefef", "#000000"), style.name = style.name)
 }
 
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
