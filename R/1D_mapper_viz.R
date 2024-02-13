@@ -73,7 +73,6 @@ visualize_mapper_data <- function(mapper_data, dists) {
   tightness_vector = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
   cluster_sizes = get_size_vector(binclust_data, num_vertices)
   bin_colors = palette(rainbow(num_bins))
-  print(bin_colors)
 
   cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
   cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
