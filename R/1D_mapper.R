@@ -89,7 +89,7 @@ get_clusters <- function(bins, dists, method) {
       binclust_data[[i]] = list()
       next
     }
-    if (length(bins[[i]]) == 1) {
+    if (nrow(bins[[i]]) == 1) {
       binclust_data[[i]] = setNames(1, rownames(bins[[i]])) + cluster_count
       cluster_count = cluster_count + 1
       next
