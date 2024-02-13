@@ -13,6 +13,7 @@ get_cluster_tightness_vector <- function(dists, binclust_data, num_vertices) {
     if (length(my_cluster) == 1) { # trivially tight cluster
       res = append(res, 1)
     } else {
+      # find the medoid of the dataset
       for (datapoint in names(my_cluster)) {
         these_dists = dists[datapoint,names(my_cluster)]
         dist_sum = sum(these_dists)
@@ -71,6 +72,8 @@ visualize_mapper_data <- function(mapper_data, dists) {
   bin_vector = get_bin_vector(binclust_data)
   tightness_vector = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
   cluster_sizes = get_size_vector(binclust_data, num_vertices)
+  bin_colors = palette(rainbow(num_bins))
+  print(bin_colors)
 
   cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
   cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
@@ -87,14 +90,12 @@ visualize_mapper_data <- function(mapper_data, dists) {
 
   nodeSizes <- mapVisualProperty('node size', 'cluster_size', 'p')
   edgeWidth <- mapVisualProperty('edge width', 'overlap', 'p')
+  nodeBorderColors <- mapVisualProperty('node border color', 'bin', 'd', 1:num_bins, bin_colors)
+  nodeFillColors <- mapVisualProperty('node fill color', 'cluster_tightness', 'c', c(0, mean(tightness_vector), 1), c("#ffffff", "#efefef", "#000000"))
 
-  createVisualStyle(style.name, defaults, list(nodeSizes, edgeWidth))
+  createVisualStyle(style.name, defaults, list(nodeSizes, edgeWidth, nodeBorderColors, nodeFillColors))
 
   setVisualStyle(style.name)
-
-  setNodeBorderWidthDefault(10, style.name = style.name)
-  setNodeBorderColorMapping("bin", c(1, num_bins/2, num_bins), c("#0fffff", "#008d89", "#081a1c"), style.name = style.name)
-  setNodeColorMapping("cluster_tightness", c(0,.5,1), c("#ffffff", "#efefef", "#000000"), style.name = style.name)
 }
 
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
