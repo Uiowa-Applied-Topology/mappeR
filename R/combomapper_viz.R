@@ -9,7 +9,7 @@ get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
     node_size_1 = cluster_sizes[head_id]
     node_size_2 = cluster_sizes[tail_id]
     overlap = overlap_lengths[i]
-    overlap_weight = ((overlap/node_size_1) + (overlap/node_size_2))/2
+    overlap_weight = max(overlap/node_size_1, overlap/node_size_2)
     edge_weights = append(edge_weights, overlap_weight)
   }
   return(edge_weights)
@@ -29,12 +29,13 @@ visualize_combomapper_data <- function(mapper_data, dists) {
 
   cluster_sizes = get_size_vector(binclust_data, num_vertices)
   edge_weights = get_edge_weights(overlap_data, cluster_sizes, ends(mapper_graph, E(mapper_graph)))
+  bin_colors = palette(rainbow(num_bins))
 
   cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
   cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
   cygraph = set_vertex_attr(cygraph, "cluster_tightness", value = tightness_vector)
-  cygraph = set_edge_attr(cygraph, "overlap", value = edge_weights*255)
-  cygraph = set_vertex_attr(cygraph, "cluster_size", value = cluster_sizes/sqrt(sum(cluster_sizes^2))*200)
+  cygraph = set_edge_attr(cygraph, "overlap", value = edge_weights)
+  cygraph = set_vertex_attr(cygraph, "cluster_size", value = 100*cluster_sizes/max(cluster_sizes))
 
   createNetworkFromIgraph(cygraph)
 
@@ -44,11 +45,11 @@ visualize_combomapper_data <- function(mapper_data, dists) {
                    BORDER_TRANSPARENCY = 255)
 
   nodeSizes <- mapVisualProperty('node size', 'cluster_size', 'p')
-  edgeTransparency <- mapVisualProperty('edge transparency', 'overlap', 'p')
-  nodeBorderColors = mapVisualProperty('node border color', 'bin', 'c', c(1, num_bins/2, num_bins), c("#d9fbfb", "#008d89", "#081a1c"))
-  nodeFillColors = mapVisualProperty('node fill color', 'cluster_tightness', 'c', c(0, .5, 1), c("#ffffff", "#efefef", "#000000"))
+  edgeWidth <- mapVisualProperty('edge width', 'overlap', 'p')
+  nodeBorderColors <- mapVisualProperty('node border color', 'bin', 'd', 1:num_bins, bin_colors)
+  nodeFillColors <- mapVisualProperty('node fill color', 'cluster_tightness', 'c', c(0, .5, 1), c("#ffffff", "#efefef", "#000000"))
 
-  createVisualStyle(style.name, defaults, list(nodeSizes, edgeTransparency, nodeBorderColors, nodeFillColors))
+  createVisualStyle(style.name, defaults, list(nodeSizes, edgeWidth, nodeBorderColors, nodeFillColors))
 
   setVisualStyle(style.name)
 }

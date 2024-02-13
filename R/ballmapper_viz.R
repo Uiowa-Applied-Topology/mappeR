@@ -17,17 +17,20 @@ get_size_vector <- function(binclust_data, num_vertices) {
 visualize_ballmapper_data <- function(mapper_data, dists) {
   binclust_data = mapper_data[[1]]
   mapper_graph = mapper_data[[2]]
-  edge_weights = mapper_data[[3]]
+  overlap_data = mapper_data[[3]]
 
   num_vertices = gorder(mapper_graph)
   num_edges = gsize(mapper_graph)
   num_bins = length(binclust_data)
   tightness_vector = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
+  cluster_sizes = get_size_vector(binclust_data, num_vertices)
+  edge_weights = get_edge_weights(overlap_data, cluster_sizes, ends(mapper_graph, E(mapper_graph)))
 
   cygraph = set_vertex_attr(mapper_graph, "cluster", value = 1:num_vertices)
-  cygraph = set_edge_attr(cygraph, "overlap", value = (edge_weights/sqrt(sum(edge_weights^2)))*25)
-  cygraph = set_vertex_attr(cygraph, "cluster_size", value = get_size_vector(binclust_data, num_vertices))
+  cygraph = set_edge_attr(cygraph, "overlap", value = edge_weights)
+  cygraph = set_vertex_attr(cygraph, "cluster_size", value = 100*cluster_sizes/max(cluster_sizes))
   cygraph = set_vertex_attr(cygraph, "cluster_tightness", value = tightness_vector)
+  cygraph = set.vertex.attribute(cygraph, "points in cluster", value=cluster_sizes)
 
   createNetworkFromIgraph(cygraph)
 
@@ -35,15 +38,13 @@ visualize_ballmapper_data <- function(mapper_data, dists) {
   defaults <- list(NODE_SHAPE = "ellipse",
                    EDGE_TRANSPARENCY = 120)
 
-  nodeLabels <- mapVisualProperty('node label', 'cluster', 'p')
   nodeSizes <- mapVisualProperty('node size', 'cluster_size', 'p')
   edgeWidth <- mapVisualProperty('edge width', 'overlap', 'p')
+  nodeFillColor <- mapVisualProperty('node fill color', 'cluster_tightness', 'c', c(0, mean(tightness_vector), 1), c("#ffffff", "#fefefe", "#000000"))
 
-  createVisualStyle(style.name, defaults, list(nodeLabels, nodeSizes, edgeWidth))
+  createVisualStyle(style.name, defaults, list(nodeSizes, edgeWidth, nodeFillColor))
 
   setVisualStyle(style.name)
-
-  setNodeColorMapping("cluster_tightness", c(0,.5,1), c("#ffffff", "#8d8d8d", "#000000"), style.name = style.name)
 
 }
 
