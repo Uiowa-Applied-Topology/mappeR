@@ -1,4 +1,5 @@
 source("R/graph_constructor.R")
+source("R/mapper_viz.R")
 
 # given an interval, calculates endpoints of a fixed number of evenly spaced, equal length, overlapping subintervals with a fixed percent overlap.
 get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_overlap) {
@@ -83,14 +84,13 @@ get_single_linkage_clusters <- function(dists) {
 get_clusters <- function(bins, dists, method) {
   binclust_data = list()
   cluster_count = 0
-  print(length(bins))
 
   for (i in 1:length(bins)){
     if (length(bins[[i]]) == 0) {
       binclust_data[[i]] = list()
       next
     }
-    if (length(bins[[i]]) == 1) {
+    if (nrow(bins[[i]]) == 1) {
       binclust_data[[i]] = setNames(1, rownames(bins[[i]])) + cluster_count
       cluster_count = cluster_count + 1
       next
@@ -121,4 +121,9 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
 
   return(list(binclust_data, mapper_graph, edge_overlaps))
+}
+
+cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
+  visualize_mapper_data(get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method), dists, FALSE)
+  return(invisible(NULL))
 }

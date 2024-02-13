@@ -1,4 +1,5 @@
 # expects a list of named lists with names of data and values cluster numbers
+# returns the mapper graph (as an adjacency matrix)
 construct_graph <- function(clustered_data) {
   num_vertices = max(clustered_data[[length(clustered_data)]]) # I don't know why this works
 
@@ -14,12 +15,9 @@ construct_graph <- function(clustered_data) {
         amat[i, j] = 0
       } else {
         my_cluster = flattened_data[flattened_data == i] # get the datapoints in the ith cluster
-        # my_cluster.length = length(my_cluster)
         compare_cluster = flattened_data[flattened_data == j] # get the datapoints in the jth cluster
-        # compare_cluster.length = length(compare_cluster)
         overlap = intersect(names(my_cluster), names(compare_cluster))
         overlap.length = length(overlap)
-        # avg_overlap = .5*(overlap.length*(my_cluster.length + compare_cluster.length)/(my_cluster.length * compare_cluster.length))
         if (length(overlap) != 0) {
           amat[i, j] = 1
           overlap_vector = append(overlap_vector, overlap.length)
