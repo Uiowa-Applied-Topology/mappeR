@@ -1,4 +1,5 @@
 source("R/graph_constructor.R")
+source("R/mapper_viz.R")
 
 # greedy epsilon net algorithm from Dłotko
 # output is a list of bins, each containing names of datapoints.
@@ -59,4 +60,9 @@ get_ballmapper_data <- function(data, dists, eps) {
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max") # so we only have to record the upper half
 
   return(list(formatted_balled_data, mapper_graph, edge_overlaps))
+}
+
+cyballmapper <- function(data, dists, eps) {
+  visualize_mapper_data(get_ballmapper_data(data, dists, eps), dists)
+  return(invisible(NULL))
 }

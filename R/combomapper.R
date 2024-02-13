@@ -1,7 +1,7 @@
 source("R/ballmapper.R")
 source("R/1D_mapper.R")
+source("R/mapper_viz.R")
 library(usedist)
-library(RCy3)
 
 # performs single linkage clustering and outputs clusters based on a rough heuristic.
 get_single_linkage_clusters <- function(dists) {
@@ -79,3 +79,8 @@ balls_to_bins <- function(balls) {
 
 }
 
+cycombomapper <- function(data, dist1, dist2, eps) {
+  visualize_mapper_data(get_combomapper_data(data, dist1, dist2, eps), dist2, FALSE)
+
+  return(invisible(NULL))
+}
