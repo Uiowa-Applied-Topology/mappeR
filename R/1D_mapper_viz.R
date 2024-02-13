@@ -44,22 +44,6 @@ get_bin_vector <- function(binclust_data) {
   return(clusters_and_bins)
 }
 
-# calculates how large nodes should be based on how many datapoints it contains
-# returns a vector of cluster sizes, normalized and rescaled
-get_size_vector <- function(binclust_data, num_vertices) {
-  size_vector = c()
-
-  flattened_data = unlist(binclust_data) # we don't care about bins here
-
-  # there is some lapply way to do this but i actually don't know how to code
-  for (i in 1:num_vertices) {
-    my_cluster = flattened_data[flattened_data == i] # find all the points with the same cluster number
-    size_vector = append(size_vector, length(my_cluster)) # record that cluster's length
-  }
-
-  return(size_vector)
-}
-
 visualize_mapper_data <- function(mapper_data, dists) {
   # get all of our data
   binclust_data = mapper_data[[1]]
@@ -77,8 +61,8 @@ visualize_mapper_data <- function(mapper_data, dists) {
   cygraph = set_vertex_attr(mapper_graph, "bin", value = bin_vector)
   cygraph = set_vertex_attr(cygraph, "cluster", value = 1:num_vertices)
   cygraph = set_vertex_attr(cygraph, "cluster_tightness", value = tightness_vector)
-  cygraph = set_edge_attr(cygraph, "overlap", value = get_edge_weights(edge_weights, cluster_sizes, ends(mapper_graph, E(mapper_graph)))*20)
-  cygraph = set_vertex_attr(cygraph, "cluster_size", value = cluster_sizes/sqrt(sum(cluster_sizes^2))*200)
+  cygraph = set_edge_attr(cygraph, "overlap", value = get_edge_weights(edge_weights, cluster_sizes, ends(mapper_graph, E(mapper_graph)))*10)
+  cygraph = set_vertex_attr(cygraph, "cluster_size", value = 100*cluster_sizes/max(cluster_sizes))
 
   createNetworkFromIgraph(cygraph)
 
