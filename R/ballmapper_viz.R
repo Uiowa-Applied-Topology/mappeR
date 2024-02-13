@@ -31,7 +31,7 @@ visualize_ballmapper_data <- function(mapper_data, dists) {
 
   createNetworkFromIgraph(cygraph)
 
-  style.name = "mapperstyle"
+  style.name = paste("mapperstyle", runif(1))
   defaults <- list(NODE_SHAPE = "ellipse",
                    EDGE_TRANSPARENCY = 120)
 

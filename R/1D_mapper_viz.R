@@ -80,7 +80,7 @@ visualize_mapper_data <- function(mapper_data, dists) {
 
   createNetworkFromIgraph(cygraph)
 
-  style.name = "mapperstyle"
+  style.name = paste("mapperstyle", runif(1))
   defaults <- list(NODE_SHAPE = "ellipse",
                    NODE_BORDER_WIDTH = 10,
                    EDGE_TRANSPARENCY = 255)

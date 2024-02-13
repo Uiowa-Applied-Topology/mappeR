@@ -38,7 +38,7 @@ visualize_combomapper_data <- function(mapper_data, dists) {
 
   createNetworkFromIgraph(cygraph)
 
-  style.name = "mapperstyle"
+  style.name = paste("mapperstyle", runif(1))
   defaults <- list(NODE_SHAPE = "ellipse",
                    NODE_BORDER_WIDTH = 10,
                    BORDER_TRANSPARENCY = 255)
