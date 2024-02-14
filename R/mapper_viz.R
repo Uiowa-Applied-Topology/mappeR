@@ -19,7 +19,7 @@ visualize_mapper_data <- function(mapper_data, dists, is_ballmapper = TRUE) {
   # record data in igraph, will become tables in cytoscape
   cygraph = set_vertex_attr(mapper_graph, "cluster_id", value = 1:num_vertices)
   cygraph = set_vertex_attr(cygraph, "data_in_cluster", value=clustered_data[-1])
-  cygraph = set.vertex_attr(cygraph, "num_points_in_cluster", value=cluster_sizes)
+  cygraph = set_vertex_attr(cygraph, "num_points_in_cluster", value=cluster_sizes)
   cygraph = set_vertex_attr(cygraph, "cluster_tightness", value = tightness_vector)
   cygraph = set_edge_attr(cygraph, "overlap", value = edge_weights)
 
