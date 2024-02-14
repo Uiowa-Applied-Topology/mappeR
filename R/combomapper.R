@@ -3,36 +3,6 @@ source("R/1D_mapper.R")
 source("R/mapper_viz.R")
 library(usedist)
 
-# performs single linkage clustering and outputs clusters based on a rough heuristic.
-get_single_linkage_clusters <- function(dists) {
-  hcl = hclust(as.dist(dists), method = "single")
-
-  cutval = 0
-  maxdiff = 0
-  heights = sort(unique(cophenetic(hcl))) # merge heights of dendrogram
-
-  if (length(heights) == 1) {
-    cutval = heights[1]
-  } else {
-    # idea is the most persistent number of clusters is the best one
-    # this number is the tallest section of the dendrogram without merges
-    for (i in 1:(length(heights)-1)){
-      currentdiff = abs(heights[i]-heights[i+1])
-      if (currentdiff > maxdiff) {
-        maxdiff = currentdiff
-        cutval = heights[i]
-      }
-    }
-  }
-
-  # if the dendrogram is "very short" we might expect the best number of clusters is one
-  if (max(heights) < 0.1) { # I made this number up
-    return(cutree(hcl, k=1))
-  } else {
-    return(cutree(hcl, h=cutval))
-  }
-}
-
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
 # output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
 get_comboclusters <- function(bins, dists, method) {
@@ -73,10 +43,6 @@ get_combomapper_data <- function(data, dist1, dist2, eps) {
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
 
   return(list(binclust_data, mapper_graph, edge_overlaps))
-}
-
-balls_to_bins <- function(balls) {
-
 }
 
 cycombomapper <- function(data, dist1, dist2, eps) {
