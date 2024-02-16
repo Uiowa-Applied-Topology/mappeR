@@ -19,16 +19,18 @@ get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_ove
 }
 
 # makes a list of subsets of the input data, according to specified "bins."
+# assumes a real-valued filter function.
 make_bins <- function(data, filtered_data, bin_ends) {
   bins = list()
   num_bins = nrow(bin_ends)
 
   for (i in 1:num_bins) {
-    # bin_assignments = c()
+    # left and right bin endpoints
     bin_left = as.numeric(bin_ends[i,1])
     bin_right = as.numeric(bin_ends[i,2])
-    in_bin = sapply(filtered_data, function(x) (bin_left - x <= 0) & (bin_right - x >= 0))
 
+    # check which filtered datapoints fall between the bin endpoints
+    in_bin = sapply(filtered_data, function(x) (bin_left - x <= 0) & (bin_right - x >= 0))
     bin_assignments = which(in_bin)
 
     if (length(bin_assignments) != 0) { # this means our bin is empty
@@ -47,20 +49,12 @@ get_single_linkage_clusters <- function(dists) {
   cutval = 0
   maxdiff = 0
   heights = sort(unique(cophenetic(hcl))) # merge heights of dendrogram
+  branch_heights = diff(heights)
 
-  if (length(heights) == 1) {
-    cutval = heights[1]
-  } else {
-    # idea is the most persistent number of clusters is the best one
-    # this number is the tallest section of the dendrogram without merges
-    for (i in 1:(length(heights)-1)){
-      currentdiff = abs(heights[i]-heights[i+1])
-      if (currentdiff > maxdiff) {
-        maxdiff = currentdiff
-        cutval = heights[i]
-      }
-    }
-  }
+  tallest_branch_height = max(branch_heights)
+  tall_branch_id = which(branch_lengths == tallest_branch_height)
+
+  cutval = (tall_branch_height + heights[tall_branch_id + 1])/2
 
   # if the dendrogram is "very short" we might expect the best number of clusters is one
   if (max(heights) < 0.1) { # I made this number up
