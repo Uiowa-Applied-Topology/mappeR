@@ -45,7 +45,7 @@ visualize_mapper_data <- function(mapper_data, dists, is_ballmapper = TRUE) {
     createVisualStyle(style.name, defaults, list(nodeSizes, edgeWidth, nodeFillColors))
   } else { # conventional mapper needs bin coloring
     num_bins = length(binclust_data)
-    colfunc <- colorRampPalette(c("blue", "brown", "red"))
+    colfunc <- colorRampPalette(c("blue", "purple", "red"))
     bin_colors = colfunc(num_bins)
     nodeBorderColors <- mapVisualProperty('node border color', 'bin', 'd', 1:num_bins, bin_colors)
     createVisualStyle(style.name, defaults, list(nodeSizes, edgeWidth, nodeBorderColors, nodeFillColors))
