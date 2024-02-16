@@ -7,8 +7,8 @@ get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_ove
   even_length = (max_val - min_val)/num_bins # widths with zero percent overlap
   nudge = (percent_overlap/100)*even_length
 
-  left_ends = min_val + (even_length-nudge)*(0:(num_bins-1))
-  right_ends = left_ends + even_length
+  left_ends = min_val + (even_length-nudge)*(0:(num_bins-1)) # construct correctly overlapping bins
+  right_ends = left_ends + even_length # we will scale everything after
 
   scale_factor = (max_val - min_val)/(right_ends[num_bins] - min_val) # scale by pretending min_val = 0
   bin_ends = cbind(left_ends, right_ends) # make bins
@@ -24,14 +24,13 @@ make_bins <- function(data, filtered_data, bin_ends) {
   num_bins = nrow(bin_ends)
 
   for (i in 1:num_bins) {
-    bin_assignments = c()
+    # bin_assignments = c()
     bin_left = as.numeric(bin_ends[i,1])
     bin_right = as.numeric(bin_ends[i,2])
-    for (j in 1:length(filtered_data)) { # loop through filtered data so we can look at level sets
-      if ((bin_left - filtered_data[j] <= 0) & (bin_right - filtered_data[j] >= 0)) {
-        bin_assignments = append(bin_assignments, j) # don't need the whole datapoint, just the index
-      }
-    }
+    in_bin = sapply(filtered_data, function(x) (bin_left - x <= 0) & (bin_right - x >= 0))
+
+    bin_assignments = which(in_bin)
+
     if (length(bin_assignments) != 0) { # this means our bin is empty
       bins[[i]] = data[bin_assignments,] # get a subset of the original data based on the indices we collected
     } else {
