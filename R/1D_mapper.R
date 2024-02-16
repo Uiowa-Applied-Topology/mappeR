@@ -44,17 +44,18 @@ make_bins <- function(data, filtered_data, bin_ends) {
 
 # performs single linkage clustering and outputs clusters based on a rough heuristic.
 get_single_linkage_clusters <- function(dists) {
+  dists = as.dist(dists)
   hcl = hclust(dists, method = "single")
 
   cutval = 0
   maxdiff = 0
   heights = sort(unique(cophenetic(hcl))) # merge heights of dendrogram
-  branch_heights = diff(heights)
+  branch_lengths = diff(heights)
 
-  tallest_branch_height = max(branch_heights)
-  tall_branch_id = which(branch_lengths == tallest_branch_height)
+  tallest_branch_height = max(branch_lengths)
+  tallest_branch_id = which(branch_lengths == tallest_branch_height)
 
-  cutval = (tall_branch_height + heights[tall_branch_id + 1])/2
+  cutval = (tallest_branch_height + heights[tallest_branch_id + 1])/2
 
   # if the dendrogram is "very short" we might expect the best number of clusters is one
   if (max(heights) < 0.1) { # I made this number up
@@ -93,7 +94,7 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
   # bin data according to filter values
   print("binning...")
   bins = get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap)
-  binned_data = make_bins(data, filtered_data, bin_endpoints)
+  binned_data = make_bins(data, filtered_data, bins)
 
   # cluster data
   print("clustering...")
