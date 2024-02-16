@@ -1,5 +1,6 @@
 source("R/graph_constructor.R")
 source("R/mapper_viz.R")
+source("R/clustering_methods.R")
 
 # given an interval, calculates endpoints of a fixed number of evenly spaced, equal length, overlapping subintervals with a fixed percent overlap.
 get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_overlap) {
@@ -40,29 +41,6 @@ make_bins <- function(data, filtered_data, bin_ends) {
     }
   }
   return(bins)
-}
-
-# performs single linkage clustering and outputs clusters based on a rough heuristic.
-get_single_linkage_clusters <- function(dists) {
-  dists = as.dist(dists)
-  hcl = hclust(dists, method = "single")
-
-  cutval = 0
-  maxdiff = 0
-  heights = sort(unique(cophenetic(hcl))) # merge heights of dendrogram
-  branch_lengths = diff(heights)
-
-  tallest_branch_height = max(branch_lengths)
-  tallest_branch_id = which(branch_lengths == tallest_branch_height)
-
-  cutval = (tallest_branch_height + heights[tallest_branch_id + 1])/2
-
-  # if the dendrogram is "very short" we might expect the best number of clusters is one
-  if (max(heights) < 0.1) { # I made this number up
-    return(cutree(hcl, k=1))
-  } else {
-    return(cutree(hcl, h=cutval))
-  }
 }
 
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
@@ -111,6 +89,7 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
   return(list(binclust_data, mapper_graph, edge_overlaps, bins))
 }
 
+# does the things
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   # generate mapper data
   mapper_data = get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method)
