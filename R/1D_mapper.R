@@ -71,11 +71,11 @@ get_clusters <- function(bins, dists, method) {
   cluster_count = 0
 
   for (i in 1:length(bins)){
-    if (length(bins[[i]]) == 0) {
+    if (length(bins[[i]]) == 0) { # nothing in this bin, moving on
       binclust_data[[i]] = list()
       next
     }
-    if (nrow(bins[[i]]) == 1) {
+    if (nrow(bins[[i]]) == 1) { # I am atoning for the sins of TDAmapper
       binclust_data[[i]] = setNames(1, rownames(bins[[i]])) + cluster_count
       cluster_count = cluster_count + 1
       next
@@ -92,7 +92,7 @@ get_clusters <- function(bins, dists, method) {
 get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   # bin data according to filter values
   print("binning...")
-  bin_endpoints = get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap)
+  bins = get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap)
   binned_data = make_bins(data, filtered_data, bin_endpoints)
 
   # cluster data
@@ -107,7 +107,7 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
 
   # return the binned and clustered data, the mapper graph, and the edge overlap data
-  return(list(binclust_data, mapper_graph, edge_overlaps))
+  return(list(binclust_data, mapper_graph, edge_overlaps, bins))
 }
 
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
