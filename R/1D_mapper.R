@@ -7,21 +7,13 @@ get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_ove
   even_length = (max_val - min_val)/num_bins # widths with zero percent overlap
   nudge = (percent_overlap/100)*even_length
 
-  left_ends = c(min_val) # first left endpoint is unchanged
-  right_ends = c(min_val + even_length) # first right endpoint is unchanged
-
-  for (j in 1:(num_bins-1)) {
-    leftcut = min_val + j*(even_length - nudge) # move the left endpoint so it overlaps with its neighbor appropriately
-    rightcut = leftcut + even_length # don't change the length of the segment yet
-    left_ends = append(left_ends, leftcut)
-    right_ends = append(right_ends, rightcut)
-  }
+  left_ends = min_val + (even_length-nudge)*(0:(num_bins-1))
+  right_ends = left_ends + even_length
 
   scale_factor = (max_val - min_val)/(right_ends[num_bins] - min_val) # scale by pretending min_val = 0
-
   bin_ends = cbind(left_ends, right_ends) # make bins
 
-  bin_ends = scale_factor*(bin_ends - min_val) + min_val # scale the bins after translating, then translate back
+  bin_ends = scale_factor*(bin_ends - min_val) + min_val # translate to zero, scale, then translate back
 
   return(bin_ends)
 }
@@ -107,7 +99,8 @@ get_clusters <- function(bins, dists, method) {
 get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   # bin data according to filter values
   print("binning...")
-  binned_data = make_bins(data, filtered_data, get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap))
+  bin_endpoints = get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap)
+  binned_data = make_bins(data, filtered_data, bin_endpoints)
 
   # cluster data
   print("clustering...")
@@ -120,10 +113,17 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
   edge_overlaps = graph_data[[2]]
   mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
 
+  # return the binned and clustered data, the mapper graph, and the edge overlap data
   return(list(binclust_data, mapper_graph, edge_overlaps))
 }
 
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
-  visualize_mapper_data(get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method), dists, FALSE)
+  # generate mapper data
+  mapper_data = get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method)
+
+  # pass to visualizer for........visualizing...
+  visualize_mapper_data(mapper_data, dists, is_ballmapper = FALSE)
+
+  # if this isn't here R will print something useless
   return(invisible(NULL))
 }
