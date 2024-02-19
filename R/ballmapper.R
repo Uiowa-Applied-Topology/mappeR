@@ -1,6 +1,3 @@
-source("R/graph_constructor.R")
-source("R/mapper_viz.R")
-
 # greedy epsilon net algorithm from Dłotko
 # output is a list of bins, each containing names of datapoints.
 create_balls <- function(data, dists, eps) {
@@ -79,6 +76,18 @@ get_ballmapper_data <- function(data, dists, eps) {
   return(ballmappergraph)
 }
 
+#' Runs ballmapper and passes data to Cytoscape for visualization.
+#'
+#' @param data Your input data. Ideally a dataframe.
+#' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
+#' @param eps A positive real number for your desired ball radius.
+#' @returns NULL
+#' @examples
+#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
+#' circle.dist = dist(circle.data)
+#'
+#' # make sure Cytoscape is running in the background or this will not work
+#' cyballmapper(circle.data, circle.dist, .3)
 cyballmapper <- function(data, dists, eps) {
   visualize_mapper_data(get_ballmapper_data(data, dists, eps))
   return(invisible(NULL))

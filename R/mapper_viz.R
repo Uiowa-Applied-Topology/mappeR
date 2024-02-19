@@ -1,5 +1,3 @@
-source("R/style_tools.R")
-
 visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
   nodes = mapper_data[[1]]
   edges = mapper_data[[2]]

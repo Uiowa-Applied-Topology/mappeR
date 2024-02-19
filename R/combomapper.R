@@ -1,8 +1,3 @@
-source("R/ballmapper.R")
-source("R/1D_mapper.R")
-source("R/mapper_viz.R")
-library(usedist)
-
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
 # output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
 get_comboclusters <- function(bins, dists, method) {
