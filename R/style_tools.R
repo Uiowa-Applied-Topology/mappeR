@@ -3,13 +3,9 @@ get_cluster_sizes <- function(binclust_data, num_vertices) {
   size_vector = c()
 
   flattened_data = unlist(binclust_data) # bins are not important here
+  clusters = lapply(1:num_vertices, function(x) flattened_data[flattened_data == x])
 
-  for (i in 1:num_vertices) {
-    my_cluster = flattened_data[flattened_data == i] # get just the data in this cluster
-    size_vector = append(size_vector, length(my_cluster)) # record the number of datapoints
-  }
-
-  return(size_vector)
+  return(sapply(clusters, length))
 }
 
 # categorizes clusters by bin. returns a vector of bin numbers corresponding to each cluster.
