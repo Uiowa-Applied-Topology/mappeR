@@ -60,7 +60,8 @@ get_clusters <- function(bins, dists, method) {
       cluster_count = cluster_count + 1
       next
     }
-    d = dist_subset(dists, rownames(bins[[i]])) # assuming your data has identifiers! also I am not sure of this function's behavior on non-dissimilarity matrices.
+
+    d = as.dist(as.matrix(dists)[rownames(bins[[i]]), rownames(bins[[i]])]) # I went into the dist_subset function in usedist and it was literally this
     clust = switch(tolower(method), "single" = get_single_linkage_clusters(d), stop("please tell george to do more clustering methods"))
     binclust_data[[i]] = clust + cluster_count
     cluster_count = cluster_count + max(clust) # update the total

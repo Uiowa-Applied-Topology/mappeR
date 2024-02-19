@@ -6,7 +6,6 @@ date: "2024-01-13"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(usedist)
 library(RCy3)
 source("R/1D_mapper.R")
 source("R/ballmapper.R")
