@@ -10,13 +10,10 @@ get_cluster_sizes <- function(binclust_data, num_vertices) {
 
 # categorizes clusters by bin. returns a vector of bin numbers corresponding to each cluster.
 get_bin_vector <- function(binclust_data) {
-  clusters_and_bins = c()
-  for (i in 1:length(binclust_data)) { # go through each bin
-    for (j in unique(binclust_data[[i]])) { # the bin contains clusters
-      clusters_and_bins = append(clusters_and_bins, i) # tag each cluster with the bin number
-    }
-  }
-  return(clusters_and_bins)
+  num_unique_clusters_per_bin = sapply(lapply(binclust_data, unique), length)
+  bin_by_clusters = unlist(mapply(function(x, y) rep(x, y), 1:length(num_unique_clusters_per_bin), num_unique_clusters_per_bin))
+
+  return(bin_by_clusters)
 }
 
 # computes a measure of cluster "tightness" as a number between 0 and 1, based on the medoids of the clusters.
