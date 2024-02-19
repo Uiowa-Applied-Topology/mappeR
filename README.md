@@ -45,7 +45,7 @@ cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
 
     ## Applying preferred layout...
 
-![](data/1Dmappercircle.png "wow a cycle")
+![](data/1dmappercircle.png "wow a cycle")
 
 The size of the nodes are proportional to how many datapoints are in
 that cluster. The border color identifies which bin the cluster belongs

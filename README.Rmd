@@ -33,7 +33,7 @@ plot(circle.data$x, circle.data$y, pch=20)
 # Cytoscape needs to be running
 cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
 ```
-![](data/1Dmappercircle.png "wow a cycle")
+![](data/1dmappercircle.png "wow a cycle")
 
 The size of the nodes are proportional to how many datapoints are in that cluster. The border color identifies which bin the cluster belongs to, while the interior color signals how "tight" the cluster is. The edge opacity represents the relative overlap between clusters; a darker edge indicates a stronger overlap.
 
