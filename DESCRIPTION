@@ -1,14 +1,14 @@
 Package: CyMapper
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Use Cytoscape to Visualize Mapper Graphs
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: George Clare Kennedy
+Maintainer: George Clare Kennedy <george-clarekennedy@uiowa.edu>
+Description: This is an implementation of the mapper and ballmapper algorithms, using Cytoscape for visualization.
+    There is also a refined ballmapper, where we cluster within the balls and form our mapper graph as in conventional mapper (via intersecting clusters).
+License: :)
 Encoding: UTF-8
 LazyData: true
-Suggests: 
+Suggests: RCy3,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
