@@ -73,14 +73,9 @@ get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
 
 # gives which data is in each cluster
 get_clustered_data <- function(binclust_data, num_vertices) {
-  res = array()
-
   flattened_data = unlist(binclust_data) # bins are not important here
+  clusters = lapply(1:num_vertices, function(x) flattened_data[flattened_data == x]) # sort by cluster
+  data_in_cluster = lapply(lapply(clusters, names), toString)
 
-  for (i in 1:num_vertices) {
-    my_cluster = flattened_data[flattened_data == i] # gather points in this cluster
-    res = append(res, toString(names(my_cluster)))
-  }
-
-  return(res)
+  return(data_in_cluster)
 }
