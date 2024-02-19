@@ -68,7 +68,7 @@ get_clusters <- function(bins, dists, method) {
   return(binclust_data)
 }
 
-construct_mappergraph <- function(binclust_data, dists) {
+construct_1Dmappergraph <- function(binclust_data, dists) {
   num_vertices = max(binclust_data[[length(binclust_data)]])
 
   node_ids = as.character(1:num_vertices)
@@ -111,7 +111,7 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
 
   # construct mapper graph
   print("making mapper graph...")
-  mappergraph = construct_mappergraph(binclust_data, dists)
+  mappergraph = construct_1Dmappergraph(binclust_data, dists)
 
   return(mappergraph)
 }

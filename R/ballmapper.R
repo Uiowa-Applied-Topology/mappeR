@@ -46,6 +46,34 @@ convert_balls <- function(balled_data) {
   return(res)
 }
 
+construct_ballmappergraph <- function(binclust_data, dists) {
+  num_vertices = max(binclust_data[[length(binclust_data)]])
+
+  node_ids = as.character(1:num_vertices)
+
+  overlaps = get_overlaps(binclust_data)
+  edges = get_edgelist_from_overlaps(overlaps, num_vertices)
+  sources = as.character(edges[,1])
+  targets = as.character(edges[,2])
+
+  cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
+  cluster_size = get_cluster_sizes(binclust_data, num_vertices)
+  data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
+  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
+
+  nodes = data.frame(id=node_ids,
+                     size=cluster_size,
+                     tightness=cluster_tightness,
+                     data=data_in_cluster)
+
+  edges = data.frame(source=sources,
+                     target=targets,
+                     weight=edge_weights)
+
+
+  return(list(nodes, edges))
+}
+
 # gets the ballmapper data: ball membership, graph structure, and cluster overlap information
 get_ballmapper_data <- function(data, dists, eps) {
   print("making balls...")
@@ -54,15 +82,12 @@ get_ballmapper_data <- function(data, dists, eps) {
 
   # construct ballmapper graph
   print("constructing ballmapper graph...")
-  graph_data = construct_graph(formatted_balled_data) # gets adjacency matrix and edge overlaps
-  amat = graph_data[[1]]
-  edge_overlaps = graph_data[[2]]
-  mapper_graph = graph_from_adjacency_matrix(amat, mode="max") # so we only have to record the upper half
+  ballmappergraph = construct_ballmappergraph(formatted_balled_data, dists)
 
-  return(list(formatted_balled_data, mapper_graph, edge_overlaps))
+  return(ballmappergraph)
 }
 
 cyballmapper <- function(data, dists, eps) {
-  visualize_mapper_data(get_ballmapper_data(data, dists, eps), dists)
+  visualize_mapper_data(get_ballmapper_data(data, dists, eps))
   return(invisible(NULL))
 }
