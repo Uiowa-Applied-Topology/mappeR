@@ -13,6 +13,11 @@ get_ballmapper_data(data, dists, eps)
 
 \item{eps}{A positive real number for your desired ball radius.}
 }
+\value{
+A list of two dataframes, one with node data containing ball size,
+datapoints per ball, ball tightness, and one with edge data
+containing sources, targets, and weights representing overlap strength.
+}
 \description{
 Runs ballmapper and returns two dataframes containing node and edge data.
 }

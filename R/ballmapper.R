@@ -68,7 +68,9 @@ construct_ballmappergraph <- function(binclust_data, dists) {
 #' @param data Your input data. Ideally a dataframe.
 #' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
 #' @param eps A positive real number for your desired ball radius.
-#' @returns NULL
+#' @returns A list of two dataframes, one with node data containing ball size,
+#'  datapoints per ball, ball tightness, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
 #' @examples
 #' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
 #'   y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))

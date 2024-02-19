@@ -27,7 +27,9 @@ get_1D_mapper_data(
 \item{clustering_method}{Desired clustering method. A string from these options: "single" (single-linkage)}
 }
 \value{
-A list of two dataframes, one with node data and one with edge data.
+A list of two dataframes, one with node data containing cluster size,
+datapoints per cluster, cluster tightness, and bin number, and one with edge data
+containing sources, targets, and weights representing overlap strength.
 }
 \description{
 Runs 1D mapper returns a dataframe with node and edge data.

@@ -103,7 +103,9 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
 #' @param num_bins A positive integer for the number of bins you want to split up your filtered data into.
 #' @param percent_overlap The percent (0-100) overlap you want between each bin and its neighbors.
 #' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage)
-#' @returns A list of two dataframes, one with node data and one with edge data.
+#' @returns A list of two dataframes, one with node data containing cluster size,
+#'  datapoints per cluster, cluster tightness, and bin number, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
 #' @examples
 #' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
 #'   y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
