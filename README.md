@@ -1,11 +1,7 @@
-This is an implementation of the [mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by Singh, Mémoli, and Carlsson.
+This is an implementation of the [mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by Singh, Mémoli, and Carlsson, and also the [ballmapper](https://arxiv.org/pdf/1901.07410.pdf) algorithm from Dlotko.
 
-To run the examples, first clone the repo. Open it in RStudio. `renv` should automatically take care of all the package stuff and prompt you along. You can also run `renv::restore()` in the R console.
+You will need to install the [RCy3](https://www.bioconductor.org/packages/release/bioc/html/RCy3.html) package. To do this, start `R` (or RStudio), and enter the following commands:
 
-Make sure Cytoscape is open, then you can run the examples in the R Markdown file.
+`install.packages("BiocManager")`
 
-Basic examples:
-
-Noisy circle data, 10 bins, 15% overlap, single linkage clustering: ![noisy circle](images/noisycircle.png) ![mappercircle](images/mappercircle.png)
-
-Noisy clover data, 5 bins, 15% overlap, single linkage clustering: ![noisy clover](images/noisyclover.png) ![mapperclover](images/mapperclover.png)
+`BiocManager::install("RCy3")`
