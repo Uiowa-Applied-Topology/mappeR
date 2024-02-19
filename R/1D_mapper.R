@@ -80,13 +80,14 @@ construct_mappergraph <- function(binclust_data, dists) {
 
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
   cluster_size = get_cluster_sizes(binclust_data, num_vertices)
-  data_in_cluster = get_clustered_data(binclust_data, num_vertices)
+  data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
   bins = get_bin_vector(binclust_data)
 
   nodes = data.frame(id=node_ids,
                      size=cluster_size,
                      tightness=cluster_tightness,
+                     data=data_in_cluster,
                      bin=bins)
 
   edges = data.frame(source=sources,
