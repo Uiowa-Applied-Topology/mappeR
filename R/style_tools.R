@@ -57,17 +57,15 @@ get_cluster_tightness_vector <- function(dists, binclust_data, num_vertices) {
 
 # calcuates edge weights. for each edge, its weight is the maximum of the relative percent overlaps between the clusters.
 get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
-  edge_weights = c()
-  for (i in 1:length(overlap_lengths)) {
-    cluster1_id = edges[i, 1]
-    cluster2_id = edges[i, 2]
-    cluster1_size = cluster_sizes[cluster1_id]
-    cluster2_size = cluster_sizes[cluster2_id]
-    overlap = overlap_lengths[i]
+  heads = edges[,1]
+  tails = edges[,2]
+  head_sizes = cluster_sizes[heads]
+  tail_sizes = cluster_sizes[tails]
 
-    overlap_weight = max(overlap/cluster1_size, overlap/cluster2_size) # pick the bigger relative overlap
-    edge_weights = append(edge_weights, overlap_weight)
-  }
+  head_overlaps = overlap_lengths/head_sizes
+  tail_overlaps = overlap_lengths/tail_sizes
+  edge_weights = mapply(max, head_overlaps, tail_overlaps)
+
   return(edge_weights)
 }
 
