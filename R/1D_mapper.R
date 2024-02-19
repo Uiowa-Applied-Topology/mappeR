@@ -41,6 +41,7 @@ make_bins <- function(data, filtered_data, bin_ends) {
 
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
 # output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
+#' @importFrom stats as.dist
 get_clusters <- function(bins, dists, method) {
   binclust_data = list()
   cluster_count = 0
@@ -94,8 +95,24 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
   return(list(nodes, edges))
 }
 
-# runner function for 1D mapper.
-get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
+#' Runs 1D mapper returns a dataframe with node and edge data.
+#'
+#' @param data Your input data. Ideally a dataframe.
+#' @param filtered_data A single column of your data, of numeric value.
+#' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
+#' @param num_bins A positive integer for the number of bins you want to split up your filtered data into.
+#' @param percent_overlap The percent (0-100) overlap you want between each bin and its neighbors.
+#' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage)
+#' @returns A list of two dataframes, one with node data and one with edge data.
+#' @examples
+#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
+#'   y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
+#' circle.dist = dist(circle.data)
+#'
+#' # make sure Cytoscape is running in the background or this will not work
+#' get_1D_mapper_data(circle.data, circle.data$x, circle.dist, 10, 15, "single")
+#' @export
+get_1D_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   # bin data according to filter values
   bins = get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap)
   binned_data = make_bins(data, filtered_data, bins)
@@ -119,14 +136,16 @@ get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overla
 #' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage)
 #' @returns NULL
 #' @examples
-#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
+#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
+#' y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
 #' circle.dist = dist(circle.data)
 #'
 #' # make sure Cytoscape is running in the background or this will not work
-#' cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
+#' # cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
+#' @export
 cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   # generate mapper data
-  mappergraph = get_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method)
+  mappergraph = get_1D_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method)
 
   # pass to visualizer for........visualizing...
   visualize_mapper_data(mappergraph, is_ballmapper = FALSE)

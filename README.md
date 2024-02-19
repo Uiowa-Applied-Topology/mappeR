@@ -29,12 +29,6 @@ using 10 bins with 15 percent overlap, and single linkage clustering.
 circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
 circle.dist = dist(circle.data)
 
-plot(circle.data$x, circle.data$y, pch=20)
-```
-
-![](README_files/figure-gfm/circle-1.png)<!-- -->
-
-``` r
 # Cytoscape needs to be running
 cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
 ```
@@ -45,7 +39,8 @@ cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
 
     ## Applying preferred layout...
 
-![](data/1dmappercircle.png "wow a cycle")
+![](man/figures/circle-1.png "noisy circle data")
+![](man/figures/1dmappercircle.png "wow a cycle")
 
 The size of the nodes are proportional to how many datapoints are in
 that cluster. The border color identifies which bin the cluster belongs
@@ -66,7 +61,7 @@ cyballmapper(circle.data, circle.dist, .3)
 
     ## Applying preferred layout...
 
-![](data/ballmappercircle.png "the balls have made a cycle")
+![](man/figures/ballmappercircle.png "the balls have made a cycle")
 
 The same visual styling was applied here, though it may be hard to see
 the size differences. No colors are needed as the balls are also the

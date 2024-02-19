@@ -1,4 +1,8 @@
 # performs single linkage clustering and outputs clusters based on a rough heuristic.
+#' @importFrom stats as.dist
+#' @importFrom stats hclust
+#' @importFrom stats cophenetic
+#' @importFrom stats cutree
 get_single_linkage_clusters <- function(dists) {
   dists = as.dist(dists)
   hcl = hclust(dists, method = "single")
