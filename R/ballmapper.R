@@ -63,7 +63,19 @@ construct_ballmappergraph <- function(binclust_data, dists) {
   return(list(nodes, edges))
 }
 
-# gets the ballmapper data: ball membership, graph structure, and cluster overlap information
+#' Runs ballmapper and returns two dataframes containing node and edge data.
+#'
+#' @param data Your input data. Ideally a dataframe.
+#' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
+#' @param eps A positive real number for your desired ball radius.
+#' @returns NULL
+#' @examples
+#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
+#'   y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
+#' circle.dist = dist(circle.data)
+#'
+#' show(get_ballmapper_data(circle.data, circle.dist, .3))
+#' @export
 get_ballmapper_data <- function(data, dists, eps) {
   balled_data = create_balls(data, dists, eps)
   formatted_balled_data = convert_balls(balled_data)
@@ -81,11 +93,13 @@ get_ballmapper_data <- function(data, dists, eps) {
 #' @param eps A positive real number for your desired ball radius.
 #' @returns NULL
 #' @examples
-#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
+#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
+#'   y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
 #' circle.dist = dist(circle.data)
 #'
 #' # make sure Cytoscape is running in the background or this will not work
-#' cyballmapper(circle.data, circle.dist, .3)
+#' # cyballmapper(circle.data, circle.dist, .3)
+#' @export
 cyballmapper <- function(data, dists, eps) {
   visualize_mapper_data(get_ballmapper_data(data, dists, eps))
   return(invisible(NULL))

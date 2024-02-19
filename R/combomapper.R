@@ -1,5 +1,6 @@
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
 # output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
+#' @importFrom stats setNames
 get_comboclusters <- function(bins, dists, method) {
   binclust_data = list()
   cluster_count = 0
