@@ -31,19 +31,11 @@ create_balls <- function(data, dists, eps) {
 
 # takes the output of the previous function and makes it suitable for the 1D mapper function
 convert_balls <- function(balled_data) {
-  # we will stitch these together to get a named vector of ball/cluster membership
-  res = c()
-  names = c()
+  ball_sizes = lapply(balled_data, length)
+  ballball_data = unlist(mapply(function(x, y) rep(x, y), 1:length(ball_sizes), ball_sizes))
+  names(ballball_data) = unlist(balled_data)
 
-  for (i in 1:length(balled_data)) {
-    current_ball = balled_data[[i]]
-    names = append(names, current_ball) # collect data ids from this ball
-    for (j in 1:length(current_ball)) {
-      res = append(res, i) # each datapoint will get an appropriate cluster membership tag
-    }
-  }
-  names(res) = names # sewing time
-  return(res)
+  return(ballball_data)
 }
 
 construct_ballmappergraph <- function(binclust_data, dists) {
