@@ -97,16 +97,13 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
 # runner function for 1D mapper.
 get_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
   # bin data according to filter values
-  print("binning...")
   bins = get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap)
   binned_data = make_bins(data, filtered_data, bins)
 
   # cluster data
-  print("clustering...")
   binclust_data = get_clusters(binned_data, dists, clustering_method)
 
   # construct mapper graph
-  print("making mapper graph...")
   mappergraph = construct_1Dmappergraph(binclust_data, dists)
 
   return(mappergraph)

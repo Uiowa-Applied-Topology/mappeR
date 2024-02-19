@@ -65,12 +65,10 @@ construct_ballmappergraph <- function(binclust_data, dists) {
 
 # gets the ballmapper data: ball membership, graph structure, and cluster overlap information
 get_ballmapper_data <- function(data, dists, eps) {
-  print("making balls...")
   balled_data = create_balls(data, dists, eps)
   formatted_balled_data = convert_balls(balled_data)
 
   # construct ballmapper graph
-  print("constructing ballmapper graph...")
   ballmappergraph = construct_ballmappergraph(formatted_balled_data, dists)
 
   return(ballmappergraph)

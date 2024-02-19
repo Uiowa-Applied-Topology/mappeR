@@ -55,13 +55,10 @@ construct_combomappergraph <- function(binclust_data, dists) {
 
 # runner function for combo mapper; outputs bins, clusters, and the mapper graph.
 get_combomapper_data <- function(data, dist1, dist2, eps) {
-  print("binning...")
   balls = create_balls(data, dist1, eps)
 
-  print("clustering...")
   binclust_data = get_comboclusters(balls, dist2, "single")
 
-  print("making mapper graph...")
   combomappergraph = construct_combomappergraph(binclust_data, dist2)
 
   return(combomappergraph)
