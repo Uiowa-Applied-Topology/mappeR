@@ -28,7 +28,37 @@ get_comboclusters <- function(bins, dists, method) {
   return(binclust_data)
 }
 
-# runner function for 1D mapper; outputs bins, clusters, and the mapper graph.
+construct_combomappergraph <- function(binclust_data, dists) {
+  num_vertices = max(binclust_data[[length(binclust_data)]])
+
+  node_ids = as.character(1:num_vertices)
+
+  overlaps = get_overlaps(binclust_data)
+  edges = get_edgelist_from_overlaps(overlaps, num_vertices)
+  sources = as.character(edges[,1])
+  targets = as.character(edges[,2])
+
+  cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
+  cluster_size = get_cluster_sizes(binclust_data, num_vertices)
+  data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
+  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
+  bins = get_bin_vector(binclust_data)
+
+  nodes = data.frame(id=node_ids,
+                     size=cluster_size,
+                     tightness=cluster_tightness,
+                     data=data_in_cluster,
+                     bin=bins)
+
+  edges = data.frame(source=sources,
+                     target=targets,
+                     weight=edge_weights)
+
+
+  return(list(nodes, edges))
+}
+
+# runner function for combo mapper; outputs bins, clusters, and the mapper graph.
 get_combomapper_data <- function(data, dist1, dist2, eps) {
   print("binning...")
   balls = create_balls(data, dist1, eps)
@@ -37,16 +67,13 @@ get_combomapper_data <- function(data, dist1, dist2, eps) {
   binclust_data = get_comboclusters(balls, dist2, "single")
 
   print("making mapper graph...")
-  graph_data = construct_graph(binclust_data)
-  amat = graph_data[[1]]
-  edge_overlaps = graph_data[[2]]
-  mapper_graph = graph_from_adjacency_matrix(amat, mode="max")
+  combomappergraph = construct_combomappergraph(binclust_data, dist2)
 
-  return(list(binclust_data, mapper_graph, edge_overlaps))
+  return(combomappergraph)
 }
 
 cycombomapper <- function(data, dist1, dist2, eps) {
-  visualize_mapper_data(get_combomapper_data(data, dist1, dist2, eps), dist2, FALSE)
+  visualize_mapper_data(get_combomapper_data(data, dist1, dist2, eps), FALSE)
 
   return(invisible(NULL))
 }
