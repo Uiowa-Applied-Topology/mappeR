@@ -19,6 +19,9 @@ get_bin_vector <- function(binclust_data) {
 compute_tightness <- function(dists, cluster) {
   if (length(cluster) == 0) {
     return(1)
+  }
+  if (length(cluster == 1)) {
+    return(1)
   } else {
     cluster_names = names(cluster)
     these_dists = dists[cluster_names, cluster_names]
