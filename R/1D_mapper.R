@@ -74,6 +74,7 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
   node_ids = as.character(1:num_vertices)
 
   overlaps = get_overlaps(binclust_data)
+  overlap_sizes = sapply(overlaps, length)
   edges = get_edgelist_from_overlaps(overlaps, num_vertices)
   sources = as.character(edges[,1])
   targets = as.character(edges[,2])
@@ -81,7 +82,7 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
   cluster_size = get_cluster_sizes(binclust_data, num_vertices)
   data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
-  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
+  edge_weights = get_edge_weights(overlap_sizes, cluster_size, edges)
   bins = get_bin_vector(binclust_data)
 
   nodes = data.frame(id=node_ids,
@@ -92,7 +93,8 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
 
   edges = data.frame(source=sources,
                      target=targets,
-                     weight=edge_weights)
+                     weight=edge_weights,
+                     size=overlap_sizes)
 
 
   return(list(nodes, edges))
