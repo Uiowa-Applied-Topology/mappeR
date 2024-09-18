@@ -19,9 +19,8 @@ get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_ove
 make_one_bin <- function(bin_left, bin_right, data, filtered_data) {
   in_bin = sapply(filtered_data, function(x) (bin_left - x <= 0) & (bin_right - x >= 0))
   bin_assignments = which(in_bin)
-  if (length(bin_assignments) != 0) { # this means our bin is empty
-    print(data[bin_assignments,])
-    return(data[bin_assignments,]) # get a subset of the original data based on the indices we collected
+  if (length(bin_assignments) != 0) {
+    return(rownames(data[bin_assignments,])) # get a subset of the original data based on the indices we collected
   } else {
     return(list()) # bin still exists, it's just empty
   }
@@ -30,42 +29,26 @@ make_one_bin <- function(bin_left, bin_right, data, filtered_data) {
 # makes a list of subsets of the input data, according to specified "bins."
 # assumes a real-valued filter function.
 make_bins <- function(data, filtered_data, bin_ends) {
-  left_ends = bin_ends[seq(1, length(bin_ends), 2)]
-  right_ends = bin_ends[seq(2, length(bin_ends), 2)]
+  left_ends = bin_ends[,1]
+  right_ends = bin_ends[,2]
   bins = mapply(make_one_bin, left_ends, right_ends, MoreArgs=list(data=data, filtered_data=filtered_data))
-
   return(bins)
 }
 
-cluster_bins <- function(bins, dists, method) {
-  binclust_data = list()
+run_cluster_machine <- function(dist_mats, method) {
+  switch(tolower(method), "single" = return(get_single_linkage_clusters(dist_mats)))
 }
 
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
 # output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
 #' @importFrom stats as.dist
 get_clusters <- function(bins, dists, method) {
-  binclust_data = list()
-  cluster_count = 0
-
-
-  for (i in 1:length(bins)){
-    if (length(bins[[i]]) == 0) { # nothing in this bin, moving on
-      binclust_data[[i]] = list()
-      next
-    }
-    if (nrow(bins[[i]]) == 1) { # I am atoning for the sins of TDAmapper
-      binclust_data[[i]] = setNames(1, rownames(bins[[i]])) + cluster_count
-      cluster_count = cluster_count + 1
-      next
-    }
-
-    d = as.dist(as.matrix(dists)[rownames(bins[[i]]), rownames(bins[[i]])]) # I went into the dist_subset function in usedist and it was literally this
-    clust = switch(tolower(method), "single" = get_single_linkage_clusters(d), stop("please tell george to do more clustering methods"))
-    binclust_data[[i]] = clust + cluster_count
-    cluster_count = cluster_count + max(clust) # update the total
-  }
-  return(binclust_data)
+  dist_mats = sapply(1:length(bins), function(x) as.dist(as.matrix(dists)[bins[[x]], bins[[x]]]))
+  clusters = run_cluster_machine(dist_mats, method)
+  clusters_per_bin = sapply(clusters, max)
+  offset = c(0, cumsum(clusters_per_bin))
+  clusters = mapply(function(x,y) x + y, clusters, offset[-length(offset)])
+  return(clusters)
 }
 
 construct_1Dmappergraph <- function(binclust_data, dists) {
