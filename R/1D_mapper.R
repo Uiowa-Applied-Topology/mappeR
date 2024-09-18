@@ -15,13 +15,12 @@ get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_ove
   return(bin_ends)
 }
 
-make_one_bin <- function(bin_ends, bin_num) {
-  bin_left = as.numeric(bin_ends[bin_num, 1])
-  bin_right = as.numeric(bin_ends[bin_num, 2])
-
+# helper guy that just takes care of one bin.
+make_one_bin <- function(bin_left, bin_right, data, filtered_data) {
   in_bin = sapply(filtered_data, function(x) (bin_left - x <= 0) & (bin_right - x >= 0))
   bin_assignments = which(in_bin)
   if (length(bin_assignments) != 0) { # this means our bin is empty
+    print(data[bin_assignments,])
     return(data[bin_assignments,]) # get a subset of the original data based on the indices we collected
   } else {
     return(list()) # bin still exists, it's just empty
@@ -31,15 +30,16 @@ make_one_bin <- function(bin_ends, bin_num) {
 # makes a list of subsets of the input data, according to specified "bins."
 # assumes a real-valued filter function.
 make_bins <- function(data, filtered_data, bin_ends) {
-  bin_idx = 1:nrow(bin_ends)
-  bins = mapply(bin_idx, make_one_bin)
+  left_ends = bin_ends[seq(1, length(bin_ends), 2)]
+  right_ends = bin_ends[seq(2, length(bin_ends), 2)]
+  bins = mapply(make_one_bin, left_ends, right_ends, MoreArgs=list(data=data, filtered_data=filtered_data))
 
   return(bins)
 }
 
-# cluster_bins <- function(bins, dists, method) {
-#   binclust_data = list()
-# }
+cluster_bins <- function(bins, dists, method) {
+  binclust_data = list()
+}
 
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
 # output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
