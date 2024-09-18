@@ -15,29 +15,31 @@ get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_ove
   return(bin_ends)
 }
 
+make_one_bin <- function(bin_ends, bin_num) {
+  bin_left = as.numeric(bin_ends[bin_num, 1])
+  bin_right = as.numeric(bin_ends[bin_num, 2])
+
+  in_bin = sapply(filtered_data, function(x) (bin_left - x <= 0) & (bin_right - x >= 0))
+  bin_assignments = which(in_bin)
+  if (length(bin_assignments) != 0) { # this means our bin is empty
+    return(data[bin_assignments,]) # get a subset of the original data based on the indices we collected
+  } else {
+    return(list()) # bin still exists, it's just empty
+  }
+}
+
 # makes a list of subsets of the input data, according to specified "bins."
 # assumes a real-valued filter function.
 make_bins <- function(data, filtered_data, bin_ends) {
-  bins = list()
-  num_bins = nrow(bin_ends)
+  bin_idx = 1:nrow(bin_ends)
+  bins = mapply(bin_idx, make_one_bin)
 
-  for (i in 1:num_bins) {
-    # left and right bin endpoints
-    bin_left = as.numeric(bin_ends[i,1])
-    bin_right = as.numeric(bin_ends[i,2])
-
-    # check which filtered datapoints fall between the bin endpoints
-    in_bin = sapply(filtered_data, function(x) (bin_left - x <= 0) & (bin_right - x >= 0))
-    bin_assignments = which(in_bin)
-
-    if (length(bin_assignments) != 0) { # this means our bin is empty
-      bins[[i]] = data[bin_assignments,] # get a subset of the original data based on the indices we collected
-    } else {
-      bins[[i]] = list() # bin still exists, it's just empty
-    }
-  }
   return(bins)
 }
+
+# cluster_bins <- function(bins, dists, method) {
+#   binclust_data = list()
+# }
 
 # given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
 # output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
@@ -45,6 +47,7 @@ make_bins <- function(data, filtered_data, bin_ends) {
 get_clusters <- function(bins, dists, method) {
   binclust_data = list()
   cluster_count = 0
+
 
   for (i in 1:length(bins)){
     if (length(bins[[i]]) == 0) { # nothing in this bin, moving on
