@@ -1,81 +1,136 @@
-# given an interval, calculates endpoints of a fixed number of evenly spaced, equal length, overlapping subintervals with a fixed percent overlap.
-get_width_balanced_endpoints <- function(min_val, max_val, num_bins, percent_overlap) {
-
-  even_length = (max_val - min_val)/num_bins # widths with zero percent overlap
-  nudge = (percent_overlap/100)*even_length
-
-  left_ends = min_val + (even_length-nudge)*(0:(num_bins-1)) # construct correctly overlapping bins
-  right_ends = left_ends + even_length # we will scale everything after
-
-  scale_factor = (max_val - min_val)/(right_ends[num_bins] - min_val) # scale by pretending min_val = 0
-  bin_ends = cbind(left_ends, right_ends) # make bins
-
-  bin_ends = scale_factor*(bin_ends - min_val) + min_val # translate to zero, scale, then translate back
-
-  return(bin_ends)
-}
-
-# helper guy that just takes care of one bin.
+#' Create a single bin of data
+#'
+#' This function identifies datapoints whose "filter" value falls within a numeric range.
+#'
+#' @param bin_left The minimum value to be filtered for.
+#' @param bin_right The maximum value to be filtered for.
+#' @param data A dataframe.
+#' @param filtered_data A single column of the input dataframe.
+#'
+#' @return A vector of datapoint names which fall within the filter range.
 make_one_bin <- function(bin_left, bin_right, data, filtered_data) {
-  in_bin = sapply(filtered_data, function(x) (bin_left - x <= 0) & (bin_right - x >= 0))
-  bin_assignments = which(in_bin)
+  in_bin = sapply(filtered_data, function(x)
+    (bin_left - x <= 0) & (bin_right - x >= 0))
+  bin_assignments = which(in_bin) # tells us indices of binned datapoints
   if (length(bin_assignments) != 0) {
-    return(rownames(data[bin_assignments,])) # get a subset of the original data based on the indices we collected
+    return(rownames(data[bin_assignments, ])) # why do we need to take the name from the original data? weird R thing that I am too unbothered to address feel free to annoy me if you want
   } else {
-    return(list()) # bin still exists, it's just empty
+    return(vector()) # bin still exists, it's just empty
   }
 }
 
-# makes a list of subsets of the input data, according to specified "bins."
-# assumes a real-valued filter function.
+
+#' Create bins of data from a 1D filter function
+#'
+#' This function identifies datapoints whose "filter" value falls within a specified set of numeric ranges.
+#'
+#' @param data A dataframe.
+#' @param filtered_data A single column of the input dataframe.
+#' @param bin_ends A 2D numeric array of input ranges, whose first column contains left endpoints and whose second column contains right endpoints.
+#'
+#' @return A list of "bins" containing vectors of names of datapoints.
 make_bins <- function(data, filtered_data, bin_ends) {
-  left_ends = bin_ends[,1]
-  right_ends = bin_ends[,2]
-  bins = mapply(make_one_bin, left_ends, right_ends, MoreArgs=list(data=data, filtered_data=filtered_data))
+  left_ends = bin_ends[, 1]
+  right_ends = bin_ends[, 2]
+  bins = mapply(
+    make_one_bin,
+    left_ends,
+    right_ends,
+    MoreArgs = list(data = data, filtered_data = filtered_data)
+  )
   return(bins)
 }
 
+
+#' Ship data off to the clustering goblins
+#'
+#' This function tells the computer to look away for a second, so the goblins come and cluster your data while it's not watching.
+#'
+#' @param dist_mats A list of distance matrices of each bin that is to be clustered.
+#' @param method A string that suggests how the goblins will handle the data.
+#'
+#' @return A list containing named vectors (one per bin), whose names are datapoint names and whose values are cluster labels (within each bin)
 run_cluster_machine <- function(dist_mats, method) {
   switch(tolower(method), "single" = return(get_single_linkage_clusters(dist_mats)))
 }
 
-# given binned data and the full data's distance matrix, clusters within each bin. keeps track of total clusters across bins.
-# output is a list of named vectors; there is one named vector of data per bin containing a cluster number.
+#' Initate the clustering process
+#'
+#' This function processes the binned data and global distance matrix to return freshly clustered data.
+#'
+#' @param bins A list containing "bins" of vectors of names of datapoints.
+#' @param dists A distance matrix containing pairwise distances between named datapoints.
+#' @param method A clue!
+#'
+#' @return A list containing named vectors (one per bin), whose names are datapoint names and whose values are cluster labels
+#'
 #' @importFrom stats as.dist
 get_clusters <- function(bins, dists, method) {
-  dist_mats = sapply(1:length(bins), function(x) as.dist(as.matrix(dists)[bins[[x]], bins[[x]]]))
+  # subset the global distance matrix per bin
+  dist_mats = sapply(1:length(bins), function(x)
+    as.dist(as.matrix(dists)[bins[[x]], bins[[x]]]))
+
+  # cluster the data
   clusters = run_cluster_machine(dist_mats, method)
+
+  # accurately total up clusters
   clusters_per_bin = sapply(clusters, max)
   offset = c(0, cumsum(clusters_per_bin))
-  clusters = mapply(function(x,y) x + y, clusters, offset[-length(offset)])
+  clusters = mapply(function(x, y)
+    x + y, clusters, offset[-length(offset)])
   return(clusters)
 }
 
+#' Run 1D mapper algorithm!
+#'
+#' @param binclust_data A list containing named vectors whose names are datapoint names and whose values are cluster labels.
+#' @param dists A distance matrix containing pairwise distances between named datapoints.
+#'
+#' @return A list containing:
+#' \itemize{
+#'    \item nodes - A dataframe containing vertex/cluster information:
+#'      \itemize{
+#'          \item id - The vertex label.
+#'          \item size - How many datapoints are contained in that vertex.
+#'          \item tightness - A measure of dispersion of the data inside the vertex.
+#'          \item data - A string containing names of the datapoints within the vertex.
+#'          \item bin - Which bin the vertex belongs to.
+#'      }
+#'    \item edges - A dataframe containing vertex/cluster overlap information:
+#'      \itemize{
+#'          \item source - One endpoint of an edge.
+#'          \item target - The other endpoint of an edge.
+#'          \item weight - A measure of the significance of the edge.
+#'      }
+#' }
 construct_1Dmappergraph <- function(binclust_data, dists) {
+  # grab basic graph characteristics
   num_vertices = max(binclust_data[[length(binclust_data)]])
-
   node_ids = as.character(1:num_vertices)
-
   overlaps = get_overlaps(binclust_data)
   edges = get_edgelist_from_overlaps(overlaps, num_vertices)
-  sources = as.character(edges[,1])
-  targets = as.character(edges[,2])
+  sources = as.character(edges[, 1])
+  targets = as.character(edges[, 2])
 
+  # calculate some cluster stats
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
   cluster_size = get_cluster_sizes(binclust_data, num_vertices)
   data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
   bins = get_bin_vector(binclust_data)
 
-  nodes = data.frame(id=node_ids,
-                     size=cluster_size,
-                     tightness=cluster_tightness,
-                     data=data_in_cluster,
-                     bin=bins)
+  # assemble graph data
+  nodes = data.frame(
+    id = node_ids,
+    size = cluster_size,
+    tightness = cluster_tightness,
+    data = data_in_cluster,
+    bin = bins
+  )
 
-  edges = data.frame(source=sources,
-                     target=targets,
-                     weight=edge_weights)
+  edges = data.frame(source = sources,
+                     target = targets,
+                     weight = edge_weights)
 
 
   return(list(nodes, edges))
@@ -83,26 +138,42 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
 
 #' Runs 1D mapper returns a dataframe with node and edge data.
 #'
-#' @param data Your input data. Ideally a dataframe.
-#' @param filtered_data A single column of your data, of numeric value.
-#' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
-#' @param num_bins A positive integer for the number of bins you want to split up your filtered data into.
-#' @param percent_overlap The percent (0-100) overlap you want between each bin and its neighbors.
-#' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage)
-#' @returns A list of two dataframes, one with node data containing cluster size,
-#'  datapoints per cluster, cluster tightness, and bin number, and one with edge data
-#'  containing sources, targets, and weights representing overlap strength.
-#' @examples
-#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
-#'   y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
-#' circle.dist = dist(circle.data)
+#' @param data A dataframe.
+#' @param filtered_data A single column of the input data.
+#' @param dists A distance matrix containing pairwise relations among the input data. Can be a `dist` object or 2D matrix.
+#' @param num_bins The number of "bins" to split the input data into based on the filter. A positive integer.
+#' @param percent_overlap The percent overlap desired between each "bin." An integer between 0 and 100 (inclusive).
+#' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage hierarchical)
 #'
-#' # make sure Cytoscape is running in the background or this will not work
-#' get_1D_mapper_data(circle.data, circle.data$x, circle.dist, 10, 15, "single")
+#' @return A list containing:
+#' \itemize{
+#'    \item nodes - A dataframe containing vertex/cluster information:
+#'      \itemize{
+#'          \item id - The vertex label.
+#'          \item size - How many datapoints are contained in that vertex.
+#'          \item tightness - A measure of dispersion of the data inside the vertex.
+#'          \item data - A string containing names of the datapoints within the vertex.
+#'          \item bin - Which bin the vertex belongs to.
+#'      }
+#'    \item edges - A dataframe containing vertex/cluster overlap information:
+#'      \itemize{
+#'          \item source - One endpoint of an edge.
+#'          \item target - The other endpoint of an edge.
+#'          \item weight - A measure of the significance of the edge.
+#'      }
+#' }
 #' @export
-get_1D_mapper_data <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
+get_1D_mapper_data <- function(data,
+                               filtered_data,
+                               dists,
+                               num_bins,
+                               percent_overlap,
+                               clustering_method) {
   # bin data according to filter values
-  bins = get_width_balanced_endpoints(min(filtered_data), max(filtered_data), num_bins, percent_overlap)
+  bins = create_width_balanced_cover(min(filtered_data),
+                                     max(filtered_data),
+                                     num_bins,
+                                     percent_overlap)
   binned_data = make_bins(data, filtered_data, bins)
 
   # cluster data
@@ -116,24 +187,29 @@ get_1D_mapper_data <- function(data, filtered_data, dists, num_bins, percent_ove
 
 #' Runs 1D mapper and passes data to Cytoscape for visualization.
 #'
-#' @param data Your input data. Ideally a dataframe.
-#' @param filtered_data A single column of your data, of numeric value.
-#' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
-#' @param num_bins A positive integer for the number of bins you want to split up your filtered data into.
-#' @param percent_overlap The percent (0-100) overlap you want between each bin and its neighbors.
-#' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage)
-#' @returns NULL
-#' @examples
-#' circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
-#' y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
-#' circle.dist = dist(circle.data)
+#' @param data A dataframe.
+#' @param filtered_data A single column of the input data.
+#' @param dists A distance matrix containing pairwise relations among the input data. Can be a `dist` object or 2D matrix.
+#' @param num_bins The number of "bins" to split the input data into based on the filter. A positive integer.
+#' @param percent_overlap The percent overlap desired between each "bin." An integer between 0 and 100 (inclusive).
+#' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage hierarchical)
 #'
-#' # make sure Cytoscape is running in the background or this will not work
-#' # cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
+#' @returns NULL
+#'
 #' @export
-cymapper <- function(data, filtered_data, dists, num_bins, percent_overlap, clustering_method) {
+cymapper <- function(data,
+                     filtered_data,
+                     dists,
+                     num_bins,
+                     percent_overlap,
+                     clustering_method) {
   # generate mapper data
-  mappergraph = get_1D_mapper_data(data, filtered_data, dists, num_bins, percent_overlap, clustering_method)
+  mappergraph = get_1D_mapper_data(data,
+                                   filtered_data,
+                                   dists,
+                                   num_bins,
+                                   percent_overlap,
+                                   clustering_method)
 
   # pass to visualizer for........visualizing...
   visualize_mapper_data(mappergraph, is_ballmapper = FALSE)
