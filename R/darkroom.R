@@ -1,3 +1,6 @@
+# TODO: add n-D filtering
+# TODO: add data-balanced covers
+# TODO: add other types of filter functions
 
 # 1D filtering --------------------------------------------------------------
 
@@ -24,18 +27,20 @@
 #' @examples
 #' create_width_balanced_cover(min_val=0, max_val=100, num_bins=10, percent_overlap=15)
 #' create_width_balanced_cover(-11.5, 10.33, 100, 2)
-create_width_balanced_cover <- function(min_val, max_val, num_bins, percent_overlap) {
+create_width_balanced_cover <- function(min_val,
+                                        max_val,
+                                        num_bins,
+                                        percent_overlap) {
+  even_length = (max_val - min_val) / num_bins # widths with zero percent overlap
+  nudge = (percent_overlap / 100) * even_length
 
-  even_length = (max_val - min_val)/num_bins # widths with zero percent overlap
-  nudge = (percent_overlap/100)*even_length
-
-  left_ends = min_val + (even_length-nudge)*(0:(num_bins-1)) # construct correctly overlapping bins
+  left_ends = min_val + (even_length - nudge) * (0:(num_bins - 1)) # construct correctly overlapping bins
   right_ends = left_ends + even_length # we will scale everything after
 
-  scale_factor = (max_val - min_val)/(right_ends[num_bins] - min_val) # scale by pretending min_val = 0
+  scale_factor = (max_val - min_val) / (right_ends[num_bins] - min_val) # scale by pretending min_val = 0
   bin_ends = cbind(left_ends, right_ends) # make bins
 
-  bin_ends = scale_factor*(bin_ends - min_val) + min_val # translate to zero, scale, then translate back
+  bin_ends = scale_factor * (bin_ends - min_val) + min_val # translate to zero, scale, then translate back
 
   return(bin_ends)
 }
@@ -55,7 +60,7 @@ make_one_bin <- function(bin_left, bin_right, data, filtered_data) {
     (bin_left - x <= 0) & (bin_right - x >= 0))
   bin_assignments = which(in_bin) # tells us indices of binned datapoints
   if (length(bin_assignments) != 0) {
-    return(rownames(data[bin_assignments, ])) # why do we need to take the name from the original data? weird R thing that I am too unbothered to address feel free to annoy me if you want
+    return(rownames(data[bin_assignments, ])) # TODO: bother me about why I need the original dataset here, I think it's more safe but who knows!
   } else {
     return(vector()) # bin still exists, it's just empty
   }
@@ -95,7 +100,8 @@ create_balls <- function(data, dists, eps) {
 
   names(marked) = datanames
 
-  while (FALSE %in% marked) { # keep going until we have covered all the data
+  while (FALSE %in% marked) {
+    # keep going until we have covered all the data
     current_ball_center = NULL
 
     # find a ball center
@@ -105,7 +111,7 @@ create_balls <- function(data, dists, eps) {
       unmarked_points = datanames[which(!marked)]
       current_ball_center = sample(unmarked_points, 1) # otherwise pick from the set of unmarked points
     }
-    all_dists = dists[current_ball_center,] # get all distances away from ball center
+    all_dists = dists[current_ball_center, ] # get all distances away from ball center
     balled_data_names = datanames[which(all_dists < eps)] # restrict to within the (open???) ball
     marked[balled_data_names] = TRUE # mark points inside the ball as covered
     balls = append(balls, list(balled_data_names)) # add the ball to our big list of balls
@@ -116,7 +122,8 @@ create_balls <- function(data, dists, eps) {
 # takes the output of the previous function and makes it suitable for the 1D mapper function
 convert_balls <- function(balled_data) {
   ball_sizes = lapply(balled_data, length)
-  ballball_data = unlist(mapply(function(x, y) rep(x, y), 1:length(ball_sizes), ball_sizes))
+  ballball_data = unlist(mapply(function(x, y)
+    rep(x, y), 1:length(ball_sizes), ball_sizes))
   names(ballball_data) = unlist(balled_data)
 
   return(ballball_data)

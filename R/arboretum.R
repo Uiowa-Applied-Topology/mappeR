@@ -1,4 +1,3 @@
-
 # dendrogram processing ---------------------------------------------------
 
 # get tallest branch of a single dendrogram

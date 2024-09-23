@@ -7,22 +7,24 @@ construct_ballmappergraph <- function(binclust_data, dists) {
 
   overlaps = get_overlaps(binclust_data)
   edges = get_edgelist_from_overlaps(overlaps, num_vertices)
-  sources = as.character(edges[,1])
-  targets = as.character(edges[,2])
+  sources = as.character(edges[, 1])
+  targets = as.character(edges[, 2])
 
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
   cluster_size = get_cluster_sizes(binclust_data, num_vertices)
   data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
 
-  nodes = data.frame(id=node_ids,
-                     size=cluster_size,
-                     tightness=cluster_tightness,
-                     data=data_in_cluster)
+  nodes = data.frame(
+    id = node_ids,
+    size = cluster_size,
+    tightness = cluster_tightness,
+    data = data_in_cluster
+  )
 
-  edges = data.frame(source=sources,
-                     target=targets,
-                     weight=edge_weights)
+  edges = data.frame(source = sources,
+                     target = targets,
+                     weight = edge_weights)
 
 
   return(list(nodes, edges))
