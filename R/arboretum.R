@@ -37,22 +37,3 @@ process_dendrograms <- function(dends) {
 
   return(snipped_dends)
 }
-
-
-# single linkage ----------------------------------------------------------
-
-
-# please don't ask
-run_slink <- function(dist) {
-  return(hclust(dist, "single"))
-}
-
-# performs single linkage clustering and outputs clusters based on a rough heuristic.
-#' @importFrom stats as.dist
-#' @importFrom stats hclust
-#' @importFrom stats cophenetic
-#' @importFrom stats cutree
-get_single_linkage_clusters <- function(dist_mats) {
-  dends = lapply(dist_mats, run_slink)
-  return(process_dendrograms(dends))
-}

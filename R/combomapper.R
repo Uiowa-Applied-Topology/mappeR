@@ -1,3 +1,5 @@
+# TODO: test that this works lol
+
 # runner function for combo mapper; outputs bins, clusters, and the mapper graph.
 get_combomapper_data <- function(data, dist1, dist2, eps) {
   balls = create_balls(data, dist1, eps)

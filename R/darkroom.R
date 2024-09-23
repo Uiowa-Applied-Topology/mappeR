@@ -112,3 +112,12 @@ create_balls <- function(data, dists, eps) {
   }
   return(balls)
 }
+
+# takes the output of the previous function and makes it suitable for the 1D mapper function
+convert_balls <- function(balled_data) {
+  ball_sizes = lapply(balled_data, length)
+  ballball_data = unlist(mapply(function(x, y) rep(x, y), 1:length(ball_sizes), ball_sizes))
+  names(ballball_data) = unlist(balled_data)
+
+  return(ballball_data)
+}
