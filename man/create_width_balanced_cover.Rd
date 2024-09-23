@@ -30,6 +30,6 @@ This is a function that generates a cover of an interval \eqn{[a,b]} with
 some number of (possibly) overlapping, evenly spaced, identical width subintervals.
 }
 \examples{
-create_width_balanced_cover(0, 100, 10, 15)
+create_width_balanced_cover(min_val=0, max_val=100, num_bins=10, percent_overlap=15)
 create_width_balanced_cover(-11.5, 10.33, 100, 2)
 }

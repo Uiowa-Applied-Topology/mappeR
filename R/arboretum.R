@@ -1,6 +1,5 @@
-#=========================================================
-# Arboretum: go hug a tree
-#=========================================================
+
+# dendrogram processing ---------------------------------------------------
 
 # get tallest branch of a single dendrogram
 get_tallest_branch <- function(dend) {
@@ -38,6 +37,10 @@ process_dendrograms <- function(dends) {
 
   return(snipped_dends)
 }
+
+
+# single linkage ----------------------------------------------------------
+
 
 # please don't ask
 run_slink <- function(dist) {

@@ -16,11 +16,3 @@ cyballmapper(data, dists, eps)
 \description{
 Runs ballmapper and passes data to Cytoscape for visualization.
 }
-\examples{
-circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
-  y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
-circle.dist = dist(circle.data)
-
-# make sure Cytoscape is running in the background or this will not work
-# cyballmapper(circle.data, circle.dist, .3)
-}
