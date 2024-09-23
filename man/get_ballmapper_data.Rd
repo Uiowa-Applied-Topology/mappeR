@@ -21,10 +21,3 @@ containing sources, targets, and weights representing overlap strength.
 \description{
 Runs ballmapper and returns two dataframes containing node and edge data.
 }
-\examples{
-circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
-  y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
-circle.dist = dist(circle.data)
-
-show(get_ballmapper_data(circle.data, circle.dist, .3))
-}

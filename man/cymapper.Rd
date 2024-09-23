@@ -14,26 +14,18 @@ cymapper(
 )
 }
 \arguments{
-\item{data}{Your input data. Ideally a dataframe.}
+\item{data}{A dataframe.}
 
-\item{filtered_data}{A single column of your data, of numeric value.}
+\item{filtered_data}{A single column of the input data.}
 
-\item{dists}{A distance matrix for your data. Can be a \code{dist} object or 2D matrix.}
+\item{dists}{A distance matrix containing pairwise relations among the input data. Can be a \code{dist} object or 2D matrix.}
 
-\item{num_bins}{A positive integer for the number of bins you want to split up your filtered data into.}
+\item{num_bins}{The number of "bins" to split the input data into based on the filter. A positive integer.}
 
-\item{percent_overlap}{The percent (0-100) overlap you want between each bin and its neighbors.}
+\item{percent_overlap}{The percent overlap desired between each "bin." An integer between 0 and 100 (inclusive).}
 
-\item{clustering_method}{Desired clustering method. A string from these options: "single" (single-linkage)}
+\item{clustering_method}{Desired clustering method. A string from these options: "single" (single-linkage hierarchical)}
 }
 \description{
 Runs 1D mapper and passes data to Cytoscape for visualization.
-}
-\examples{
-circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03),
-y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
-circle.dist = dist(circle.data)
-
-# make sure Cytoscape is running in the background or this will not work
-# cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
 }
