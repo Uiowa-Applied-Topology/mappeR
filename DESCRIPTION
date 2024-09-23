@@ -1,4 +1,4 @@
-Package: CyMapper
+Package: mappeR
 Type: Package
 Title: Construct and Visualize TDA Mapper Graphs
 Description: An implementation of various flavors of the mapper 

@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(CyMapper)
+library(mappeR)
 
-test_check("CyMapper")
+test_check("mappeR")
