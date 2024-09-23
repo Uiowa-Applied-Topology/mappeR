@@ -7,6 +7,7 @@ date: "2024-02-19"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 require(RCy3)
+require(fastcluster)
 devtools::load_all()
 ```
 

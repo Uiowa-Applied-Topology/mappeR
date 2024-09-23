@@ -45,12 +45,12 @@ get_clusters <- function(bins, dists, method) {
 
 # please don't ask
 run_slink <- function(dist) {
-  return(hclust(dist, "single"))
+  return(fastcluster::hclust(dist, "single"))
 }
 
 # performs single linkage clustering and outputs clusters based on a rough heuristic.
 #' @importFrom stats as.dist
-#' @importFrom stats hclust
+#' @importFrom fastcluster hclust
 #' @importFrom stats cophenetic
 #' @importFrom stats cutree
 get_single_linkage_clusters <- function(dist_mats) {
