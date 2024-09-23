@@ -1,5 +1,5 @@
 test_interval_math <- function(left_end, right_end, num_bins, percent_overlap) {
-  bins = get_width_balanced_endpoints(left_end, right_end, num_bins, percent_overlap)
+  bins = create_width_balanced_cover(left_end, right_end, num_bins, percent_overlap)
 
   expect_equal(nrow(bins), num_bins) # output should contain correct number of bins
   expect_equal(as.numeric(bins[1,1]), left_end) # leftmost endpoint should be correct
@@ -7,6 +7,7 @@ test_interval_math <- function(left_end, right_end, num_bins, percent_overlap) {
 
   bin_length = as.numeric(abs(bins[1,1] - bins[1,2]))
 
+  # TODO: probably vectorize this idk
   for (i in 2:(num_bins - 1)) {
     expect_equal(as.numeric(abs(bins[i, 1] - bins[i, 2])), bin_length) # bin lengths should be consistent
 
@@ -21,6 +22,8 @@ test_interval_math <- function(left_end, right_end, num_bins, percent_overlap) {
   expect_equal(as.numeric(100*abs(bins[nrow(bins), 1] - bins[nrow(bins)-1, 2])/bin_length), percent_overlap) # last bin overlap is correct
 }
 
+# TODO: more intervals?
+# TODO: degenerate intervals, zero bins, zero overlap, forbidden inputs
 test_that("interval math works", {
   # random case
   vars = c(sort(c(sample(1:2, 1)*(-1)*runif(1), sample(1:2, 1)*(-1)*runif(1))), runif(2))
@@ -34,19 +37,31 @@ test_that("interval math works", {
   test_interval_math(0, 1, 5, 40)
 })
 
+# TODO: test empty bins, singletons, doubletons
+# TODO: clean this up? why a 2D dataframe?
 # idea from https://stackoverflow.com/questions/32345484/does-vector-exist-in-matrix
 test_that("data binning works", {
+  # 100 random 2D points, each coordinate with value from 0-100
+  random_data = data.frame(x = runif(100)*100, y = runif(100)*100)
+
+  min_x = min(random_data$x)
+  max_x = max(random_data$x)
+
+  # 20 bins (not evenly spaced), endpoints include data extremes so as to cover
   random_left_ends = runif(20)*100
-  bin_ends = cbind(random_left_ends, random_left_ends + runif(20)*100)
-  data = data.frame(x = runif(50)*100, y= runif(50)*100)
-  bins = make_bins(data, data$x, bin_ends)
-  for (data_idx in 1:50) {
-    for (bin_idx in 1:20) {
-      if ((data$x[data_idx] >= bin_ends[bin_idx, 1]) & (data$x[data_idx] <= bin_ends[bin_idx, 2])) {
-        expect_true(any(bins[[bin_idx]] == data[data_idx,][col(bins[[bin_idx]])])) # datapoint should correctly be in appropriate bin
+  random_right_ends = c(random_left_ends + runif(20)*100, max_x)
+  bin_ends = cbind(c(min_x, random_left_ends), random_right_ends)
+
+  bins = make_bins(random_data, random_data$x, bin_ends)
+
+  # TODO: vectorize this
+  for (i in 1:20) {
+    for (datapoint in bins[[i]]) {
+      if ((random_data[datapoint,1] >= bin_ends[i, 1]) & (random_data[datapoint,1] <= bin_ends[i, 2])) {
+        expect_true(any(bins[[i]] == datapoint)) # datapoint should correctly be in appropriate bin
       } else {
-        if(length(bins[[bin_idx]]) != 0) {
-          expect_false(any(bins[[bin_idx]] == data[data_idx,][col(bins[[bin_idx]])])) # should also correctly not be in inappropriate bin
+        if(length(bins[[i]]) != 0) {
+          expect_false(any(bins[[i]] == datapoint)) # should also correctly not be in inappropriate bin
         }
       }
     }

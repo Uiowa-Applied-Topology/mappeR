@@ -15,7 +15,7 @@
 #' @param percent_overlap How much overlap desired between the cover intervals
 #'  (the percent of the intersection of each interval with its immediate
 #'   neighbor relative to its length, e.g., \eqn{[0,2]} and \eqn{[1,3]} would have \eqn{50\%} overlap).
-#'   An integer between 0 and 100, inclusive.
+#'   A real number between 0 and 100, inclusive.
 #'
 #' @return A 2D numeric array.
 #' \itemize{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/1D_mapper.R
 \name{construct_1Dmappergraph}
 \alias{construct_1Dmappergraph}
-\title{Run 1D mapper algorithm!}
+\title{Run 1D mapper algorithm}
 \usage{
 construct_1Dmappergraph(binclust_data, dists)
 }
@@ -31,5 +31,5 @@ A list containing:
 }
 }
 \description{
-Run 1D mapper algorithm!
+Run 1D mapper algorithm
 }
