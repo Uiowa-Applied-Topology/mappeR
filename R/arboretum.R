@@ -31,7 +31,7 @@ cut_dendrogram <- function(dend, threshold) {
 
   cutval = (tallest_branch_height + heights[tallest_branch_id + 1])/2 # midpoint of tallest branch
 
-  if ((tallest_branch_height < threshold) | (sd(heights) < .02)) {
+  if ((tallest_branch_height < threshold) | (sd(heights)^2/mean(heights) < .1)) {
     return(cutree(dend, k=1))
   } else {
     return(cutree(dend, h=cutval))
