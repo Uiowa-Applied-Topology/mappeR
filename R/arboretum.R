@@ -3,6 +3,9 @@
 # get tallest branch of a single dendrogram
 get_tallest_branch <- function(dend) {
   heights = sort(unique(cophenetic(dend)))
+  if(length(heights) <= 1) {
+    return(max(heights))
+  }
   branch_lengths = diff(heights)
   return(max(branch_lengths))
 }
@@ -12,6 +15,15 @@ cut_dendrogram <- function(dend, threshold) {
   # TODO remove all the duplicate code lol
 
   heights = sort(unique(cophenetic(dend))) # merge heights of dendrogram
+
+  if (length(heights) <= 1) {
+    if (max(heights) < threshold) {
+      return(cutree(dend, k=1))
+    } else {
+      return(cutree(dend, k=2))
+    }
+  }
+
   branch_lengths = diff(heights) # differences are branch lengths
 
   tallest_branch_height = max(branch_lengths)
