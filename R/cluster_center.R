@@ -12,6 +12,17 @@ run_cluster_machine <- function(dist_mats, method) {
   switch(tolower(method), "single" = return(get_single_linkage_clusters(dist_mats)))
 }
 
+subset_dists <- function(bin, dists) {
+  bin_length = length(bin)
+  if (bin_length == 0) {
+    return(NA)
+  } else if (bin_length == 1) {
+    return(bin)
+  } else {
+    return(as.dist(as.matrix(dists)[bin, bin]))
+  }
+}
+
 #' Initate the clustering process
 #'
 #' This function processes the binned data and global distance matrix to return freshly clustered data.
@@ -23,11 +34,11 @@ run_cluster_machine <- function(dist_mats, method) {
 #' @return A list containing named vectors (one per bin), whose names are datapoint names and whose values are cluster labels
 get_clusters <- function(bins, dists, method) {
   # subset the global distance matrix per bin
-  dist_mats = sapply(1:length(bins), function(x)
-    as.dist(as.matrix(dists)[bins[[x]], bins[[x]]]))
+  dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists))
 
   # cluster the data
   clusters = run_cluster_machine(dist_mats, method)
+  # print(clusters)
 
   # accurately total up clusters
   clusters_per_bin = sapply(clusters, max)
@@ -43,13 +54,29 @@ get_clusters <- function(bins, dists, method) {
 
 # please don't ask
 run_slink <- function(dist) {
-  return(fastcluster::hclust(dist, "single"))
+  if ((class(dist) != "dist") & (any(is.na(dist)))) {
+    return(vector())
+  } else if (class(dist) != "dist") {
+    res = list(1)
+    names(res) = dist
+    return(res)
+  } else {
+    return(fastcluster::hclust(dist, "single"))
+  }
 }
 
 # performs single linkage clustering and outputs clusters based on a rough heuristic.
 get_single_linkage_clusters <- function(dist_mats) {
   dends = lapply(dist_mats, run_slink)
-  return(process_dendrograms(dends))
+  real_dends = dends[lapply(dends, length) > 1]
+  imposter_dends = dends[lapply(dends, length) == 1]
+  processed_dends = process_dendrograms(real_dends)
+  if (length(imposter_dends) != 0) {
+    return(append(processed_dends, sapply(imposter_dends, function(x)
+      list(unlist(x))))) # LMAO what is this
+  } else {
+    return(processed_dends)
+  }
 }
 
 # TODO: add options for what clustering math is given to mapper graph
