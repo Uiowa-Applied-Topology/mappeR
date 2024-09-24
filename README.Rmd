@@ -30,7 +30,7 @@ circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500
 circle.dist = dist(circle.data)
 
 # Cytoscape needs to be running
-cymapper(circle.data, circle.data$x, circle.dist, 20, 5, "single")
+cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
 ```
 ![](man/figures/circle-1.png "noisy circle data")
 ![](man/figures/1dmappercircle.png "wow a cycle")
