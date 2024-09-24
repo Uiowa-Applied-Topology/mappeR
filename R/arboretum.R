@@ -31,7 +31,7 @@ cut_dendrogram <- function(dend, threshold) {
 
   cutval = (tallest_branch_height + heights[tallest_branch_id + 1])/2 # midpoint of tallest branch
 
-  if (tallest_branch_height < threshold) {
+  if ((tallest_branch_height < threshold) | (sd(heights) < .02)) {
     return(cutree(dend, k=1))
   } else {
     return(cutree(dend, h=cutval))
@@ -42,7 +42,7 @@ cut_dendrogram <- function(dend, threshold) {
 process_dendrograms <- function(dends) {
   tallest_branches = sapply(dends, get_tallest_branch)
   biggest_branch_length = max(tallest_branches)
-  threshold = biggest_branch_length*.05
+  threshold = biggest_branch_length*.1
 
   snipped_dends = mapply(cut_dendrogram, dend=dends, MoreArgs = list(threshold=threshold))
 
