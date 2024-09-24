@@ -21,8 +21,6 @@ run_cluster_machine <- function(dist_mats, method) {
 #' @param method A clue!
 #'
 #' @return A list containing named vectors (one per bin), whose names are datapoint names and whose values are cluster labels
-#'
-#' @importFrom stats as.dist
 get_clusters <- function(bins, dists, method) {
   # subset the global distance matrix per bin
   dist_mats = sapply(1:length(bins), function(x)
@@ -49,10 +47,6 @@ run_slink <- function(dist) {
 }
 
 # performs single linkage clustering and outputs clusters based on a rough heuristic.
-#' @importFrom stats as.dist
-#' @importFrom fastcluster hclust
-#' @importFrom stats cophenetic
-#' @importFrom stats cutree
 get_single_linkage_clusters <- function(dist_mats) {
   dends = lapply(dist_mats, run_slink)
   return(process_dendrograms(dends))

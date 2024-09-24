@@ -1,6 +1,5 @@
 # TODO: add rox docs
 
-#' @importFrom utils combn
 get_overlaps <- function(binclust_data) {
   num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
 

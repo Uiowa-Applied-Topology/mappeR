@@ -2,18 +2,27 @@ Package: mappeR
 Type: Package
 Title: Construct and Visualize TDA Mapper Graphs
 Description: An implementation of various flavors of the mapper 
-  algorithm (from the field of topological data analysis) in R, which is able 
-  to pass data to Cytoscape for detailed visualization and further analysis.
+  algorithm (from the field of topological data analysis) in R, along with 
+  tools for exploring the output graph in more detail. This can be done either 
+  by exporting the raw statistics, using the \pkg{igraph} package, or letting 
+  the package pass the data to Cytoscape (sold separately for free 
+  \href{https://cytoscape.org/}{here}) for further analysis.
 Authors@R: person("George", "Clare Kennedy", email = "george-clarekennedy@uiowa.edu",
   role = c("aut", "cre"))
 License: MIT + file LICENSE
-URL: https://github.com/Uiowa-Applied-Topology/cymapper
-BugReports: https://github.com/Uiowa-Applied-Topology/cymapper/issues
+URL: https://github.com/Uiowa-Applied-Topology/mappeR
+BugReports: https://github.com/Uiowa-Applied-Topology/mappeR/issues
 Version: 0.1.0
 Encoding: UTF-8
 Imports:
-  RCy3
-Suggests: testthat (>= 3.0.0), igraph
+    fastcluster,
+    grDevices,
+    RCy3,
+    stats,
+    utils
+Suggests: 
+    testthat (>= 3.0.0),
+    igraph
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
