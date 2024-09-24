@@ -54,9 +54,9 @@ get_clusters <- function(bins, dists, method) {
 
 # please don't ask
 run_slink <- function(dist) {
-  if ((class(dist) != "dist") & (any(is.na(dist)))) {
+  if (!(inherits(dist, "dist")) & (any(is.na(dist)))) {
     return(vector())
-  } else if (class(dist) != "dist") {
+  } else if (!(inherits(dist, "dist"))) {
     res = list(1)
     names(res) = dist
     return(res)
