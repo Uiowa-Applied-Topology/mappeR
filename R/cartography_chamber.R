@@ -212,9 +212,7 @@ cyballmapper <- function(data, dists, eps) {
 # runner function for combo mapper; outputs bins, clusters, and the mapper graph.
 get_combomapper_data <- function(data, dist1, dist2, eps) {
   balls = create_balls(data, dist1, eps)
-  formatted_balled_data = convert_balls(balls)
-
-  clusters = get_clusters(formatted_balled_data, dist2, "single")
+  clusters = get_clusters(balls, dist2, "single")
 
   combomappergraph = construct_1Dmappergraph(clusters, dist2)
 
