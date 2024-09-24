@@ -32,7 +32,7 @@ circle.dist = dist(circle.data)
 # Cytoscape needs to be running
 cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
 cyballmapper(circle.data, circle.dist, .3)
-cycombomapper(circle.data, circle.dist, circle.dist, .3)
+cycombomapper(circle.data, circle.dist, circle.dist, .3, "single")
 ```
 ![](man/figures/circle-1.png "noisy circle data")
 ![](man/figures/1dmappercircle.png "wow a cycle")

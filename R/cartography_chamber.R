@@ -210,17 +210,17 @@ cyballmapper <- function(data, dists, eps) {
 # TODO: test that this works lol
 
 # runner function for combo mapper; outputs bins, clusters, and the mapper graph.
-get_combomapper_data <- function(data, dist1, dist2, eps) {
+get_combomapper_data <- function(data, dist1, dist2, eps, method) {
   balls = create_balls(data, dist1, eps)
-  clusters = get_clusters(balls, dist2, "single")
+  clusters = get_clusters(balls, dist2, method)
 
   combomappergraph = construct_1Dmappergraph(clusters, dist2)
 
   return(combomappergraph)
 }
 
-cycombomapper <- function(data, dist1, dist2, eps) {
-  visualize_mapper_data(get_combomapper_data(data, dist1, dist2, eps), FALSE)
+cycombomapper <- function(data, dist1, dist2, eps, method) {
+  visualize_mapper_data(get_combomapper_data(data, dist1, dist2, eps, method), FALSE)
 
   return(invisible(NULL))
 }
