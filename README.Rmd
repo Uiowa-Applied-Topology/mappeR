@@ -26,7 +26,7 @@ You will also need to install [Cytoscape](https://cytoscape.org/) and have it ru
 Here we will run conventional 1D mapper on this noisy circle dataset, using 10 bins with 15 percent overlap, and single linkage clustering.
 
 ```{r circle, echo=TRUE}
-circle.data = data.frame( x= sapply(1:10, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:10, function(x) sin(x)) + rnorm(100, 0, 0.03))
+circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
 circle.dist = dist(circle.data)
 
 # Cytoscape needs to be running
