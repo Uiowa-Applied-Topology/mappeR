@@ -55,4 +55,8 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
 
 # igraph ------------------------------------------------------------------
 
-# TODO: this
+imapper <- function(mapperobject) {
+  edges = mapperobject[[2]][c("source", "target")]
+  graph = graph_from_data_frame(d = edges, directed = FALSE)
+  return(graph)
+}
