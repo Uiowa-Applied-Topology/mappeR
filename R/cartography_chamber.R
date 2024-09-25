@@ -117,22 +117,10 @@ get_1D_mapper_data <- function(data,
 #' @returns NULL
 #'
 #' @export
-cymapper <- function(data,
-                     filtered_data,
-                     dists,
-                     num_bins,
-                     percent_overlap,
-                     clustering_method) {
-  # generate mapper data
-  mappergraph = get_1D_mapper_data(data,
-                                   filtered_data,
-                                   dists,
-                                   num_bins,
-                                   percent_overlap,
-                                   clustering_method)
+cymapper <- function(mapperobject) {
 
   # pass to visualizer for........visualizing...
-  visualize_mapper_data(mappergraph, is_ballmapper = FALSE)
+  visualize_mapper_data(mapperobject, is_ballmapper = FALSE)
 
   # if this isn't here R will print something useless
   return(invisible(NULL))
@@ -199,8 +187,8 @@ get_ballmapper_data <- function(data, dists, eps) {
 #' @param eps A positive real number for your desired ball radius.
 #' @returns NULL
 #' @export
-cyballmapper <- function(data, dists, eps) {
-  visualize_mapper_data(get_ballmapper_data(data, dists, eps))
+cyballmapper <- function(mapperobject) {
+  visualize_mapper_data(mapperobject, FALSE)
   return(invisible(NULL))
 }
 
@@ -219,8 +207,8 @@ get_clusterballmapper_data <- function(data, dist1, dist2, eps, method) {
   return(clusterballmappergraph)
 }
 
-cyclusterballmapper <- function(data, dist1, dist2, eps, method) {
-  visualize_mapper_data(get_clusterballmapper_data(data, dist1, dist2, eps, method), FALSE)
+cyclusterballmapper <- function(mapperobject) {
+  visualize_mapper_data(mapperobject, FALSE)
 
   return(invisible(NULL))
 }
