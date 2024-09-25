@@ -12,7 +12,6 @@ get_tallest_branch <- function(dend) {
 
 # cuts...a dendrogram...
 cut_dendrogram <- function(dend, threshold) {
-  plot(dend)
   # TODO remove all the duplicate code lol
 
   heights = sort(unique(cophenetic(dend))) # merge heights of dendrogram
