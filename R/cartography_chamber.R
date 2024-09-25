@@ -42,7 +42,7 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
   # assemble graph data
   nodes = data.frame(
     id = node_ids,
-    size = cluster_size,
+    cluster_size = cluster_size,
     tightness = cluster_tightness,
     data = data_in_cluster,
     bin = bins
@@ -160,7 +160,7 @@ construct_ballmappergraph <- function(binclust_data, dists) {
 
   nodes = data.frame(
     id = node_ids,
-    size = cluster_size,
+    cluster_size = cluster_size,
     tightness = cluster_tightness,
     data = data_in_cluster
   )
