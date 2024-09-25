@@ -55,4 +55,18 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
 
 # igraph ------------------------------------------------------------------
 
-# TODO: this
+imapper <- function(mapperobject) {
+  vertices = mapperobject[[1]]
+  edges = mapperobject[[2]]
+
+  num_bins = max(mapperobject[[1]]$bin)
+
+  mappergraph = graph_from_data_frame(d = edges, directed = FALSE, vertices = vertices)
+  mappergraph = set_vertex_attr(mappergraph, "label", value=NA)
+  mappergraph = set_vertex_attr(mappergraph, "size", value=sqrt(vertices$cluster_size))
+
+  colfunc = colorRampPalette(c("red", "gold", "blue"))
+  mappergraph = set_vertex_attr(mappergraph, "color", value=sapply(vertices$bin, function(x) colfunc(num_bins)[x]))
+
+  return(mappergraph)
+}
