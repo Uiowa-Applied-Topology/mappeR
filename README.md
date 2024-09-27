@@ -1,6 +1,6 @@
 mappeR
 ================
-2024-02-19
+2024-09-27
 
 This is an implementation of the
 [mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by
@@ -8,61 +8,26 @@ Singh, Mémoli, and Carlsson, and also the
 [ballmapper](https://arxiv.org/pdf/1901.07410.pdf) algorithm from
 Dlotko.
 
-You will need to install the
-[RCy3](https://www.bioconductor.org/packages/release/bioc/html/RCy3.html)
-package. To do this, start R (or RStudio), and enter the following
-commands:
+To install the latest version of this package from Github, run the
+following commands:
 
-`install.packages("BiocManager")`
+`install.packages("devtools")`
 
-`BiocManager::install("RCy3")`
+`library(devtools)`
 
-You will also need to install [Cytoscape](https://cytoscape.org/) and
-have it running in the background.
+`devtools::install_github("Uiowa-Applied-Topology/mappeR", upgrade=FALSE)`
+
+`library("mappeR")`
+
+If you’re installing from Github, you might need to do some more stuff:
+
+- **Windows:** install Rtools
+  (<http://cran.r-project.org/bin/windows/Rtools/>)
+- **OS X:** install Xcode (from the Mac App Store)
+- **Linux:** run `apt-get install r-base-dev` (or similar).
 
 ## Examples
 
-Here we will run conventional 1D mapper on this noisy circle dataset,
-using 10 bins with 15 percent overlap, and single linkage clustering.
+<img src="../../AppData/Local/Temp/Rtmp29rhPc/file2269815ba2d8b.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file22698357f1e21.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file226982349a85.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file226981035ad6.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file226981f21310e.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file2269823594ad5.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file22698475d7d3d.png" width="50%" /><img src="README_files/figure-gfm/plotting the curve-8.png" width="50%" />
 
-``` r
-circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)) + rnorm(100, 0, 0.03))
-circle.dist = dist(circle.data)
-
-# Cytoscape needs to be running
-cymapper(circle.data, circle.data$x, circle.dist, 10, 15, "single")
-```
-
-    ## Loading data...
-
-    ## Applying default style...
-
-    ## Applying preferred layout...
-
-![](man/figures/circle-1.png "noisy circle data")
-![](man/figures/1dmappercircle.png "wow a cycle")
-
-The size of the nodes are proportional to how many datapoints are in
-that cluster. The border color identifies which bin the cluster belongs
-to, while the interior color signals how “tight” the cluster is. The
-edge opacity represents the relative overlap between clusters; a darker
-edge indicates a stronger overlap.
-
-Here we will run ballmapper on the same dataset, with
-$\varepsilon = 0.3$.
-
-``` r
-cyballmapper(circle.data, circle.dist, .3)
-```
-
-    ## Loading data...
-
-    ## Applying default style...
-
-    ## Applying preferred layout...
-
-![](man/figures/ballmappercircle.png "the balls have made a cycle")
-
-The same visual styling was applied here, though it may be hard to see
-the size differences. No colors are needed as the balls are also the
-bins for ballmapper, so any coloring would be redundant.
+<img src="README_files/figure-gfm/mapping the mapper-1.png" width="50%" /><img src="README_files/figure-gfm/mapping the mapper-2.png" width="50%" /><img src="README_files/figure-gfm/mapping the mapper-3.png" width="50%" />

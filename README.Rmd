@@ -1,56 +1,97 @@
 ---
-title: "Cymapper"
+title: "mappeR"
 output: rmarkdown::github_document
-date: "2024-02-19"
+date: "2024-09-27"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-require(RCy3)
-require(fastcluster)
+knitr::opts_chunk$set(echo = FALSE)
 devtools::load_all()
 ```
 
 This is an implementation of the [mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by Singh, Mémoli, and Carlsson, and also the [ballmapper](https://arxiv.org/pdf/1901.07410.pdf) algorithm from Dlotko.
 
-You will need to install the [RCy3](https://www.bioconductor.org/packages/release/bioc/html/RCy3.html) package. To do this, start R (or RStudio), and enter the following commands:
+To install the latest version of this package from Github, run the following commands:
 
-`install.packages("BiocManager")`
+`install.packages("devtools")`
 
-`BiocManager::install("RCy3")`
+`library(devtools)`
 
-You will also need to install [Cytoscape](https://cytoscape.org/) and have it running in the background.
+`devtools::install_github("Uiowa-Applied-Topology/mappeR", upgrade=FALSE)`
+
+`library("mappeR")`
+
+If you're installing from Github, you might need to do some more stuff:
+
+- **Windows:** install Rtools (http://cran.r-project.org/bin/windows/Rtools/)
+- **OS X:** install Xcode (from the Mac App Store)
+- **Linux:** run `apt-get install r-base-dev` (or similar).
 
 ## Examples
 
-Here we will run conventional 1D mapper on this noisy circle dataset, using 10 bins with 15 percent overlap, and single linkage clustering.
+```{r hourglass data, include=FALSE}
+require(rgl)
+options(rgl.useNULL = TRUE)
+require(webshot2)
+num_points = 5000
 
-```{r circle, echo=TRUE}
-require(igraph)
-circle.data = data.frame( x= sapply(1:1000, function(x) cos(x)*cos(3*x)) + rnorm(100, 500, .03), y = sapply(1:1000, function(x) sin(x)*cos(3*x)) + rnorm(100, 0, 0.03))
-circle.dist = dist(circle.data)
+hourglass.data = data.frame( x= sapply(1:num_points, function(x) sin(x)*10) + rnorm(num_points, 0, 0.1), y = sapply(1:num_points, function(x) cos(x)*cos(x)*sin(x)*10) + rnorm(num_points, 0, 0.1), z = sapply(1:num_points, function(x) 10*sin(x)*cos(x)*sin(x))+ rnorm(num_points, 0, 0.1))
 
-plot(circle.data, pch=20)
+hourglass.dist = dist(hourglass.data)
 
-mapperobject = get_1D_mapper_data(circle.data, circle.data$x, circle.dist, 10, 25, "single")
-imappergraph = imapper(mapperobject)
-tkplot(imappergraph)
-
-# Cytoscape needs to be running
-cymapper(mapperobject)
-# cyballmapper(circle.data, circle.dist, .3)
-# cyclusterballmapper(circle.data, circle.dist, circle.dist, .3, "single")
+num_bins = 10
+percent_overlap = 25
+projx = hourglass.data$x
+projy = hourglass.data$y
+projz = hourglass.data$z
 ```
-![](man/figures/circle-1.png "noisy circle data")
-![](man/figures/1dmappercircle.png "wow a cycle")
 
-The size of the nodes are proportional to how many datapoints are in that cluster. The border color identifies which bin the cluster belongs to, while the interior color signals how "tight" the cluster is. The edge opacity represents the relative overlap between clusters; a darker edge indicates a stronger overlap.
+```{r plotting the curve,fig.show="hold", out.width="50%"}
+plot3d(hourglass.data, pch=20, asp=1)
+view3d(theta=-90, phi=30)
+rglwidget()
+plot3d(hourglass.data, pch=20, asp=1)
+view3d(theta=-60, phi=30)
+rglwidget()
+plot3d(hourglass.data, pch=20, asp=1)
+view3d(theta=-30, phi=30)
+rglwidget()
+plot3d(hourglass.data, pch=20, asp=1)
+view3d(theta=0, phi=30)
+rglwidget()
+plot3d(hourglass.data, pch=20, asp=1)
+view3d(theta=30, phi=30)
+rglwidget()
+plot3d(hourglass.data, pch=20, asp=1)
+view3d(theta=60, phi=30)
+rglwidget()
+plot3d(hourglass.data, pch=20, asp=1)
+view3d(theta=90, phi=30)
+rglwidget()
 
-Here we will run ballmapper on the same dataset, with $\varepsilon = 0.3$.
-```{r}
-cyballmapper(circle.data, circle.dist, .3)
+plot(hourglass.data)
 ```
-![](man/figures/ballmappercircle.png "the balls have made a cycle")
 
-The same visual styling was applied here, though it may be hard to see the size differences. No colors are needed as the balls are also the bins for ballmapper, so any coloring would be redundant.
+```{r mapping the mapper, fig.show="hold", out.width="50%"}
 
+colfunc <- colorRampPalette(c("red", "gold", "blue"))
+bin_colors = colfunc(num_bins)
+mapperobjectx = get_1D_mapper_data(hourglass.data, projx, hourglass.dist, num_bins, percent_overlap, "single")
+mapperobjecty = get_1D_mapper_data(hourglass.data, projy, hourglass.dist, num_bins, percent_overlap, "single")
+mapperobjectz = get_1D_mapper_data(hourglass.data, projz, hourglass.dist, num_bins, percent_overlap, "single")
+coverx = mappeR::create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+covery = mappeR::create_width_balanced_cover(min(projy), max(projy), num_bins, percent_overlap)
+coverz = mappeR::create_width_balanced_cover(min(projz), max(projz), num_bins, percent_overlap)
+
+imappergraphx = imapper(mapperobjectx)
+plot(imappergraphx, xlim=c(0, 2))
+legend("right", title="x-coordinate", apply(coverx, 1, function(x) paste("[", round(x[1], 3), ", ", round(x[2], 3), "]")), fill=bin_colors, horiz=FALSE)
+
+imappergraphy = imapper(mapperobjecty)
+plot(imappergraphy, xlim=c(0, 2))
+legend("right", title="y-coordinate", apply(covery, 1, function(x) paste("[", round(x[1], 3), ", ", round(x[2], 3), "]")), fill=bin_colors, horiz=FALSE)
+
+imappergraphz = imapper(mapperobjectz)
+plot(imappergraphz, xlim=c(0, 2))
+legend("right", title="z-coordinate", apply(coverz, 1, function(x) paste("[", round(x[1], 3), ", ", round(x[2], 3), "]")), fill=bin_colors, horiz=FALSE)
+```
