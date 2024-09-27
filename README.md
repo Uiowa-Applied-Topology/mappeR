@@ -28,6 +28,10 @@ If you’re installing from Github, you might need to do some more stuff:
 
 ## Examples
 
-<img src="../../AppData/Local/Temp/Rtmp29rhPc/file2269815ba2d8b.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file22698357f1e21.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file226982349a85.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file226981035ad6.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file226981f21310e.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file2269823594ad5.png" width="50%" /><img src="../../AppData/Local/Temp/Rtmp29rhPc/file22698475d7d3d.png" width="50%" /><img src="README_files/figure-gfm/plotting the curve-8.png" width="50%" />
+    ## Loading required package: rgl
+
+    ## Loading required package: webshot2
+
+<img src="../../AppData/Local/Temp/RtmpmgRuLP/file228fc304d395.png" width="50%" /><img src="../../AppData/Local/Temp/RtmpmgRuLP/file228fc696c3cc1.png" width="50%" /><img src="../../AppData/Local/Temp/RtmpmgRuLP/file228fc147a6446.png" width="50%" /><img src="../../AppData/Local/Temp/RtmpmgRuLP/file228fc7954365a.png" width="50%" /><img src="../../AppData/Local/Temp/RtmpmgRuLP/file228fc65d314be.png" width="50%" /><img src="../../AppData/Local/Temp/RtmpmgRuLP/file228fc36613e86.png" width="50%" /><img src="../../AppData/Local/Temp/RtmpmgRuLP/file228fc16695ec2.png" width="50%" /><img src="README_files/figure-gfm/plotting the curve-8.png" width="50%" />
 
 <img src="README_files/figure-gfm/mapping the mapper-1.png" width="50%" /><img src="README_files/figure-gfm/mapping the mapper-2.png" width="50%" /><img src="README_files/figure-gfm/mapping the mapper-3.png" width="50%" />

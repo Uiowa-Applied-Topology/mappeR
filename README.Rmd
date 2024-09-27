@@ -29,7 +29,7 @@ If you're installing from Github, you might need to do some more stuff:
 
 ## Examples
 
-```{r hourglass data, include=FALSE}
+```{r hourglass data, echo=FALSE}
 require(rgl)
 options(rgl.useNULL = TRUE)
 require(webshot2)
