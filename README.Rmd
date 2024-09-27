@@ -11,6 +11,8 @@ devtools::load_all()
 
 This is an implementation of the [mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by Singh, Mémoli, and Carlsson, and also the [ballmapper](https://arxiv.org/pdf/1901.07410.pdf) algorithm from Dlotko.
 
+## Setup
+
 To install the latest version of this package from Github, run the following commands:
 
 `install.packages("devtools")`
@@ -30,14 +32,13 @@ If you're installing from Github, you might need to do some more stuff:
 ## Examples
 
 ```{r hourglass data, echo=FALSE}
-require(rgl)
-options(rgl.useNULL = TRUE)
-require(webshot2)
 num_points = 5000
 
 hourglass.data = data.frame( x= sapply(1:num_points, function(x) sin(x)*10) + rnorm(num_points, 0, 0.1), y = sapply(1:num_points, function(x) cos(x)*cos(x)*sin(x)*10) + rnorm(num_points, 0, 0.1), z = sapply(1:num_points, function(x) 10*sin(x)*cos(x)*sin(x))+ rnorm(num_points, 0, 0.1))
 
 hourglass.dist = dist(hourglass.data)
+
+eccentricity = apply(as.matrix(hourglass.dist),1,sum)/num_points
 
 num_bins = 10
 percent_overlap = 25
@@ -46,42 +47,27 @@ projy = hourglass.data$y
 projz = hourglass.data$z
 ```
 
-```{r plotting the curve,fig.show="hold", out.width="50%"}
-plot3d(hourglass.data, pch=20, asp=1)
-view3d(theta=-90, phi=30)
-rglwidget()
-plot3d(hourglass.data, pch=20, asp=1)
-view3d(theta=-60, phi=30)
-rglwidget()
-plot3d(hourglass.data, pch=20, asp=1)
-view3d(theta=-30, phi=30)
-rglwidget()
-plot3d(hourglass.data, pch=20, asp=1)
-view3d(theta=0, phi=30)
-rglwidget()
-plot3d(hourglass.data, pch=20, asp=1)
-view3d(theta=30, phi=30)
-rglwidget()
-plot3d(hourglass.data, pch=20, asp=1)
-view3d(theta=60, phi=30)
-rglwidget()
-plot3d(hourglass.data, pch=20, asp=1)
-view3d(theta=90, phi=30)
-rglwidget()
-
-plot(hourglass.data)
+```{r plotting the curve, fig.align='center'}
+library(rgl)
+plot(hourglass.data, pch=20, asp=1)
+plot3d(hourglass.data,pch=20)
+aspect3d(1)
 ```
 
 ```{r mapping the mapper, fig.show="hold", out.width="50%"}
 
-colfunc <- colorRampPalette(c("red", "gold", "blue"))
+colfunc <- colorRampPalette(c("blue", "gold", "red"))
 bin_colors = colfunc(num_bins)
 mapperobjectx = get_1D_mapper_data(hourglass.data, projx, hourglass.dist, num_bins, percent_overlap, "single")
 mapperobjecty = get_1D_mapper_data(hourglass.data, projy, hourglass.dist, num_bins, percent_overlap, "single")
 mapperobjectz = get_1D_mapper_data(hourglass.data, projz, hourglass.dist, num_bins, percent_overlap, "single")
-coverx = mappeR::create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
-covery = mappeR::create_width_balanced_cover(min(projy), max(projy), num_bins, percent_overlap)
-coverz = mappeR::create_width_balanced_cover(min(projz), max(projz), num_bins, percent_overlap)
+
+eccentricitymapperobj = get_1D_mapper_data(hourglass.data, eccentricity, hourglass.dist, num_bins, percent_overlap, "single")
+
+coverx = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+covery = create_width_balanced_cover(min(projy), max(projy), num_bins, percent_overlap)
+coverz = create_width_balanced_cover(min(projz), max(projz), num_bins, percent_overlap)
+eccentricitycover = create_width_balanced_cover(min(eccentricity), max(eccentricity), num_bins, percent_overlap)
 
 imappergraphx = imapper(mapperobjectx)
 plot(imappergraphx, xlim=c(0, 2))
@@ -94,4 +80,20 @@ legend("right", title="y-coordinate", apply(covery, 1, function(x) paste("[", ro
 imappergraphz = imapper(mapperobjectz)
 plot(imappergraphz, xlim=c(0, 2))
 legend("right", title="z-coordinate", apply(coverz, 1, function(x) paste("[", round(x[1], 3), ", ", round(x[2], 3), "]")), fill=bin_colors, horiz=FALSE)
+
+iecc = imapper(eccentricitymapperobj)
+plot(iecc, xlim=c(0, 2))
+legend("right", title="eccentricity", apply(eccentricitycover, 1, function(x) paste("[", round(x[1], 3), ", ", round(x[2], 3), "]")), fill=bin_colors, horiz=FALSE)
+```
+```{r ballmapper time, fig.show='hold', out.width="50%"}
+library(latex2exp)
+ballmapperobj1 = get_ballmapper_data(hourglass.data, hourglass.dist, .25)
+ballmapperobj2 = get_ballmapper_data(hourglass.data, hourglass.dist, .5)
+ballmapperobj3 = get_ballmapper_data(hourglass.data, hourglass.dist, 1)
+ballmapperobj4 = get_ballmapper_data(hourglass.data, hourglass.dist, 2)
+
+plot(imapper(ballmapperobj1), main=TeX(r"($\epsilon=.25$)"))
+plot(imapper(ballmapperobj2), main=TeX(r"($\epsilon=.5$)"))
+plot(imapper(ballmapperobj3), main=TeX(r"($\epsilon=1$)"))
+plot(imapper(ballmapperobj4), main=TeX(r"($\epsilon=2$)"))
 ```
