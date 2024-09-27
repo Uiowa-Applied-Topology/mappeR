@@ -19,11 +19,7 @@ biocViews:
 Imports:
     fastcluster,
     grDevices,
-<<<<<<< HEAD
-=======
     igraph,
-    RCy3,
->>>>>>> 4974153291777400fc626a6107156b752341fc21
     stats,
     utils
 Suggests: 
