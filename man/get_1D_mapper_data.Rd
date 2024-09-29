@@ -2,7 +2,7 @@
 % Please edit documentation in R/cartography_chamber.R
 \name{get_1D_mapper_data}
 \alias{get_1D_mapper_data}
-\title{Runs 1D mapper returns a dataframe with node and edge data.}
+\title{Run 1D mapper}
 \usage{
 get_1D_mapper_data(
   data,
@@ -46,5 +46,5 @@ A list containing:
 }
 }
 \description{
-Runs 1D mapper returns a dataframe with node and edge data.
+Run mapper using a 1-dimensional projection filter and a width-balanced cover.
 }

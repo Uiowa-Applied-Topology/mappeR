@@ -2,7 +2,7 @@
 % Please edit documentation in R/cartography_chamber.R
 \name{get_ballmapper_data}
 \alias{get_ballmapper_data}
-\title{Runs ballmapper and returns two dataframes containing node and edge data.}
+\title{Run ballmapper}
 \usage{
 get_ballmapper_data(data, dists, eps)
 }
@@ -19,5 +19,5 @@ datapoints per ball, ball tightness, and one with edge data
 containing sources, targets, and weights representing overlap strength.
 }
 \description{
-Runs ballmapper and returns two dataframes containing node and edge data.
+Run mapper using an \eqn{\varepsilon}-net cover (greedily generated) and the 2D inclusion function as a filter.
 }
