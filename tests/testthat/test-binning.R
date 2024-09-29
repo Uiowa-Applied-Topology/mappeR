@@ -52,7 +52,7 @@ test_that("data binning works", {
   random_right_ends = c(random_left_ends + runif(20)*100, max_x)
   bin_ends = cbind(c(min_x, random_left_ends), random_right_ends)
 
-  bins = make_bins(random_data, random_data$x, bin_ends)
+  bins = create_bins(random_data, random_data$x, apply(bin_ends, 1, check_in_interval))
 
   # TODO: vectorize this
   for (i in 1:20) {
