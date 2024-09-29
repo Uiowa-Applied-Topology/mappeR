@@ -1,6 +1,6 @@
 mappeR
 ================
-2024-09-27
+2024-09-29
 
 This is an implementation of the
 [mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by
