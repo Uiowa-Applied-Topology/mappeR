@@ -1,18 +1,38 @@
 
 # mapper mapper -----------------------------------------------------------
 
+#' Create a mapper object
+#'
+#' Run the mapper algorithm on a data frame.
+#'
+#' @param data A data frame.
+#' @param dists A distance matrix for the data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param cover_element_tests A list of membership test functions for a list of cover elements. Each member of `cover_element_tests` should be able to identify (return `TRUE` or `FALSE`) if a single input data point is a member of the cover element it represents.
+#' @param method The desired clustering method to use. e.g., "single"
+#'
+#' @return A list of two dataframes, one with node data containing bin membership,
+#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
+#' @export
 create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
   bins = create_bins(data, filtered_data, cover_element_tests)
 
   if (method == "none") {
-    print("WE'RE NOT READY FOR THAT YET AAAAAAAA")
-    quit()
+    return(run_mapper(convert_to_clusters(bins), dists, binning = FALSE))
   } else {
     clusters = get_clusters(bins, dists, method)
     return(run_mapper(clusters, dists, binning = TRUE))
   }
 }
 
+#' Create a bin of data
+#'
+#' @param data A data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param cover_element_test A membership test function for a cover element. It should identify (return `TRUE` or `FALSE`) if a single input data point, is a member of the cover element it represents.
+#'
+#' @return A vector of names of points from the data frame, representing a bin.
 create_single_bin <- function(data, filtered_data, cover_element_test) {
   in_bin = sapply(filtered_data, cover_element_test)
   bin_assignments = which(in_bin)
@@ -23,10 +43,26 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
   }
 }
 
+#' Create bins of data
+#'
+#' @param data A data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param cover_element_tests A list of membership test functions for a list of cover elements. Each member of `cover_element_tests` should be able to identify (return `TRUE` or `FALSE`) if a single input data point is a member of the cover element it represents.
+#'
+#' @return A list of bins, each containing a vector of the names of the data inside it.
 create_bins <- function(data, filtered_data, cover_element_tests) {
   return(mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data)))
 }
 
+#' Construct mapper graph from data
+#'
+#' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids
+#' @param dists A distance matrix for the data that has been binned and clustered.
+#' @param binning Whether the output dataframe should sort vertices into "bins" or not. Should be true if using clustering, leave false otherwise
+#'
+#' @return A list of two dataframes, one with node data containing bin membership,
+#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
 run_mapper <- function(binclust_data, dists, binning=TRUE) {
   num_vertices = max(binclust_data[[length(binclust_data)]])
   node_ids = as.character(1:num_vertices)
@@ -96,44 +132,71 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #
 # a flavor of mapper based on projection to a single coordinate
 
+#' Run 1D mapper
+#'
+#' Run mapper using a one-dimensional filter, a cover of intervals, and a clustering algorithm.
+#'
+#' @param data A data frame.
+#' @param dists A distance matrix for the data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param cover A 2D array of interval left and right endpoints.
+#' @param clustering_method Your favorite clustering algorithm.
+#'
+#' @return A list of two dataframes, one with node data containing bin membership,
+#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
+#' @export
 create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
   cover = apply(cover, 1, check_in_interval)
 
   return(create_mapper_object(data, dists, filtered_data, cover, clustering_method))
 }
 
-# ballmapper --------------------------------------------------------------
+# ball mapper --------------------------------------------------------------
 #
 # a flavor of mapper all about the balls
 
-#' Run ballmapper
+#' Run mapper using a trivial filter, a cover of balls, and no clustering algorithm.
 #'
 #' Run mapper using an \eqn{\varepsilon}-net cover (greedily generated) and the 2D inclusion function as a filter.
 #'
-#' @param data Your input data. Ideally a dataframe.
-#' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
+#' @param data A data frame.
+#' @param dists A distance matrix for the data frame.
 #' @param eps A positive real number for your desired ball radius.
-#' @returns A list of two dataframes, one with node data containing ball size,
-#'  datapoints per ball, ball tightness, and one with edge data
+#' @returns A list of two data frames, one with node data containing ball size,
+#'  data points per ball, ball tightness, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
-get_ballmapper_data <- function(data, dists, eps) {
+create_ball_mapper_object <- function(data, dists, eps) {
   balled_data = create_balls(data, dists, eps)
-  formatted_balled_data = convert_balls(balled_data)
+  in_balled_data = lapply(balled_data, is_in_ball)
 
-  # construct ballmapper graph
-  ballmappergraph = run_mapper(formatted_balled_data, dists, binning = FALSE)
+  ball_mapper_object = create_mapper_object(data, dists, rownames(data), in_balled_data)
 
-  return(ballmappergraph)
+  return(ball_mapper_object)
 }
 
 
 # clusterball mapper ------------------------------------------------------
 #
-# a flavor of mapper that's just clustering in the balls of ballmapper
+# a flavor of mapper that's just clustering in the balls of ball mapper
 
-# runner function for combo mapper; outputs bins, clusters, and the mapper graph.
-get_clusterballmapper_data <- function(data, dist1, dist2, eps, method) {
+#' Run clusterball mapper
+#'
+#' Run ball mapper, but additionally cluster within the balls. Can use two different distance matrices to accomplish this.
+#'
+#' @param data A data frame.
+#' @param dist1 A distance matrix for the data frame; this will be used to ball the data.
+#' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param eps A positive real number for your desired ball radius.
+#' @param clustering_method Your favorite clustering algorithm.
+#'
+#' @return A list of two dataframes, one with node data containing bin membership,
+#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
+#' @export
+create_clusterball_mapper_object <- function(data, dist1, dist2, eps, method) {
   balls = create_balls(data, dist1, eps)
   clusters = get_clusters(balls, dist2, method)
 
@@ -148,7 +211,6 @@ get_clusterballmapper_data <- function(data, dist1, dist2, eps, method) {
 
 get_overlaps <- function(binclust_data) {
   num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
-
   flattened_data = unlist(binclust_data)
   clusters = lapply(1:num_vertices, function(x)
     flattened_data[flattened_data == x]) # sort by cluster

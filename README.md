@@ -184,10 +184,10 @@ number of data points in the cluster.
 
 <img src="README_files/figure-gfm/mapping_the_mapper-1.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-2.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-3.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-4.png" width="50%" />
 
-## Example: ballmapper
+## Example: ball mapper
 
 By toying with the general mapper parameters, we can obtain different
-flavors of the algorithm. In the *ballmapper* flavor, we simply use the
+flavors of the algorithm. In the *ball mapper* flavor, we simply use the
 inclusion into the ambient space of the data as our lens function, and
 let the cover do the work. Specifically, we cover the ambient space with
 $\varepsilon$-balls by creating a $\varepsilon$-net, which can be done
@@ -207,10 +207,16 @@ the 1D mapper, but no coloring is done as each vertex would have to
 receive its own color in this flavor, which is redundant.
 
 ``` r
-ballmapper1 = get_ballmapper_data(P.data, P.dist, .25)
-ballmapper2 = get_ballmapper_data(P.data, P.dist, .5)
-ballmapper3 = get_ballmapper_data(P.data, P.dist, 1)
-ballmapper4 = get_ballmapper_data(P.data, P.dist, 2)
+# creates a cover using a greedy algorithm
+balls1 = create_balls(data = P.data, dists = P.dist, eps = .25)
+
+# filtering is just giving back the data (row names because it's not 1D anymore)
+ballmapper1 = create_mapper_object(P.data, P.dist, rownames(P.data), lapply(balls1, is_in_ball))
+
+# mappeR has a built-in ball mapper function to do this for you
+ballmapper2 = create_ball_mapper_object(P.data, P.dist, .5)
+ballmapper3 = create_ball_mapper_object(P.data, P.dist, 1)
+ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 ```
 
 <img src="README_files/figure-gfm/ballmapper_time-1.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-2.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-3.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-4.png" width="50%" />
