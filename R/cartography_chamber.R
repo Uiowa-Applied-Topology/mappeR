@@ -1,4 +1,11 @@
 
+# mapper mapper -----------------------------------------------------------
+
+create_mapper_object = function(data, filtered_data, cover, method) {
+  return(NULL)
+}
+
+
 # 1D mapper ---------------------------------------------------------------
 
 #' Run 1D mapper algorithm
