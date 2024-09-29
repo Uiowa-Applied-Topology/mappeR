@@ -131,9 +131,6 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
 create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
-  check_in_interval <- function(endpoints) {
-    return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
-  }
 
   cover = apply(cover, 1, check_in_interval)
 

@@ -45,6 +45,10 @@ create_width_balanced_cover <- function(min_val,
   return(bin_ends)
 }
 
+check_in_interval <- function(endpoints) {
+  return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
+}
+
 # balls -------------------------------------------------------------------
 
 # greedy epsilon net algorithm from Dłotko
