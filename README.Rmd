@@ -6,6 +6,7 @@ date: "2024-09-27"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+require(webtex)
 devtools::load_all()
 ```
 
@@ -33,10 +34,31 @@ If you're installing from Github, you might need to do some more stuff:
 
 Mapper is a way to view a point cloud $P$ through a "lens" of our choice.
 
-Consider a function $$f: P \to \mathbb{R}$$. Cover $\mathbb{R}$ in a set of intervals $\{I_i\}_{i=1}^n$, so that every point in $P$ is contained in some level set $L_i = f^{-1}(I_i)$. We may then construct a graph $$G = (V,E)$$ based on this cover to reflect the original data, where $$V = \{L_i \mid L_i \neq \varnothing\}$$, and $$E = \{\{L_i, L_j\}\mid L_i\cap L_j \neq \varnothing,\ i\neq j\}$$
+Consider a function
+```math
+f: P \to \mathbb{R}
+```
+Cover $\mathbb{R}$ in a set of intervals $\{I_i\}_{i=1}^n$, so that every point in $P$ is contained in some level set $L_i = f^{-1}(I_i)$. We may then construct a graph
+```math
+G = (V,E)
+```
+based on this cover to reflect the original data, where
+```math
+V = \{L_i \mid L_i \neq \varnothing\}
+```
+and
+```math
+E = \{\{L_i, L_j\}\mid L_i\cap L_j \neq \varnothing,\ i\neq j\}
+```
 
-This is the basic idea of the mapper algorithm, with the addition that each level set is first refined into clusters based on the intrinsic pairwise distances of the data according to some clustering algorithm. That is, we partition each level set $L_i$ into $k_i$ disjoint clusters $\{C_j\}_{j=1}^{k_i}$ and build a new graph $G' = (V', E')$ that is homomorphic to $G$ defined by $$V' = \bigsqcup_{i=1}^{n}\{C_j\}_{j=1}^{k_i}$$ and $$E' = \{\{C_i, C_j\}\mid C_i\cap C_j \neq \varnothing\}$$
-
+This is the basic idea of the mapper algorithm, with the addition that each level set is first refined into clusters based on the intrinsic pairwise distances of the data according to some clustering algorithm. That is, we partition each level set $L_i$ into $k_i$ disjoint clusters $\{C_j\}_{j=1}^{k_i}$ and build a new graph $G' = (V', E')$ that is homomorphic to $G$ defined by
+```math
+V' = \bigsqcup_{i=1}^{n}\{C_j\}_{j=1}^{k_i}
+```
+and
+```math
+E' = \{\{C_i, C_j\}\mid C_i\cap C_j \neq \varnothing\}
+```
 So in general, the ingredients to construct a mapper graph are
 
 * A data set, along with their pairwise distances
@@ -63,7 +85,9 @@ P.dist = dist(P.data)
 
 Here is a point cloud $P$ formed by adding a bit of uniform noise to 5000 points regularly sampled from the parametric curve
 
-$$\gamma(t) = \begin{cases}x = 10\sin(x)\\ y=10\sin(x)\cos^2(x)\\ z=10\sin^2(x)\cos(x) \end{cases}$$
+```math
+\gamma(t) = \begin{cases}x = 10\sin(x)\\ y=10\sin(x)\cos^2(x)\\ z=10\sin^2(x)\cos(x) \end{cases}
+```
 <img src="README_files/figure-gfm/fig8-1.png" />
 
 This seems to form a kind of figure-8 curve just based on this projection. But as we can see from the 2D projections, the "shape" of the data set we're seeing really does depend on how we're looking at it:
