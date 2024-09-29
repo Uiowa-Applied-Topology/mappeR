@@ -121,13 +121,14 @@ the data set we’re seeing really does depend on how we’re looking at it:
 
 <img src="README_files/figure-gfm/plotting the curve-1.png" style="display: block; margin: auto;" />
 We will build graphs using the outline of the mapper algorithm
-described, with real-valued lens functions. The parameters used to
-generate the graphs below were:
+described, with real-valued lens functions.
+
+Parameters:
 
 - Data: figure-8
 - Lens: Projection to each factor, or eccentricity (a measure of
   centrality per data point)
-- Cover: A cover of $\mathbb{R}$ (really, just up to the extremes of the
+- Cover: A cover of $\mathbb{R}$ (just up to the extremes of the
   function values) using 10 equally spaced intervals with 25% overlap
   between each consecutive interval
 - Clustering method: Single-linkage hierarchical clustering
