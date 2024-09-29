@@ -210,7 +210,7 @@ receive its own color in this flavor, which is redundant.
 # creates a cover using a greedy algorithm
 balls1 = create_balls(data = P.data, dists = P.dist, eps = .25)
 
-# filtering is just giving back the data (row names because it's not 1D anymore)
+# filtering is just giving back the data (row names because my balls are lists of data point names, so the filter should match)
 ballmapper1 = create_mapper_object(P.data, P.dist, rownames(P.data), lapply(balls1, is_in_ball))
 
 # mappeR has a built-in ball mapper function to do this for you

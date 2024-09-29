@@ -109,22 +109,6 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 
     return(list(nodes, edges))
   }
-
-  # assemble graph data
-  nodes = data.frame(
-    id = node_ids,
-    cluster_size = cluster_size,
-    tightness = cluster_tightness,
-    data = data_in_cluster,
-    bin = bins
-  )
-
-  edges = data.frame(source = sources,
-                     target = targets,
-                     weight = edge_weights)
-
-
-  return(list(nodes, edges))
 }
 
 
@@ -188,7 +172,6 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param data A data frame.
 #' @param dist1 A distance matrix for the data frame; this will be used to ball the data.
 #' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
-#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
 #' @param eps A positive real number for your desired ball radius.
 #' @param clustering_method Your favorite clustering algorithm.
 #'
@@ -196,9 +179,9 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
-create_clusterball_mapper_object <- function(data, dist1, dist2, eps, method) {
+create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   balls = create_balls(data, dist1, eps)
-  clusters = get_clusters(balls, dist2, method)
+  clusters = get_clusters(balls, dist2, clustering_method)
 
   clusterballmappergraph = run_mapper(clusters, dist2)
 
