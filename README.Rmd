@@ -133,6 +133,11 @@ eccentriccover = create_width_balanced_cover(min(eccentricity),
                                              num_bins,
                                              percent_overlap)
 
+# bin tester machine machine
+check_in_interval <- function(endpoints) {
+  return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
+}
+
 # each of the "cover" elements will really be a function that checks if a data point lives in it
 xcovercheck = apply(xcover, 1, check_in_interval)
 ycovercheck = apply(ycover, 1, check_in_interval)
@@ -228,6 +233,14 @@ There's a secret parameter here, which is $\varepsilon$. Below are output graphs
 ```{r ball_mapper_parameters, echo=TRUE}
 # creates a cover using a greedy algorithm
 balls1 = create_balls(data = P.data, dists = P.dist, eps = .25)
+
+# ball tester machine machine
+is_in_ball <- function(ball) {
+  balltester <- function(x) {
+    return(x %in% ball)
+  }
+  return(function(x) x %in% ball)
+}
 
 # filtering is just giving back the data (row names because my balls are lists of data point names, so the filter should match)
 ballmapper1 = create_mapper_object(P.data, P.dist, rownames(P.data), lapply(balls1, is_in_ball))

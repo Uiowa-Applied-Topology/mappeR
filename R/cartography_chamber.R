@@ -131,6 +131,10 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
 create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
+  check_in_interval <- function(endpoints) {
+    return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
+  }
+
   cover = apply(cover, 1, check_in_interval)
 
   return(create_mapper_object(data, dists, filtered_data, cover, clustering_method))
@@ -153,9 +157,8 @@ create_1D_mapper_object <- function(data, dists, filtered_data, cover, clusterin
 #' @export
 create_ball_mapper_object <- function(data, dists, eps) {
   balled_data = create_balls(data, dists, eps)
-  in_balled_data = lapply(balled_data, is_in_ball)
 
-  ball_mapper_object = create_mapper_object(data, dists, rownames(data), in_balled_data)
+  ball_mapper_object = run_mapper(convert_to_clusters(balled_data), dists, binning = FALSE)
 
   return(ball_mapper_object)
 }
