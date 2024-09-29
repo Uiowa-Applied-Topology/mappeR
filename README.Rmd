@@ -4,6 +4,11 @@ output: rmarkdown::github_document
 date: "2024-09-29"
 ---
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 devtools::load_all()
