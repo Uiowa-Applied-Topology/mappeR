@@ -124,10 +124,19 @@ eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
 num_bins = 10
 percent_overlap = 25
 
-xmapper = get_1D_mapper_data(P.data, projx, P.dist, num_bins, percent_overlap, "single")
-ymapper = get_1D_mapper_data(P.data, projy, P.dist, num_bins, percent_overlap, "single")
-zmapper = get_1D_mapper_data(P.data, projz, P.dist, num_bins, percent_overlap, "single")
-eccentricmapper = get_1D_mapper_data(P.data, eccentricity, P.dist, num_bins, percent_overlap, "single")
+# each of the "cover" elements will really be a function that checks if a datapoint lives in it
+xcover = apply(create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap), 1, check_in_interval)
+ycover = apply(create_width_balanced_cover(min(projy), max(projy), num_bins, percent_overlap), 1, check_in_interval)
+zcover = apply(create_width_balanced_cover(min(projz), max(projz), num_bins, percent_overlap), 1, check_in_interval)
+eccentriccover = apply(create_width_balanced_cover(min(eccentricity), max(eccentricity), num_bins, percent_overlap), 1, check_in_interval)
+
+xmapper = create_mapper_object(data = P.data, dists = P.dist, filtered_data = projx, cover_element_tests = xcover, method = "single")
+ymapper = create_mapper_object(P.data, P.dist, projy, ycover, "single")
+zmapper = create_mapper_object(P.data, P.dist, projz, zcover, "single")
+eccentricmapper = create_mapper_object(P.data, P.dist, eccentricity, eccentriccover, "single")
+
+# mappeR also has a built-in 1D mapper function
+xmapper2 = create_1D_mapper_object(P.data, P.dist, projx, num_bins, percent_overlap, "single")
 ```
 
 The vertices in each output graph below are colored according to the level set the cluster belongs to, and scaled by (the square root of) the number of data points in the cluster.
@@ -145,6 +154,17 @@ eccentricitycover = create_width_balanced_cover(min(eccentricity),
                                                 percent_overlap)
 
 imappergraphx = imapper(xmapper)
+plot(imappergraphx, xlim = c(0, 2))
+legend(
+  "right",
+  title = "x-coordinate",
+  apply(coverx, 1, function(x)
+    paste("[", round(x[1], 3), ", ", round(x[2], 3), "]")),
+  fill = bin_colors,
+  horiz = FALSE
+)
+
+imappergraphx = imapper(xmapper2)
 plot(imappergraphx, xlim = c(0, 2))
 legend(
   "right",

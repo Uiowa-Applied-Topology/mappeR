@@ -45,47 +45,8 @@ create_width_balanced_cover <- function(min_val,
   return(bin_ends)
 }
 
-#' Create a single bin of data
-#'
-#' This function identifies datapoints whose "filter" value falls within a numeric range.
-#'
-#' @param bin_left The minimum value to be filtered for.
-#' @param bin_right The maximum value to be filtered for.
-#' @param data A dataframe.
-#' @param filtered_data A single column of the input dataframe.
-#'
-#' @return A vector of datapoint names which fall within the filter range.
-make_one_bin <- function(bin_left, bin_right, data, filtered_data) {
-  in_bin = sapply(filtered_data, function(x)
-    (bin_left - x <= 0) & (bin_right - x >= 0))
-  bin_assignments = which(in_bin) # tells us indices of binned datapoints
-  if (length(bin_assignments) != 0) {
-    return(rownames(data[bin_assignments, ])) # TODO: bother me about why I need the original dataset here, I think it's more safe but who knows!
-  } else {
-    return(vector()) # bin still exists, it's just empty
-  }
-}
-
-
-#' Create bins of data from a 1D filter function
-#'
-#' This function identifies datapoints whose "filter" value falls within a specified set of numeric ranges.
-#'
-#' @param data A dataframe.
-#' @param filtered_data A single column of the input dataframe.
-#' @param bin_ends A 2D numeric array of input ranges, whose first column contains left endpoints and whose second column contains right endpoints.
-#'
-#' @return A list of "bins" containing vectors of names of datapoints.
-make_bins <- function(data, filtered_data, bin_ends) {
-  left_ends = bin_ends[, 1]
-  right_ends = bin_ends[, 2]
-  bins = mapply(
-    make_one_bin,
-    left_ends,
-    right_ends,
-    MoreArgs = list(data = data, filtered_data = filtered_data)
-  )
-  return(bins)
+check_in_interval <- function(endpoints) {
+  return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
 }
 
 # balls -------------------------------------------------------------------
