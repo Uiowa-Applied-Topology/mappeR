@@ -162,8 +162,8 @@ eccentriccover = create_width_balanced_cover(min(eccentricity),
 xcovercheck = apply(xcover, 1, check_in_interval)
 ycovercheck = apply(ycover, 1, check_in_interval)
 zcovercheck = apply(zcover, 1, check_in_interval)
-eccentriccovercheck = apply(eccentriccover, 1, check_in_interval)
 
+# build the mapper objects
 xmapper = create_mapper_object(
   data = P.data,
   dists = P.dist,
@@ -173,15 +173,9 @@ xmapper = create_mapper_object(
 )
 ymapper = create_mapper_object(P.data, P.dist, projy, ycovercheck, "single")
 zmapper = create_mapper_object(P.data, P.dist, projz, zcovercheck, "single")
-eccentricmapper = create_mapper_object(P.data, P.dist, eccentricity, eccentriccovercheck, "single")
 
 # mappeR also has a built-in 1D mapper function that will do the above for you
-eccentricmapper = create_1D_mapper_object(P.data,
-                                          P.dist,
-                                          eccentricity,
-                                          num_bins,
-                                          percent_overlap,
-                                          "single")
+eccentricmapper = create_1D_mapper_object(P.data, P.dist, eccentricity, eccentriccover, "single")
 ```
 
 The vertices in each output graph below are colored according to the

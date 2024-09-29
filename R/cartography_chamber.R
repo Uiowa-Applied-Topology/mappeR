@@ -105,8 +105,8 @@ cymapper <- function(mapperobject) {
 
 # a flavor of mapper based on projection to a single coordinate, and a width-balanced cover
 
-create_1D_mapper_object <- function(data, dists, filtered_data, num_intervals, percent_overlap, clustering_method="single") {
-  cover = apply(create_width_balanced_cover(min(filtered_data), max(filtered_data), num_intervals, percent_overlap), 1, check_in_interval)
+create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
+  cover = apply(cover, 1, check_in_interval)
 
   return(create_mapper_object(data, dists, filtered_data, cover, clustering_method))
 }
