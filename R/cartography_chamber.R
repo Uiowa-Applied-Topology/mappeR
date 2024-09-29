@@ -1,30 +1,33 @@
 
-# 1D mapper ---------------------------------------------------------------
+# mapper mapper -----------------------------------------------------------
 
-#' Run 1D mapper algorithm
-#'
-#' @param binclust_data A list containing named vectors whose names are datapoint names and whose values are cluster labels.
-#' @param dists A distance matrix containing pairwise distances between named datapoints.
-#'
-#' @return A list containing:
-#' \itemize{
-#'    \item nodes - A dataframe containing vertex/cluster information:
-#'      \itemize{
-#'          \item id - The vertex label.
-#'          \item size - How many datapoints are contained in that vertex.
-#'          \item tightness - A measure of dispersion of the data inside the vertex.
-#'          \item data - A string containing names of the datapoints within the vertex.
-#'          \item bin - Which bin the vertex belongs to.
-#'      }
-#'    \item edges - A dataframe containing vertex/cluster overlap information:
-#'      \itemize{
-#'          \item source - One endpoint of an edge.
-#'          \item target - The other endpoint of an edge.
-#'          \item weight - A measure of the significance of the edge.
-#'      }
-#' }
-construct_1Dmappergraph <- function(binclust_data, dists) {
-  # grab basic graph characteristics
+create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
+  bins = create_bins(data, filtered_data, cover_element_tests)
+
+  if (method == "none") {
+    print("WE'RE NOT READY FOR THAT YET AAAAAAAA")
+    quit()
+  } else {
+    clusters = get_clusters(bins, dists, method)
+    return(run_mapper(clusters, dists, binning = TRUE))
+  }
+}
+
+create_single_bin <- function(data, filtered_data, cover_element_test) {
+  in_bin = sapply(filtered_data, cover_element_test)
+  bin_assignments = which(in_bin)
+  if (length(bin_assignments) != 0) {
+    return(rownames(data[bin_assignments, ])) # TODO: bother me about why I need the original dataset here, I think it's more safe but who knows!
+  } else {
+    return(vector()) # bin still exists, it's just empty
+  }
+}
+
+create_bins <- function(data, filtered_data, cover_element_tests) {
+  return(mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data)))
+}
+
+run_mapper <- function(binclust_data, dists, binning=TRUE) {
   num_vertices = max(binclust_data[[length(binclust_data)]])
   node_ids = as.character(1:num_vertices)
   overlaps = get_overlaps(binclust_data)
@@ -37,7 +40,39 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
   cluster_size = get_cluster_sizes(binclust_data, num_vertices)
   data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
-  bins = get_bin_vector(binclust_data)
+
+  # if you care about bins
+  if (binning) {
+    nodes = data.frame(
+      id = node_ids,
+      cluster_size = cluster_size,
+      tightness = cluster_tightness,
+      data = data_in_cluster,
+      bin = get_bin_vector(binclust_data)
+    )
+
+    edges = data.frame(source = sources,
+                       target = targets,
+                       weight = edge_weights)
+
+    return(list(nodes, edges))
+
+  # if you don't
+  } else {
+    nodes = data.frame(
+      id = node_ids,
+      cluster_size = cluster_size,
+      tightness = cluster_tightness,
+      data = data_in_cluster
+    )
+
+    edges = data.frame(source = sources,
+                       target = targets,
+                       weight = edge_weights)
+
+
+    return(list(nodes, edges))
+  }
 
   # assemble graph data
   nodes = data.frame(
@@ -56,100 +91,20 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
   return(list(nodes, edges))
 }
 
-#' Run 1D mapper
-#'
-#' Run mapper using a 1-dimensional projection filter and a width-balanced cover.
-#'
-#' @param data A dataframe.
-#' @param filtered_data A single column of the input data.
-#' @param dists A distance matrix containing pairwise relations among the input data. Can be a `dist` object or 2D matrix.
-#' @param num_bins The number of "bins" to split the input data into based on the filter. A positive integer.
-#' @param percent_overlap The percent overlap desired between each "bin." An integer between 0 and 100 (inclusive).
-#' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage hierarchical)
-#'
-#' @return A list containing:
-#' \itemize{
-#'    \item nodes - A dataframe containing vertex/cluster information:
-#'      \itemize{
-#'          \item id - The vertex label.
-#'          \item size - How many datapoints are contained in that vertex.
-#'          \item tightness - A measure of dispersion of the data inside the vertex.
-#'          \item data - A string containing names of the datapoints within the vertex.
-#'          \item bin - Which bin the vertex belongs to.
-#'      }
-#'    \item edges - A dataframe containing vertex/cluster overlap information:
-#'      \itemize{
-#'          \item source - One endpoint of an edge.
-#'          \item target - The other endpoint of an edge.
-#'          \item weight - A measure of the significance of the edge.
-#'      }
-#' }
-#' @export
-get_1D_mapper_data <- function(data,
-                               filtered_data,
-                               dists,
-                               num_bins,
-                               percent_overlap,
-                               clustering_method) {
-  # bin data according to filter values
-  bins = create_width_balanced_cover(min(filtered_data),
-                                     max(filtered_data),
-                                     num_bins,
-                                     percent_overlap)
-  binned_data = make_bins(data, filtered_data, bins)
 
-  # cluster data
-  binclust_data = get_clusters(binned_data, dists, clustering_method)
+# 1D mapper ---------------------------------------------------------------
+#
+# a flavor of mapper based on projection to a single coordinate
 
-  # construct mapper graph
-  mappergraph = construct_1Dmappergraph(binclust_data, dists)
+create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
+  cover = apply(cover, 1, check_in_interval)
 
-  return(mappergraph)
+  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method))
 }
-
-cymapper <- function(mapperobject) {
-
-  # pass to visualizer for........visualizing...
-  visualize_mapper_data(mapperobject, is_ballmapper = FALSE)
-
-  # if this isn't here R will print something useless
-  return(invisible(NULL))
-}
-
 
 # ballmapper --------------------------------------------------------------
-
-# TODO: add rox docs and all that jazz
-
-construct_ballmappergraph <- function(binclust_data, dists) {
-  num_vertices = max(binclust_data[[length(binclust_data)]])
-
-  node_ids = as.character(1:num_vertices)
-
-  overlaps = get_overlaps(binclust_data)
-  edges = get_edgelist_from_overlaps(overlaps, num_vertices)
-  sources = as.character(edges[, 1])
-  targets = as.character(edges[, 2])
-
-  cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
-  cluster_size = get_cluster_sizes(binclust_data, num_vertices)
-  data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
-  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
-
-  nodes = data.frame(
-    id = node_ids,
-    cluster_size = cluster_size,
-    tightness = cluster_tightness,
-    data = data_in_cluster
-  )
-
-  edges = data.frame(source = sources,
-                     target = targets,
-                     weight = edge_weights)
-
-
-  return(list(nodes, edges))
-}
+#
+# a flavor of mapper all about the balls
 
 #' Run ballmapper
 #'
@@ -167,35 +122,24 @@ get_ballmapper_data <- function(data, dists, eps) {
   formatted_balled_data = convert_balls(balled_data)
 
   # construct ballmapper graph
-  ballmappergraph = construct_ballmappergraph(formatted_balled_data, dists)
+  ballmappergraph = run_mapper(formatted_balled_data, dists, binning = FALSE)
 
   return(ballmappergraph)
 }
 
-cyballmapper <- function(mapperobject) {
-  visualize_mapper_data(mapperobject, FALSE)
-  return(invisible(NULL))
-}
-
 
 # clusterball mapper ------------------------------------------------------
-
-# TODO: test that this works lol
+#
+# a flavor of mapper that's just clustering in the balls of ballmapper
 
 # runner function for combo mapper; outputs bins, clusters, and the mapper graph.
 get_clusterballmapper_data <- function(data, dist1, dist2, eps, method) {
   balls = create_balls(data, dist1, eps)
   clusters = get_clusters(balls, dist2, method)
 
-  clusterballmappergraph = construct_1Dmappergraph(clusters, dist2)
+  clusterballmappergraph = run_mapper(clusters, dist2)
 
   return(clusterballmappergraph)
-}
-
-cyclusterballmapper <- function(mapperobject) {
-  visualize_mapper_data(mapperobject, FALSE)
-
-  return(invisible(NULL))
 }
 
 # graph construction ------------------------------------------------------
