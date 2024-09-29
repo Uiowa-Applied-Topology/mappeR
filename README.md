@@ -149,10 +149,39 @@ eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
 num_bins = 10
 percent_overlap = 25
 
-xmapper = get_1D_mapper_data(P.data, projx, P.dist, num_bins, percent_overlap, "single")
-ymapper = get_1D_mapper_data(P.data, projy, P.dist, num_bins, percent_overlap, "single")
-zmapper = get_1D_mapper_data(P.data, projz, P.dist, num_bins, percent_overlap, "single")
-eccentricmapper = get_1D_mapper_data(P.data, eccentricity, P.dist, num_bins, percent_overlap, "single")
+# generate the cover
+xcover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+ycover = create_width_balanced_cover(min(projy), max(projy), num_bins, percent_overlap)
+zcover = create_width_balanced_cover(min(projz), max(projz), num_bins, percent_overlap)
+eccentriccover = create_width_balanced_cover(min(eccentricity),
+                                             max(eccentricity),
+                                             num_bins,
+                                             percent_overlap)
+
+# each of the "cover" elements will really be a function that checks if a data point lives in it
+xcovercheck = apply(xcover, 1, check_in_interval)
+ycovercheck = apply(ycover, 1, check_in_interval)
+zcovercheck = apply(zcover, 1, check_in_interval)
+eccentriccovercheck = apply(eccentriccover, 1, check_in_interval)
+
+xmapper = create_mapper_object(
+  data = P.data,
+  dists = P.dist,
+  filtered_data = projx,
+  cover_element_tests = xcovercheck,
+  method = "single"
+)
+ymapper = create_mapper_object(P.data, P.dist, projy, ycovercheck, "single")
+zmapper = create_mapper_object(P.data, P.dist, projz, zcovercheck, "single")
+eccentricmapper = create_mapper_object(P.data, P.dist, eccentricity, eccentriccovercheck, "single")
+
+# mappeR also has a built-in 1D mapper function that will do the above for you
+eccentricmapper = create_1D_mapper_object(P.data,
+                                          P.dist,
+                                          eccentricity,
+                                          num_bins,
+                                          percent_overlap,
+                                          "single")
 ```
 
 The vertices in each output graph below are colored according to the
