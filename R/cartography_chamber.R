@@ -107,18 +107,6 @@ get_1D_mapper_data <- function(data,
   return(mappergraph)
 }
 
-#' Runs 1D mapper and passes data to Cytoscape for visualization.
-#'
-#' @param data A dataframe.
-#' @param filtered_data A single column of the input data.
-#' @param dists A distance matrix containing pairwise relations among the input data. Can be a `dist` object or 2D matrix.
-#' @param num_bins The number of "bins" to split the input data into based on the filter. A positive integer.
-#' @param percent_overlap The percent overlap desired between each "bin." An integer between 0 and 100 (inclusive).
-#' @param clustering_method Desired clustering method. A string from these options: "single" (single-linkage hierarchical)
-#'
-#' @returns NULL
-#'
-#' @export
 cymapper <- function(mapperobject) {
 
   # pass to visualizer for........visualizing...
@@ -184,13 +172,6 @@ get_ballmapper_data <- function(data, dists, eps) {
   return(ballmappergraph)
 }
 
-#' Runs ballmapper and passes data to Cytoscape for visualization.
-#'
-#' @param data Your input data. Ideally a dataframe.
-#' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
-#' @param eps A positive real number for your desired ball radius.
-#' @returns NULL
-#' @export
 cyballmapper <- function(mapperobject) {
   visualize_mapper_data(mapperobject, FALSE)
   return(invisible(NULL))

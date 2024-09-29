@@ -101,7 +101,7 @@ Here is a point cloud $P$ formed by adding a bit of uniform noise to 5000 points
 
 This seems to form a kind of figure-8 curve just based on this projection. But as we can see from the 2D projections, the "shape" of the data set we're seeing really does depend on how we're looking at it:
 
-```{r plotting the curve, fig.align='center'}
+```{r plotting_the_curve, fig.align='center'}
 plot(P.data, pch = 20, asp = 1)
 ```
 We will build graphs using the outline of the mapper algorithm described, with real-valued lens functions.
@@ -113,7 +113,7 @@ Parameters:
 * Cover: A cover of $\mathbb{R}$ (just up to the extremes of the function values) using 10 equally spaced intervals with 25\% overlap between each consecutive interval
 * Clustering method: Single-linkage hierarchical clustering
 
-```{r mapper parameters, echo=TRUE}
+```{r mapper_parameters, echo=TRUE}
 # lens functions
 projx = P.data$x
 projy = P.data$y
@@ -132,7 +132,7 @@ eccentricmapper = get_1D_mapper_data(P.data, eccentricity, P.dist, num_bins, per
 
 The vertices in each output graph below are colored according to the level set the cluster belongs to, and scaled by (the square root of) the number of data points in the cluster.
 
-```{r mapping the mapper, fig.show="hold", out.width="50%"}
+```{r mapping_the_mapper, fig.show="hold", out.width="50%"}
 colfunc <- colorRampPalette(c("blue", "gold", "red"))
 bin_colors = colfunc(num_bins)
 
@@ -202,14 +202,14 @@ Parameters:
 
 There's a secret parameter here, which is $\varepsilon$. Below are output graphs for varying values of $\varepsilon$; the sizing is as with the 1D mapper, but no coloring is done as each vertex would have to receive its own color in this flavor, which is redundant.
 
-```{r ballmapper parameters, echo=TRUE}
+```{r ballmapper_parameters, echo=TRUE}
 ballmapper1 = get_ballmapper_data(P.data, P.dist, .25)
 ballmapper2 = get_ballmapper_data(P.data, P.dist, .5)
 ballmapper3 = get_ballmapper_data(P.data, P.dist, 1)
 ballmapper4 = get_ballmapper_data(P.data, P.dist, 2)
 ```
 
-```{r ballmapper time, fig.show='hold', out.width="50%"}
+```{r ballmapper_time, fig.show='hold', out.width="50%"}
 library(latex2exp)
 
 plot(imapper(ballmapper1), main = TeX(r"($\epsilon=.25$)"))

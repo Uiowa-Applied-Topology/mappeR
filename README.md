@@ -2,6 +2,11 @@ mappeR
 ================
 2024-09-29
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 This is an implementation of the
 [mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by
 Singh, Mémoli, and Carlsson, and also the
@@ -119,7 +124,7 @@ This seems to form a kind of figure-8 curve just based on this
 projection. But as we can see from the 2D projections, the “shape” of
 the data set we’re seeing really does depend on how we’re looking at it:
 
-<img src="README_files/figure-gfm/plotting the curve-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/plotting_the_curve-1.png" style="display: block; margin: auto;" />
 We will build graphs using the outline of the mapper algorithm
 described, with real-valued lens functions.
 
@@ -154,7 +159,7 @@ The vertices in each output graph below are colored according to the
 level set the cluster belongs to, and scaled by (the square root of) the
 number of data points in the cluster.
 
-<img src="README_files/figure-gfm/mapping the mapper-1.png" width="50%" /><img src="README_files/figure-gfm/mapping the mapper-2.png" width="50%" /><img src="README_files/figure-gfm/mapping the mapper-3.png" width="50%" /><img src="README_files/figure-gfm/mapping the mapper-4.png" width="50%" />
+<img src="README_files/figure-gfm/mapping_the_mapper-1.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-2.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-3.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-4.png" width="50%" />
 
 ## Example: ballmapper
 
@@ -185,4 +190,4 @@ ballmapper3 = get_ballmapper_data(P.data, P.dist, 1)
 ballmapper4 = get_ballmapper_data(P.data, P.dist, 2)
 ```
 
-<img src="README_files/figure-gfm/ballmapper time-1.png" width="50%" /><img src="README_files/figure-gfm/ballmapper time-2.png" width="50%" /><img src="README_files/figure-gfm/ballmapper time-3.png" width="50%" /><img src="README_files/figure-gfm/ballmapper time-4.png" width="50%" />
+<img src="README_files/figure-gfm/ballmapper_time-1.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-2.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-3.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-4.png" width="50%" />
