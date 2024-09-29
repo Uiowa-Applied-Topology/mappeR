@@ -110,7 +110,7 @@ Here is a point cloud $P$ formed by adding a bit of uniform noise to
 5000 points regularly sampled from the parametric curve
 
 ``` math
-\gamma(t) = \begin{cases}x = 10\sin(x)\\ y=10\sin(x)\cos^2(x)\\ z=10\sin^2(x)\cos(x) \end{cases}
+\gamma(t) = \begin{cases}x = 10\ \sin(t)\\ y=10\ \sin(t)\cos^2(t)\\ z=10\ \sin^2(t)\cos(t) \end{cases}
 ```
 
 <img src="README_files/figure-gfm/fig8-1.png" />
