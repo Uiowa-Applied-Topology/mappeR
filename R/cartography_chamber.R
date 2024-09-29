@@ -91,19 +91,10 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
   return(list(nodes, edges))
 }
 
-cymapper <- function(mapperobject) {
-
-  # pass to visualizer for........visualizing...
-  visualize_mapper_data(mapperobject, is_ballmapper = FALSE)
-
-  # if this isn't here R will print something useless
-  return(invisible(NULL))
-}
-
 
 # 1D mapper ---------------------------------------------------------------
-
-# a flavor of mapper based on projection to a single coordinate, and a width-balanced cover
+#
+# a flavor of mapper based on projection to a single coordinate
 
 create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
   cover = apply(cover, 1, check_in_interval)
@@ -112,38 +103,8 @@ create_1D_mapper_object <- function(data, dists, filtered_data, cover, clusterin
 }
 
 # ballmapper --------------------------------------------------------------
-
-# TODO: add rox docs and all that jazz
-
-construct_ballmappergraph <- function(binclust_data, dists) {
-  num_vertices = max(binclust_data[[length(binclust_data)]])
-
-  node_ids = as.character(1:num_vertices)
-
-  overlaps = get_overlaps(binclust_data)
-  edges = get_edgelist_from_overlaps(overlaps, num_vertices)
-  sources = as.character(edges[, 1])
-  targets = as.character(edges[, 2])
-
-  cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
-  cluster_size = get_cluster_sizes(binclust_data, num_vertices)
-  data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
-  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
-
-  nodes = data.frame(
-    id = node_ids,
-    cluster_size = cluster_size,
-    tightness = cluster_tightness,
-    data = data_in_cluster
-  )
-
-  edges = data.frame(source = sources,
-                     target = targets,
-                     weight = edge_weights)
-
-
-  return(list(nodes, edges))
-}
+#
+# a flavor of mapper all about the balls
 
 #' Run ballmapper
 #'
@@ -161,35 +122,24 @@ get_ballmapper_data <- function(data, dists, eps) {
   formatted_balled_data = convert_balls(balled_data)
 
   # construct ballmapper graph
-  ballmappergraph = construct_ballmappergraph(formatted_balled_data, dists)
+  ballmappergraph = run_mapper(formatted_balled_data, dists, binning = FALSE)
 
   return(ballmappergraph)
 }
 
-cyballmapper <- function(mapperobject) {
-  visualize_mapper_data(mapperobject, FALSE)
-  return(invisible(NULL))
-}
-
 
 # clusterball mapper ------------------------------------------------------
-
-# TODO: test that this works lol
+#
+# a flavor of mapper that's just clustering in the balls of ballmapper
 
 # runner function for combo mapper; outputs bins, clusters, and the mapper graph.
 get_clusterballmapper_data <- function(data, dist1, dist2, eps, method) {
   balls = create_balls(data, dist1, eps)
   clusters = get_clusters(balls, dist2, method)
 
-  clusterballmappergraph = construct_1Dmappergraph(clusters, dist2)
+  clusterballmappergraph = run_mapper(clusters, dist2)
 
   return(clusterballmappergraph)
-}
-
-cyclusterballmapper <- function(mapperobject) {
-  visualize_mapper_data(mapperobject, FALSE)
-
-  return(invisible(NULL))
 }
 
 # graph construction ------------------------------------------------------

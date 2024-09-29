@@ -53,6 +53,26 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
   setVisualStyle(style.name)
 }
 
+cymapper <- function(mapperobject) {
+
+  # pass to visualizer for........visualizing...
+  visualize_mapper_data(mapperobject, is_ballmapper = FALSE)
+
+  # if this isn't here R will print something useless
+  return(invisible(NULL))
+}
+
+cyballmapper <- function(mapperobject) {
+  visualize_mapper_data(mapperobject, FALSE)
+  return(invisible(NULL))
+}
+
+cyclusterballmapper <- function(mapperobject) {
+  visualize_mapper_data(mapperobject, FALSE)
+
+  return(invisible(NULL))
+}
+
 # igraph ------------------------------------------------------------------
 
 
