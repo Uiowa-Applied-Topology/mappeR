@@ -26,11 +26,11 @@ test_interval_math <- function(left_end, right_end, num_bins, percent_overlap) {
 # TODO: degenerate intervals, zero bins, zero overlap, forbidden inputs
 test_that("interval math works", {
   # random case
-  vars = c(sort(c(sample(1:2, 1)*(-1)*runif(1), sample(1:2, 1)*(-1)*runif(1))), runif(2))
-  left_end  = vars[1]
-  right_end = vars[2]
-  num_bins = floor(vars[3]*100)
-  percent_overlap = vars[4]*100
+  vars = c(sort(runif(2)))
+  left_end  = vars[1]*100
+  right_end = vars[2]*100
+  num_bins = sample(1:1000, 1)
+  percent_overlap = runif(1)*100
   test_interval_math(left_end, right_end, num_bins, percent_overlap)
 
   # case that broke ethan's code
