@@ -6,7 +6,6 @@ date: "2024-09-29"
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-require(webtex)
 devtools::load_all()
 ```
 

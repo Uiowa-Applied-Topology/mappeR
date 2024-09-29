@@ -56,7 +56,9 @@ construct_1Dmappergraph <- function(binclust_data, dists) {
   return(list(nodes, edges))
 }
 
-#' Runs 1D mapper returns a dataframe with node and edge data.
+#' Run 1D mapper
+#'
+#' Run mapper using a 1-dimensional projection filter and a width-balanced cover.
 #'
 #' @param data A dataframe.
 #' @param filtered_data A single column of the input data.
@@ -161,7 +163,9 @@ construct_ballmappergraph <- function(binclust_data, dists) {
   return(list(nodes, edges))
 }
 
-#' Runs ballmapper and returns two dataframes containing node and edge data.
+#' Run ballmapper
+#'
+#' Run mapper using an \eqn{\varepsilon}-net cover (greedily generated) and the 2D inclusion function as a filter.
 #'
 #' @param data Your input data. Ideally a dataframe.
 #' @param dists A distance matrix for your data. Can be a `dist` object or 2D matrix.
