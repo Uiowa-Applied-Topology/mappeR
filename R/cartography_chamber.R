@@ -1,6 +1,58 @@
 
 # mapper mapper -----------------------------------------------------------
 
+#' Create a mapper object
+#'
+#' Run the mapper algorithm on a data frame.
+#'
+#' @param data A data frame.
+#' @param dists A distance matrix for the data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param cover_element_tests A list of membership test functions for a list of cover elements. Each member of `cover_element_tests` should be able to identify (return `TRUE` or `FALSE`) if a single input data point is a member of the cover element it represents.
+#' @param method The desired clustering method to use. e.g., "single"
+#'
+#' @return A list of two dataframes, one with node data containing bin membership,
+#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
+#' @export
+#'
+#' @examples
+#' num_points = 5000
+#'
+#' # generate some points close to a curve in 3D space
+#' P.data = data.frame(
+#'   x = sapply(1:num_points, function(x)
+#'     sin(x) * 10) + rnorm(num_points, 0, 0.1),
+#'   y = sapply(1:num_points, function(x)
+#'     cos(x) ^ 2 * sin(x) * 10) + rnorm(num_points, 0, 0.1),
+#'   z = sapply(1:num_points, function(x)
+#'     10 * sin(x) ^ 2 * cos(x)) + rnorm(num_points, 0, 0.1)
+#' )
+#'
+#' # create distance matrix
+#' P.dist = dist(P.data)
+#'
+#' # lens function is projection to the \eqn{x}-coordinate
+#' projx = P.data$x
+#'
+#' # cover parameters to generate a width-balanced cover
+#' num_bins = 10
+#' percent_overlap = 25
+#'
+#' # generate the cover
+#' xcover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+#'
+#' # each of the "cover" elements will really be a function that checks if a data point lives in it
+#' xcovercheck = apply(xcover, 1, check_in_interval)
+#'
+#' # build the mapper object
+#' xmapper = create_mapper_object(
+#'   data = P.data,
+#'   dists = P.dist,
+#'   filtered_data = projx,
+#'   cover_element_tests = xcovercheck,
+#'   method = "single"
+#' )
 create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
   bins = create_bins(data, filtered_data, cover_element_tests)
 
@@ -13,6 +65,13 @@ create_mapper_object <- function(data, dists, filtered_data, cover_element_tests
   }
 }
 
+#' Create a bin of data
+#'
+#' @param data A data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param cover_element_test A membership test function for a cover element. It should identify (return `TRUE` or `FALSE`) if a single input data point is a member of the cover element it represents.
+#'
+#' @return A vector of names of points from the data frame, representing a bin.
 create_single_bin <- function(data, filtered_data, cover_element_test) {
   in_bin = sapply(filtered_data, cover_element_test)
   bin_assignments = which(in_bin)
@@ -23,10 +82,26 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
   }
 }
 
+#' Create bins of data
+#'
+#' @param data A data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param cover_element_tests A list of membership test functions for a list of cover elements. Each member of `cover_element_tests` should be able to identify (return `TRUE` or `FALSE`) if a single input data point is a member of the cover element it represents.
+#'
+#' @return A list of bins, each containing a vector of the names of the data inside it.
 create_bins <- function(data, filtered_data, cover_element_tests) {
   return(mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data)))
 }
 
+#' Construct mapper graph from data
+#'
+#' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids
+#' @param dists A distance matrix for the data that has been binned and clustered.
+#' @param binning Whether the output dataframe should sort vertices into "bins" or not. Should be true if using clustering, leave false otherwise
+#'
+#' @return A list of two dataframes, one with node data containing bin membership,
+#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
 run_mapper <- function(binclust_data, dists, binning=TRUE) {
   num_vertices = max(binclust_data[[length(binclust_data)]])
   node_ids = as.character(1:num_vertices)
@@ -96,6 +171,20 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #
 # a flavor of mapper based on projection to a single coordinate
 
+#' Run 1D mapper
+#'
+#' Run mapper using a one-dimensional filter and a cover of intervals.
+#'
+#' @param data A data frame.
+#' @param dists A distance matrix for the data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
+#' @param cover A 2D array of interval left and right endpoints.
+#' @param clustering_method Your favorite clustering algorithm.
+#'
+#' @return A list of two dataframes, one with node data containing bin membership,
+#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#'  containing sources, targets, and weights representing overlap strength.
+#' @export
 create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
   cover = apply(cover, 1, check_in_interval)
 

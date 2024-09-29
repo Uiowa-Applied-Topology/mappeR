@@ -45,6 +45,12 @@ create_width_balanced_cover <- function(min_val,
   return(bin_ends)
 }
 
+#' Check if a point is in an interval
+#'
+#' @param endpoints A vector of the two endpoints of the interval. Must be in increasing order.
+#'
+#' @return A function that returns TRUE or FALSE depending on if an input data point is in between the interval's endpoints.
+#' @export
 check_in_interval <- function(endpoints) {
   return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
 }
