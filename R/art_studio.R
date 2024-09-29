@@ -22,7 +22,7 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
                                  'id',
                                  'd',
                                  1:nrow(nodes),
-                                 100 * nodes$size / max(nodes$size))
+                                 100 * nodes$cluster_size / max(nodes$cluster_size))
   edgeWidth <- mapVisualProperty('edge transparency', 'weight', 'c', c(0, .5, 1), c(0, 127, 255))
   nodeFillColors <- mapVisualProperty(
     'node fill color',
@@ -40,7 +40,7 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
   } else {
     # conventional mapper needs bin coloring
     num_bins = length(unique(nodes$bin))
-    colfunc <- colorRampPalette(c("blue", "purple", "red"))
+    colfunc <- colorRampPalette(c("blue", "gold", "red"))
     bin_colors = colfunc(num_bins)
     nodeBorderColors <- mapVisualProperty('node border color', 'bin', 'd', 1:num_bins, bin_colors)
     createVisualStyle(
@@ -70,8 +70,8 @@ imapper <- function(mapperobject) {
   mappergraph = set_vertex_attr(mappergraph, "label", value=NA)
   mappergraph = set_vertex_attr(mappergraph, "size", value=sqrt(vertices$cluster_size))
   if ("bin" %in% colnames(vertices)) {
-    num_bins = max(mapperobject[[1]]$bin)
-    colfunc = colorRampPalette(c("red", "gold", "blue"))
+    num_bins = max(vertices$bin)
+    colfunc = colorRampPalette(c("blue", "gold", "red"))
     mappergraph = set_vertex_attr(mappergraph, "color", value=sapply(vertices$bin, function(x) colfunc(num_bins)[x]))
   }
 

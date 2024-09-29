@@ -4,7 +4,7 @@
 \alias{cyballmapper}
 \title{Runs ballmapper and passes data to Cytoscape for visualization.}
 \usage{
-cyballmapper(data, dists, eps)
+cyballmapper(mapperobject)
 }
 \arguments{
 \item{data}{Your input data. Ideally a dataframe.}

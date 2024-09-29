@@ -4,14 +4,7 @@
 \alias{cymapper}
 \title{Runs 1D mapper and passes data to Cytoscape for visualization.}
 \usage{
-cymapper(
-  data,
-  filtered_data,
-  dists,
-  num_bins,
-  percent_overlap,
-  clustering_method
-)
+cymapper(mapperobject)
 }
 \arguments{
 \item{data}{A dataframe.}
