@@ -63,8 +63,13 @@ This is the basic idea of the mapper algorithm, with the addition that
 each level set is first refined into clusters based on the intrinsic
 pairwise distances of the data according to some clustering algorithm.
 That is, we partition each level set $L_i$ into $k_i$ disjoint clusters
-$\{C_j\}_{j=1}^{k_i}$ and build a new graph $G' = (V', E')$ that is
-homomorphic to $G$ defined by
+
+``` math
+L_i = \bigsqcup_{j=1}^{k_i} C_j
+```
+
+and build a new graph $G' = (V', E')$ that is homomorphic to $G$ defined
+by
 
 ``` math
 V' = \bigsqcup_{i=1}^{n}\{C_j\}_{j=1}^{k_i}
