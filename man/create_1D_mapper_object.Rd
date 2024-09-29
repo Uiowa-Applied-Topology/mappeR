@@ -29,5 +29,5 @@ datapoints per cluster, and cluster dispersion, and one with edge data
 containing sources, targets, and weights representing overlap strength.
 }
 \description{
-Run mapper using a one-dimensional filter and a cover of intervals.
+Run mapper using a one-dimensional filter, a cover of intervals, and a clustering algorithm.
 }

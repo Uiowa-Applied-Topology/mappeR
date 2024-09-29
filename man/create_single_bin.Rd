@@ -11,7 +11,7 @@ create_single_bin(data, filtered_data, cover_element_test)
 
 \item{filtered_data}{The result of a function applied to the data frame; there should be one row per observation in the original data frame.}
 
-\item{cover_element_test}{A membership test function for a cover element. It should identify (return \code{TRUE} or \code{FALSE}) if a single input data point is a member of the cover element it represents.}
+\item{cover_element_test}{A membership test function for a cover element. It should identify (return \code{TRUE} or \code{FALSE}) if a single input data point, is a member of the cover element it represents.}
 }
 \value{
 A vector of names of points from the data frame, representing a bin.

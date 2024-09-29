@@ -50,6 +50,22 @@ get_clusters <- function(bins, dists, method) {
 
 # TODO: add more clustering methods
 
+# caveman clustering ------------------------------------------------------
+
+#' The easiest clustering method
+#'
+#' @param bins A list of bins, each containing names of data from some data frame.
+#'
+#' @return A named vector whose names are data point names and whose values are cluster labels
+#' @export
+convert_to_clusters <- function(bins) {
+  ball_sizes = lapply(bins, length)
+  ballball_data = unlist(mapply(function(x, y)
+    rep(x, y), 1:length(ball_sizes), ball_sizes))
+  names(ballball_data) = unlist(bins)
+  return(ballball_data)
+}
+
 ## single linkage clustering -----------------------------------------------
 
 # please don't ask
