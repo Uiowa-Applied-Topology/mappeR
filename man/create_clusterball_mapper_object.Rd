@@ -4,7 +4,7 @@
 \alias{create_clusterball_mapper_object}
 \title{Run clusterball mapper}
 \usage{
-create_clusterball_mapper_object(data, dist1, dist2, eps, method)
+create_clusterball_mapper_object(data, dist1, dist2, eps, clustering_method)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -14,8 +14,6 @@ create_clusterball_mapper_object(data, dist1, dist2, eps, method)
 \item{dist2}{Another distance matrix for the data frame; this will be used to cluster the data after balling.}
 
 \item{eps}{A positive real number for your desired ball radius.}
-
-\item{filtered_data}{The result of a function applied to the data frame; there should be one row per observation in the original data frame.}
 
 \item{clustering_method}{Your favorite clustering algorithm.}
 }
