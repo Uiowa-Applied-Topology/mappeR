@@ -6,7 +6,7 @@
 \alias{mappeR-package}
 \title{mappeR: Construct and Visualize TDA Mapper Graphs}
 \description{
-An implementation of various flavors of the mapper algorithm (from the field of topological data analysis) in R, originally developed by Singh, Mémoli and Carlsson (2007) \doi{doi:10.2312/SPBG/SPBG07/091-100}, along with other tools for exploring the output graph in more detail. This can be done either by exporting the raw statistics, using the \pkg{igraph} package, or letting the package pass the data to Cytoscape (sold separately for free \href{https://cytoscape.org/}{here}) for further analysis.
+An implementation of various flavors of the mapper algorithm (from the field of topological data analysis) in R, originally developed by Singh, Mémoli and Carlsson (2007) (link to paper [here](https://research.math.osu.edu/tgda/mapperPBG.pdf), along with other tools for exploring the output graph in more detail. This can be done either by exporting the raw statistics, using the \pkg{igraph} package, or letting the package pass the data to Cytoscape (sold separately for free [here](https://cytoscape.org/)) for further analysis.
 }
 \seealso{
 Useful links:

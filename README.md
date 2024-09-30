@@ -10,8 +10,7 @@ mappeR
 This is an implementation of the
 [mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by
 Singh, Mémoli, and Carlsson, and also the
-[ballmapper](https://arxiv.org/pdf/1901.07410.pdf) algorithm from
-Dlotko.
+[ballmapper](http://arxiv.org/pdf/1901.07410.pdf) algorithm from Dlotko.
 
 ## Setup
 
@@ -29,7 +28,7 @@ following commands:
 If you’re installing from Github, you might need to do some more stuff:
 
 - **Windows:** install Rtools
-  (<http://cran.r-project.org/bin/windows/Rtools/>)
+  (<https://cran.r-project.org/bin/windows/Rtools/>)
 - **OS X:** install Xcode (from the Mac App Store)
 - **Linux:** run `apt-get install r-base-dev` (or similar).
 
