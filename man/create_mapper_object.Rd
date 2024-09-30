@@ -31,3 +31,29 @@ containing sources, targets, and weights representing overlap strength.
 \description{
 Run the mapper algorithm on a data frame.
 }
+\examples{
+\dontrun{
+data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+projx = data$x
+
+num_bins = 10
+percent_overlap = 25
+xcover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+
+check_in_interval <- function(endpoints) {
+ return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
+}
+
+# each of the "cover" elements will really be a function that checks if a data point lives in it
+xcovercheck = apply(xcover, 1, check_in_interval)
+
+# build the mapper object
+xmapper = create_mapper_object(
+  data = data,
+  dists = dist(data),
+  filtered_data = projx,
+  cover_element_tests = xcovercheck,
+  method = "single"
+)
+}
+}

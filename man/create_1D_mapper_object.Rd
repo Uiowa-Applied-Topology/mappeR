@@ -24,10 +24,23 @@ create_1D_mapper_object(
 \item{clustering_method}{Your favorite clustering algorithm.}
 }
 \value{
-A list of two dataframes, one with node data containing bin membership,
-datapoints per cluster, and cluster dispersion, and one with edge data
+A list of two data frames, one with node data containing bin membership,
+data points per cluster, and cluster dispersion, and one with edge data
 containing sources, targets, and weights representing overlap strength.
 }
 \description{
 Run mapper using a one-dimensional filter, a cover of intervals, and a clustering algorithm.
+}
+\examples{
+\dontrun{
+data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+projx = data$x
+
+num_bins = 10
+percent_overlap = 25
+
+cover = get_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+
+create_1D_mapper_object(data, dist(data), projx, cover, "single")
+}
 }

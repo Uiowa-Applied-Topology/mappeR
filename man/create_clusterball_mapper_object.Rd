@@ -25,3 +25,12 @@ containing sources, targets, and weights representing overlap strength.
 \description{
 Run ball mapper, but additionally cluster within the balls. Can use two different distance matrices to accomplish this.
 }
+\examples{
+\dontrun{
+data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+data.dists = dist(data)
+eps = 1
+
+create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
+}
+}

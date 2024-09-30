@@ -15,6 +15,31 @@
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
+#' @examples
+#' \dontrun{
+#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' projx = data$x
+#'
+#' num_bins = 10
+#' percent_overlap = 25
+#' xcover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+#'
+#' check_in_interval <- function(endpoints) {
+#'  return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
+#' }
+#'
+#' # each of the "cover" elements will really be a function that checks if a data point lives in it
+#' xcovercheck = apply(xcover, 1, check_in_interval)
+#'
+#' # build the mapper object
+#' xmapper = create_mapper_object(
+#'   data = data,
+#'   dists = dist(data),
+#'   filtered_data = projx,
+#'   cover_element_tests = xcovercheck,
+#'   method = "single"
+#' )
+#' }
 create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
   bins = create_bins(data, filtered_data, cover_element_tests)
 
@@ -126,10 +151,22 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #' @param cover A 2D array of interval left and right endpoints.
 #' @param clustering_method Your favorite clustering algorithm.
 #'
-#' @return A list of two dataframes, one with node data containing bin membership,
-#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#' @return A list of two data frames, one with node data containing bin membership,
+#'  data points per cluster, and cluster dispersion, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
+#' @examples
+#' \dontrun{
+#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' projx = data$x
+#'
+#' num_bins = 10
+#' percent_overlap = 25
+#'
+#' cover = get_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+#'
+#' create_1D_mapper_object(data, dist(data), projx, cover, "single")
+#' }
 create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
 
   cover = apply(cover, 1, check_in_interval)
@@ -152,6 +189,13 @@ create_1D_mapper_object <- function(data, dists, filtered_data, cover, clusterin
 #'  data points per ball, ball tightness, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
+#' @examples
+#' \dontrun{
+#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' eps = 1
+#'
+#' create_ball_mapper_object(data, dist(data), eps)
+#' }
 create_ball_mapper_object <- function(data, dists, eps) {
   balled_data = create_balls(data, dists, eps)
 
@@ -179,14 +223,20 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
+#' @examples
+#' \dontrun{
+#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data.dists = dist(data)
+#' eps = 1
+#'
+#' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
+#' }
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   balls = create_balls(data, dist1, eps)
   return(create_mapper_object(data, dist2, rownames(data), apply(balls, 1, is_in_ball)))
 }
 
 # graph construction ------------------------------------------------------
-
-# TODO: add rox docs
 
 next_triangular <- function(x) {
   next_triangle_indx = floor((1 + sqrt(1 + 8 * x)) / 2)

@@ -53,23 +53,32 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
   setVisualStyle(style.name)
 }
 
+#' Open mapper graph in Cytoscape
+#'
+#' @param mapperobject A set of data frames representing a mapper object, returned by, say, [create_mapper_object()].
+#'
+#' @return Nothing; opens Cytoscape with information from the mapper object ported there. Note Cytoscape must be actively running for this method to work.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' projx = data$x
+#'
+#' num_bins = 10
+#' percent_overlap = 25
+#'
+#' cover = get_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+#'
+#' mapperobj = create_1D_mapper_object(data, dist(data), projx, cover, "single")
+#' cymapper(mapperobj)
+#' }
 cymapper <- function(mapperobject) {
 
   # pass to visualizer for........visualizing...
   visualize_mapper_data(mapperobject, is_ballmapper = FALSE)
 
   # if this isn't here R will print something useless
-  return(invisible(NULL))
-}
-
-cyballmapper <- function(mapperobject) {
-  visualize_mapper_data(mapperobject, FALSE)
-  return(invisible(NULL))
-}
-
-cyclusterballmapper <- function(mapperobject) {
-  visualize_mapper_data(mapperobject, FALSE)
-
   return(invisible(NULL))
 }
 
@@ -82,6 +91,14 @@ cyclusterballmapper <- function(mapperobject) {
 #'
 #' @return an igraph object
 #' @export
+#' @examples
+#' \dontrun{
+#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' eps = 1
+#'
+#' mapperobj = create_ball_mapper_object(data, dist(data), eps)
+#' mapper_object_to_igraph(mapperobj)
+#' }
 mapper_object_to_igraph <- function(mapperobject) {
   vertices = mapperobject[[1]]
   edges = mapperobject[[2]]
