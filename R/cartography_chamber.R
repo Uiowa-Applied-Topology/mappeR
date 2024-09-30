@@ -72,9 +72,9 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
   targets = as.character(edges[, 2])
 
   # calculate some cluster stats
-  cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data, num_vertices)
-  cluster_size = get_cluster_sizes(binclust_data, num_vertices)
-  data_in_cluster = unlist(get_clustered_data(binclust_data, num_vertices))
+  cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data)
+  cluster_size = get_cluster_sizes(binclust_data)
+  data_in_cluster = unlist(get_clustered_data(binclust_data))
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
 
   # if you care about bins
@@ -188,6 +188,16 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
 
 # TODO: add rox docs
 
+next_triangular <- function(x) {
+  next_triangle_indx = floor((1 + sqrt(1 + 8 * x)) / 2)
+  prev_triangle_val = choose(next_triangle_indx, 2)
+  if (prev_triangle_val == x) {
+    return (next_triangle_indx - 1)
+  } else {
+    return (next_triangle_indx)
+  }
+}
+
 get_overlaps <- function(binclust_data) {
   num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
   flattened_data = unlist(binclust_data)
@@ -200,18 +210,7 @@ get_overlaps <- function(binclust_data) {
     intersect(x[[1]], x[[2]])) # get all intersections between clusters
   names(raw_overlaps) = 1:length(raw_overlaps)
   overlaps = Filter(length, raw_overlaps) # filter out the empty intersections
-
   return(overlaps)
-}
-
-next_triangular <- function(x) {
-  next_triangle_indx = floor((1 + sqrt(1 + 8 * x)) / 2)
-  prev_triangle_val = choose(next_triangle_indx, 2)
-  if (prev_triangle_val == x) {
-    return (next_triangle_indx - 1)
-  } else {
-    return (next_triangle_indx)
-  }
 }
 
 get_edgelist_from_overlaps <- function(overlaps, num_vertices) {

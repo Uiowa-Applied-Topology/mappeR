@@ -7,14 +7,14 @@
 get_clusters(bins, dists, method)
 }
 \arguments{
-\item{bins}{A list containing "bins" of vectors of names of datapoints.}
+\item{bins}{A list containing "bins" of vectors of names of data points.}
 
-\item{dists}{A distance matrix containing pairwise distances between named datapoints.}
+\item{dists}{A distance matrix containing pairwise distances between named data points.}
 
 \item{method}{A clue!}
 }
 \value{
-A list containing named vectors (one per bin), whose names are datapoint names and whose values are cluster labels
+A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
 }
 \description{
 This function processes the binned data and global distance matrix to return freshly clustered data.
