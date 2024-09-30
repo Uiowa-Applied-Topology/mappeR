@@ -44,7 +44,7 @@ Consider a function
 f: P \to \mathbb{R}
 ```
 
-Cover $\mathbb{R}$ in a set of intervals $\{I_i\}_{i=1}^n$, so that
+Cover $\mathbb{R}$ in a set of intervals $`\{I_i\}_{i=1}^n`$, so that
 every point in $P$ is contained in some level set $L_i = f^{-1}(I_i)$.
 We may then construct a graph
 
@@ -94,7 +94,7 @@ So in general, the ingredients to construct a mapper graph are
 - A cover of the codomain of the lens function
 - A clustering algorithm
 
-## Example: 1D Mapper
+## Example 1: 1D Mapper
 
 ``` r
 num_points = 5000
@@ -165,8 +165,6 @@ check_in_interval <- function(endpoints) {
 
 # each of the "cover" elements will really be a function that checks if a data point lives in it
 xcovercheck = apply(xcover, 1, check_in_interval)
-ycovercheck = apply(ycover, 1, check_in_interval)
-zcovercheck = apply(zcover, 1, check_in_interval)
 
 # build the mapper objects
 xmapper = create_mapper_object(
@@ -176,11 +174,17 @@ xmapper = create_mapper_object(
   cover_element_tests = xcovercheck,
   method = "single"
 )
-ymapper = create_mapper_object(P.data, P.dist, projy, ycovercheck, "single")
-zmapper = create_mapper_object(P.data, P.dist, projz, zcovercheck, "single")
 
 # mappeR also has a built-in 1D mapper function that will do the above for you
+ymapper = create_1D_mapper_object(P.data, P.dist, projy, ycover, "single")
+zmapper = create_1D_mapper_object(P.data, P.dist, projz, zcover, "single")
 eccentricmapper = create_1D_mapper_object(P.data, P.dist, eccentricity, eccentriccover, "single")
+
+# mappeR also has functions which will convert the mapper outputs into igraph format
+ixmapper = mapper_object_to_igraph(xmapper)
+iymapper = mapper_object_to_igraph(ymapper)
+izmapper = mapper_object_to_igraph(zmapper)
+ieccentricmapper = mapper_object_to_igraph(eccentricmapper)
 ```
 
 The vertices in each output graph below are colored according to the
@@ -189,7 +193,7 @@ number of data points in the cluster.
 
 <img src="README_files/figure-gfm/mapping_the_mapper-1.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-2.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-3.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-4.png" width="50%" />
 
-## Example: ball mapper
+## Example 2: ball mapper
 
 By toying with the general mapper parameters, we can obtain different
 flavors of the algorithm. In the *ball mapper* flavor, we simply use the
@@ -217,9 +221,6 @@ balls1 = create_balls(data = P.data, dists = P.dist, eps = .25)
 
 # ball tester machine machine
 is_in_ball <- function(ball) {
-  balltester <- function(x) {
-    return(x %in% ball)
-  }
   return(function(x) x %in% ball)
 }
 
