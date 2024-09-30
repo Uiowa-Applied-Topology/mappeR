@@ -8,9 +8,8 @@ mappeR
 <!-- badges: end -->
 
 This is an implementation of the
-[mapper](https://research.math.osu.edu/tgda/mapperPBG.pdf) algorithm by
-Singh, Mémoli, and Carlsson, and also the
-[ballmapper](http://arxiv.org/pdf/1901.07410.pdf) algorithm from Dlotko.
+[mapper](https://diglib.eg.org/items/d4e204e8-5dd2-4b5d-bccd-5da3c4a1e925)
+algorithm by Singh, Mémoli, and Carlsson.
 
 ## Setup
 
