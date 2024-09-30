@@ -2,12 +2,12 @@
 # 1D covering -------------------------------------------------------------
 
 # get two random numbers between -1 and 1 for the left and right endpoints
-vars = c(sort(runif(2, -1, 1)))
+vars = sort(runif(2, -1, 1))
 left_end  = vars[1]
 right_end = vars[2]
 
-# get a random number of bins between 1 and 1000
-num_bins = sample(1:1000, 1)
+# get a random number of bins between 1 and 100
+num_bins = sample(1:100, 1)
 
 # get a random percent overlap between 0 and 100
 percent_overlap = runif(1)*100
