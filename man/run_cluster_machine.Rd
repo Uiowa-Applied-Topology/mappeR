@@ -12,7 +12,7 @@ run_cluster_machine(dist_mats, method)
 \item{method}{A string that suggests how the goblins will handle the data.}
 }
 \value{
-A list containing named vectors (one per bin), whose names are datapoint names and whose values are cluster labels (within each bin)
+A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
 }
 \description{
 This function tells the computer to look away for a second, so the goblins come and cluster your data while it's not watching.
