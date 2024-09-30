@@ -42,7 +42,7 @@ Consider a function
 ```math
 f: P \to \mathbb{R}
 ```
-Cover $\mathbb{R}$ in a set of intervals $\{I_i\}_{i=1}^n$, so that every point in $P$ is contained in some level set $L_i = f^{-1}(I_i)$. We may then construct a graph
+Cover $\mathbb{R}$ in a set of intervals $`\{I_i\}_{i=1}^n`$, so that every point in $P$ is contained in some level set $L_i = f^{-1}(I_i)$. We may then construct a graph
 ```math
 G = (V,E)
 ```
@@ -75,7 +75,7 @@ So in general, the ingredients to construct a mapper graph are
 * A cover of the codomain of the lens function
 * A clustering algorithm
 
-## Example: 1D Mapper
+## Example 1: 1D Mapper
 
 ```{r data, echo=TRUE}
 num_points = 5000
@@ -140,8 +140,6 @@ check_in_interval <- function(endpoints) {
 
 # each of the "cover" elements will really be a function that checks if a data point lives in it
 xcovercheck = apply(xcover, 1, check_in_interval)
-ycovercheck = apply(ycover, 1, check_in_interval)
-zcovercheck = apply(zcover, 1, check_in_interval)
 
 # build the mapper objects
 xmapper = create_mapper_object(
@@ -151,11 +149,17 @@ xmapper = create_mapper_object(
   cover_element_tests = xcovercheck,
   method = "single"
 )
-ymapper = create_mapper_object(P.data, P.dist, projy, ycovercheck, "single")
-zmapper = create_mapper_object(P.data, P.dist, projz, zcovercheck, "single")
 
 # mappeR also has a built-in 1D mapper function that will do the above for you
+ymapper = create_1D_mapper_object(P.data, P.dist, projy, ycover, "single")
+zmapper = create_1D_mapper_object(P.data, P.dist, projz, zcover, "single")
 eccentricmapper = create_1D_mapper_object(P.data, P.dist, eccentricity, eccentriccover, "single")
+
+# mappeR also has functions which will convert the mapper outputs into igraph format
+ixmapper = mapper_object_to_igraph(xmapper)
+iymapper = mapper_object_to_igraph(ymapper)
+izmapper = mapper_object_to_igraph(zmapper)
+ieccentricmapper = mapper_object_to_igraph(eccentricmapper)
 ```
 
 The vertices in each output graph below are colored according to the level set the cluster belongs to, and scaled by (the square root of) the number of data points in the cluster.
@@ -172,8 +176,8 @@ eccentricitycover = create_width_balanced_cover(min(eccentricity),
                                                 num_bins,
                                                 percent_overlap)
 
-imappergraphx = imapper(xmapper)
-plot(imappergraphx, xlim = c(0, 2))
+mapper_object_to_igraphgraphx = mapper_object_to_igraph(xmapper)
+plot(mapper_object_to_igraphgraphx, xlim = c(0, 2))
 legend(
   "right",
   title = "x-coordinate",
@@ -183,8 +187,8 @@ legend(
   horiz = FALSE
 )
 
-imappergraphy = imapper(ymapper)
-plot(imappergraphy, xlim = c(0, 2))
+mapper_object_to_igraphgraphy = mapper_object_to_igraph(ymapper)
+plot(mapper_object_to_igraphgraphy, xlim = c(0, 2))
 legend(
   "right",
   title = "y-coordinate",
@@ -194,8 +198,8 @@ legend(
   horiz = FALSE
 )
 
-imappergraphz = imapper(zmapper)
-plot(imappergraphz, xlim = c(0, 2))
+mapper_object_to_igraphgraphz = mapper_object_to_igraph(zmapper)
+plot(mapper_object_to_igraphgraphz, xlim = c(0, 2))
 legend(
   "right",
   title = "z-coordinate",
@@ -205,7 +209,7 @@ legend(
   horiz = FALSE
 )
 
-iecc = imapper(eccentricmapper)
+iecc = mapper_object_to_igraph(eccentricmapper)
 plot(iecc, xlim = c(0, 2))
 legend(
   "right",
@@ -217,7 +221,7 @@ legend(
 )
 ```
 
-## Example: ball mapper
+## Example 2: ball mapper
 
 By toying with the general mapper parameters, we can obtain different flavors of the algorithm. In the *ball mapper* flavor, we simply use the inclusion into the ambient space of the data as our lens function, and let the cover do the work. Specifically, we cover the ambient space with $\varepsilon$-balls by creating a $\varepsilon$-net, which can be done with a greedy algorithm.
 
@@ -236,9 +240,6 @@ balls1 = create_balls(data = P.data, dists = P.dist, eps = .25)
 
 # ball tester machine machine
 is_in_ball <- function(ball) {
-  balltester <- function(x) {
-    return(x %in% ball)
-  }
   return(function(x) x %in% ball)
 }
 
@@ -254,8 +255,10 @@ ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 ```{r ballmapper_time, fig.show='hold', out.width="50%"}
 library(latex2exp)
 
-plot(imapper(ballmapper1), main = TeX(r"($\epsilon=.25$)"))
-plot(imapper(ballmapper2), main = TeX(r"($\epsilon=.5$)"))
-plot(imapper(ballmapper3), main = TeX(r"($\epsilon=1$)"))
-plot(imapper(ballmapper4), main = TeX(r"($\epsilon=2$)"))
+plot(mapper_object_to_igraph(ballmapper1), main = TeX(r"($\epsilon=.25$)"))
+plot(mapper_object_to_igraph(ballmapper2), main = TeX(r"($\epsilon=.5$)"))
+plot(mapper_object_to_igraph(ballmapper3), main = TeX(r"($\epsilon=1$)"))
+plot(mapper_object_to_igraph(ballmapper4), main = TeX(r"($\epsilon=2$)"))
 ```
+
+

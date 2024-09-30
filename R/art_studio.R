@@ -82,7 +82,7 @@ cyclusterballmapper <- function(mapperobject) {
 #'
 #' @return an igraph object
 #' @export
-imapper <- function(mapperobject) {
+mapper_object_to_igraph <- function(mapperobject) {
   vertices = mapperobject[[1]]
   edges = mapperobject[[2]]
 
