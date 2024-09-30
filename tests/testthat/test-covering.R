@@ -18,6 +18,11 @@ cover = create_width_balanced_cover(left_end, right_end, num_bins, percent_overl
 # length of the first interval
 interval_length = as.numeric(abs(cover[1,1] - cover[1,2]))
 
+test_that("1D width balanced cover endpoints are correct", {
+  expect_true(left_end == cover[1,1])
+  expect_true(right_end == cover[nrow(cover), 2])
+})
+
 test_that("1D width balanced cover intervals are equally sized", {
   # each interval in the cover should be the same length, so the same as the first interval
   sapply(1:(num_bins - 1), function(i) expect_equal(as.numeric(abs(cover[i, 1] - cover[i, 2])), interval_length))
