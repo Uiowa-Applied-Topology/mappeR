@@ -285,7 +285,6 @@ get_overlaps <- function(binclust_data) {
 #'
 #' @return A 2D array representing the edge list of a graph.
 get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
-  print(typeof(overlaps))
   overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
   sources = sapply(overlap_names, function(x)
     num_vertices - next_triangular(x))
@@ -295,7 +294,6 @@ get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
     num_vertices - k + diff + 1
   })
   edges = cbind(rev(sources), rev(targets))
-  print(edges)
   return(edges)
 }
 
