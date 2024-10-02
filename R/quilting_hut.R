@@ -53,6 +53,31 @@ check_in_interval <- function(endpoints) {
 
 # greedy epsilon net algorithm from Dłotko
 # output is a list of bins, each containing names of datapoints.
+#' Make a cover of balls
+#'
+#' @param data A data frame.
+#' @param dists A distance matrix for the data frame.
+#' @param eps A positive real number.
+#'
+#' @return A list of vectors of data point names, one list element per ball. The output is such that every data point is contained in a ball of radius \eqn{\varepsilon}, and no ball center is contained in more than one ball. The centers are datapoints themselves.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' num_points = 5000
+#'
+#' P.data = data.frame(
+#'   x = sapply(1:num_points, function(x)
+#'     sin(x) * 10) + rnorm(num_points, 0, 0.1),
+#'   y = sapply(1:num_points, function(x)
+#'     cos(x) ^ 2 * sin(x) * 10) + rnorm(num_points, 0, 0.1),
+#'   z = sapply(1:num_points, function(x)
+#'     10 * sin(x) ^ 2 * cos(x)) + rnorm(num_points, 0, 0.1)
+#' )
+#'
+#' P.dist = dist(P.data)
+#' balls = create_balls(data = P.data, dists = P.dist, eps = .25)
+#' }
 create_balls <- function(data, dists, eps) {
   dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
   balls = list()
