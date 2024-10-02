@@ -57,7 +57,6 @@ get_clusters <- function(bins, dists, method) {
 
   # cluster the data
   clusters = run_cluster_machine(subset_dists(bins, dists), method) # this fixed everything????
-  print(names(dists))
 
   return(clusters)
 }

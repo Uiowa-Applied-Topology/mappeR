@@ -260,15 +260,17 @@ next_triangular <- function(x) {
 #'
 #' @return A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge.
 get_overlaps <- function(binclust_data) {
-  num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
   if (!is.null(dim(binclust_data))) {
     return(0)
   }
+  num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
   flattened_data = unlist(binclust_data)
   clusters = lapply(1:num_vertices, function(x)
     flattened_data[flattened_data == x]) # sort by cluster
   cluster_names = lapply(clusters, names) # it doesn't work if you don't do this
-
+  if (length(cluster_names) < 2) {
+    return(0)
+  }
   pairs = combn(cluster_names, 2) # get all pairs of clusters
   raw_overlaps = apply(pairs, 2, function(x)
     intersect(x[[1]], x[[2]])) # get all intersections between clusters

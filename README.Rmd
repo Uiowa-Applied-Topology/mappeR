@@ -78,7 +78,7 @@ So in general, the ingredients to construct a mapper graph are
 ## Example 1: 1D Mapper
 
 ```{r data, echo=TRUE}
-num_points = 100
+num_points = 5000
 
 P.data = data.frame(
   x = sapply(1:num_points, function(x)
@@ -121,7 +121,7 @@ projz = P.data$z
 eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
 
 # cover parameters to generate a width-balanced cover
-num_bins = 1
+num_bins = 10
 percent_overlap = 25
 
 # generate the cover
@@ -151,15 +151,15 @@ xmapper = create_mapper_object(
 )
 
 # mappeR also has a built-in 1D mapper function that will do the above for you
-# ymapper = create_1D_mapper_object(P.data, P.dist, projy, ycover, "single")
-# zmapper = create_1D_mapper_object(P.data, P.dist, projz, zcover, "single")
-# eccentricmapper = create_1D_mapper_object(P.data, P.dist, eccentricity, eccentriccover, "single")
+ymapper = create_1D_mapper_object(P.data, P.dist, projy, ycover, "single")
+zmapper = create_1D_mapper_object(P.data, P.dist, projz, zcover, "single")
+eccentricmapper = create_1D_mapper_object(P.data, P.dist, eccentricity, eccentriccover, "single")
 
 # mappeR also has functions which will convert the mapper outputs into igraph format
 ixmapper = mapper_object_to_igraph(xmapper)
-# iymapper = mapper_object_to_igraph(ymapper)
-# izmapper = mapper_object_to_igraph(zmapper)
-# ieccentricmapper = mapper_object_to_igraph(eccentricmapper)
+iymapper = mapper_object_to_igraph(ymapper)
+izmapper = mapper_object_to_igraph(zmapper)
+ieccentricmapper = mapper_object_to_igraph(eccentricmapper)
 ```
 
 The vertices in each output graph below are colored according to the level set the cluster belongs to, and scaled by (the square root of) the number of data points in the cluster.
@@ -236,7 +236,7 @@ There's a secret parameter here, which is $\varepsilon$. Below are output graphs
 
 ```{r ball_mapper_parameters, echo=TRUE}
 # creates a cover using a greedy algorithm
-balls1 = create_balls(data = P.data, dists = P.dist, eps = 20)
+balls1 = create_balls(data = P.data, dists = P.dist, eps = .25)
 
 # ball tester machine machine
 is_in_ball <- function(ball) {
@@ -247,18 +247,18 @@ is_in_ball <- function(ball) {
 ballmapper1 = create_mapper_object(P.data, P.dist, rownames(P.data), lapply(balls1, is_in_ball))
 
 # mappeR has a built-in ball mapper function to do this for you
-# ballmapper2 = create_ball_mapper_object(P.data, P.dist, .5)
-# ballmapper3 = create_ball_mapper_object(P.data, P.dist, 1)
-# ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
+ballmapper2 = create_ball_mapper_object(P.data, P.dist, .5)
+ballmapper3 = create_ball_mapper_object(P.data, P.dist, 1)
+ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 ```
 
 ```{r ballmapper_time, fig.show='hold', out.width="50%"}
 library(latex2exp)
 
 plot(mapper_object_to_igraph(ballmapper1), main = TeX(r"($\epsilon=.25$)"))
-# plot(mapper_object_to_igraph(ballmapper2), main = TeX(r"($\epsilon=.5$)"))
-# plot(mapper_object_to_igraph(ballmapper3), main = TeX(r"($\epsilon=1$)"))
-# plot(mapper_object_to_igraph(ballmapper4), main = TeX(r"($\epsilon=2$)"))
+plot(mapper_object_to_igraph(ballmapper2), main = TeX(r"($\epsilon=.5$)"))
+plot(mapper_object_to_igraph(ballmapper3), main = TeX(r"($\epsilon=1$)"))
+plot(mapper_object_to_igraph(ballmapper4), main = TeX(r"($\epsilon=2$)"))
 ```
 
 
