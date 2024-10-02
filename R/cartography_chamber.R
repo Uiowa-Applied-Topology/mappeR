@@ -92,15 +92,15 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
   num_vertices = max(binclust_data[[length(binclust_data)]])
   node_ids = as.character(1:num_vertices)
   overlaps = get_overlaps(binclust_data)
-  edges = get_edgelist_from_overlaps(overlaps, num_vertices)
-  sources = as.character(edges[, 1])
-  targets = as.character(edges[, 2])
+  edgelist = get_edgelist_from_overlaps(overlaps, num_vertices)
+  sources = as.character(edgelist[, 1])
+  targets = as.character(edgelist[, 2])
 
   # calculate some cluster stats
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data)
   cluster_size = get_cluster_sizes(binclust_data)
   data_in_cluster = unlist(get_clustered_data(binclust_data))
-  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
+  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edgelist)
 
   # if you care about bins
   if (binning) {
@@ -265,6 +265,9 @@ next_triangular <- function(x) {
 #' @return A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge.
 get_overlaps <- function(binclust_data) {
   num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
+  if (num_vertices == 1) {
+    return(0)
+  }
   flattened_data = unlist(binclust_data)
   clusters = lapply(1:num_vertices, function(x)
     flattened_data[flattened_data == x]) # sort by cluster
@@ -285,15 +288,19 @@ get_overlaps <- function(binclust_data) {
 #'
 #' @return A 2D array representing the edge list of a graph.
 get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
-  overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
-  sources = sapply(overlap_names, function(x)
-    num_vertices - next_triangular(x))
-  targets = sapply(overlap_names, function(x) {
-    k = next_triangular(x)
-    diff = k * (k + 1) / 2 - x
-    num_vertices - k + diff + 1
-  })
-  edges = cbind(rev(sources), rev(targets))
-  return(edges)
+  if (num_vertices == 2) {
+    return(matrix(c(1,2), nrow = 1, ncol = 2))
+  } else {
+    overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
+    sources = sapply(overlap_names, function(x)
+      num_vertices - next_triangular(x))
+    targets = sapply(overlap_names, function(x) {
+      k = next_triangular(x)
+      diff = k * (k + 1) / 2 - x
+      num_vertices - k + diff + 1
+    })
+    edges = cbind(rev(sources), rev(targets))
+    return(edges)
+  }
 }
 

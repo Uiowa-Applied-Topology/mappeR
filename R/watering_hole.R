@@ -213,10 +213,19 @@ get_clustered_data <- function(binclust_data) {
 #'
 #' @return A vector of real numbers representing cluster overlap strength. This is calculated per edge by dividing the number of data points in the overlap by the number of points in the cluster on either end, and taking the maximum value.
 get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
+
+  if (length(edges) == 0) {
+    return(NULL)
+  }
+
   heads = edges[, 1]
   tails = edges[, 2]
   head_sizes = cluster_sizes[heads]
   tail_sizes = cluster_sizes[tails]
+
+  if (nrow(edges) == 1) {
+    return(max(length(overlap_lengths)/head_sizes, length(overlap_lengths)/tail_sizes))
+  }
 
   head_overlaps = overlap_lengths / head_sizes
   tail_overlaps = overlap_lengths / tail_sizes
