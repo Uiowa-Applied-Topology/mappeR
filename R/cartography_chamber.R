@@ -76,7 +76,7 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #'
 #' @return A list of bins, each containing a vector of the names of the data inside it.
 create_bins <- function(data, filtered_data, cover_element_tests) {
-  return(mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data)))
+  return(lapply(cover_element_tests, create_single_bin, data = data, filtered_data = filtered_data))
 }
 
 #' Construct mapper graph from data
