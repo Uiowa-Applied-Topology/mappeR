@@ -39,23 +39,25 @@ subset_dists <- function(bin, dists) {
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
 get_clusters <- function(bins, dists, method) {
-  dist_mats = dists
-
   # more than one bin, need more than one distance matrix
   if (is.null(dim(bins))) {
     # subset the global distance matrix per bin
     dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists))
+
+    # cluster the data
+    clusters = run_cluster_machine(dist_mats, method)
+
+    # accurately total up clusters
+    clusters_per_bin = sapply(clusters, max)
+    offset = c(0, cumsum(clusters_per_bin))
+    clusters = mapply(function(x, y)
+      x + y, clusters, offset[-length(offset)])
+    return(clusters)
   }
 
   # cluster the data
-  clusters = run_cluster_machine(dist_mats, method)
-  # print(clusters)
+  clusters = run_cluster_machine(dists, method)
 
-  # accurately total up clusters
-  clusters_per_bin = sapply(clusters, max)
-  offset = c(0, cumsum(clusters_per_bin))
-  clusters = mapply(function(x, y)
-    x + y, clusters, offset[-length(offset)])
   return(clusters)
 }
 
