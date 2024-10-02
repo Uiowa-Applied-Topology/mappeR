@@ -6,7 +6,7 @@
 \alias{mappeR-package}
 \title{mappeR: Construct and Visualize TDA Mapper Graphs}
 \description{
-An implementation of various flavors of the mapper algorithm (from the field of topological data analysis) in R, originally developed by Singh, Mémoli and Carlsson (2007) (link to paper [here](\url{https://diglib.eg.org/items/d4e204e8-5dd2-4b5d-bccd-5da3c4a1e925}), along with other tools for exploring the output graph in more detail. This can be done either by exporting the raw statistics, using the \pkg{igraph} package, or letting the package pass the data to Cytoscape (sold separately for free [here](\url{https://cytoscape.org/}) for further analysis.
+Topological data analysis (TDA) is a method of data analysis that uses techniques from topology to analyze high-dimensional data. 'mappeR' implements Mapper, an algorithm from this area developed by Singh, Mémoli and Carlsson (2007) (paper <[here]https://diglib.eg.org/items/d4e204e8-5dd2-4b5d-bccd-5da3c4a1e925>) which generalizes the concept of a <[Reeb graph]https://en.wikipedia.org/wiki/Reeb_graph>. The output graph is able to be visualized in R using 'igraph' or using a free newtork analysis software called 'Cytoscape', available for download <[here.]https://cytoscape.org/>
 }
 \seealso{
 Useful links:

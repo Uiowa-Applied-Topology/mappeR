@@ -57,7 +57,7 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
 #'
 #' @param mapperobject A set of data frames representing a mapper object, returned by, say, [create_mapper_object()].
 #'
-#' @return Nothing; opens Cytoscape with information from the mapper object ported there. Note Cytoscape must be actively running for this method to work.
+#' @return Nothing; opens Cytoscape with information from the mapper object ported there. Cytoscape must be actively running in the background for this method to work.
 #' @export
 #'
 #' @examples
@@ -92,13 +92,11 @@ cymapper <- function(mapperobject) {
 #' @return an igraph object
 #' @export
 #' @examples
-#' \dontrun{
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
-#' eps = 1
+#' eps = .5
 #'
 #' mapperobj = create_ball_mapper_object(data, dist(data), eps)
 #' mapper_object_to_igraph(mapperobj)
-#' }
 mapper_object_to_igraph <- function(mapperobject) {
   vertices = mapperobject[[1]]
   edges = mapperobject[[2]]

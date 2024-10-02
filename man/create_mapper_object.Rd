@@ -32,7 +32,6 @@ containing sources, targets, and weights representing overlap strength.
 Run the mapper algorithm on a data frame.
 }
 \examples{
-\dontrun{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 projx = data$x
 
@@ -55,5 +54,4 @@ xmapper = create_mapper_object(
   cover_element_tests = xcovercheck,
   method = "single"
 )
-}
 }

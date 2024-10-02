@@ -22,10 +22,8 @@ containing sources, targets, and weights representing overlap strength.
 Run mapper using an \eqn{\varepsilon}-net cover (greedily generated) and the 2D inclusion function as a filter.
 }
 \examples{
-\dontrun{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
-eps = 1
+eps = .5
 
 create_ball_mapper_object(data, dist(data), eps)
-}
 }

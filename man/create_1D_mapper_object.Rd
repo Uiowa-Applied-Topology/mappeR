@@ -32,15 +32,13 @@ containing sources, targets, and weights representing overlap strength.
 Run mapper using a one-dimensional filter, a cover of intervals, and a clustering algorithm.
 }
 \examples{
-\dontrun{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 projx = data$x
 
 num_bins = 10
 percent_overlap = 25
 
-cover = get_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 
 create_1D_mapper_object(data, dist(data), projx, cover, "single")
-}
 }

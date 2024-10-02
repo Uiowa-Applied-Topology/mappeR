@@ -63,7 +63,6 @@ check_in_interval <- function(endpoints) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' num_points = 5000
 #'
 #' P.data = data.frame(
@@ -77,7 +76,6 @@ check_in_interval <- function(endpoints) {
 #'
 #' P.dist = dist(P.data)
 #' balls = create_balls(data = P.data, dists = P.dist, eps = .25)
-#' }
 create_balls <- function(data, dists, eps) {
   dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
   balls = list()

@@ -20,7 +20,6 @@ A list of vectors of data point names, one list element per ball. The output is 
 Make a cover of balls
 }
 \examples{
-\dontrun{
 num_points = 5000
 
 P.data = data.frame(
@@ -34,5 +33,4 @@ P.data = data.frame(
 
 P.dist = dist(P.data)
 balls = create_balls(data = P.data, dists = P.dist, eps = .25)
-}
 }

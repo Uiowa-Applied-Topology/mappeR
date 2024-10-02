@@ -16,11 +16,9 @@ an igraph object
 make igraph
 }
 \examples{
-\dontrun{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
-eps = 1
+eps = .5
 
 mapperobj = create_ball_mapper_object(data, dist(data), eps)
 mapper_object_to_igraph(mapperobj)
-}
 }

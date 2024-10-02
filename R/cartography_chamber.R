@@ -16,7 +16,6 @@
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
 #' @examples
-#' \dontrun{
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 #' projx = data$x
 #'
@@ -39,7 +38,6 @@
 #'   cover_element_tests = xcovercheck,
 #'   method = "single"
 #' )
-#' }
 create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
   bins = create_bins(data, filtered_data, cover_element_tests)
 
@@ -161,17 +159,15 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
 #' @examples
-#' \dontrun{
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 #' projx = data$x
 #'
 #' num_bins = 10
 #' percent_overlap = 25
 #'
-#' cover = get_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+#' cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 #'
 #' create_1D_mapper_object(data, dist(data), projx, cover, "single")
-#' }
 create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
 
   cover = apply(cover, 1, check_in_interval)
@@ -195,12 +191,10 @@ create_1D_mapper_object <- function(data, dists, filtered_data, cover, clusterin
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
 #' @examples
-#' \dontrun{
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
-#' eps = 1
+#' eps = .5
 #'
 #' create_ball_mapper_object(data, dist(data), eps)
-#' }
 create_ball_mapper_object <- function(data, dists, eps) {
   balled_data = create_balls(data, dists, eps)
 
@@ -229,13 +223,11 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #'  containing sources, targets, and weights representing overlap strength.
 #' @export
 #' @examples
-#' \dontrun{
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 #' data.dists = dist(data)
 #' eps = 1
 #'
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
-#' }
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   balls = create_balls(data, dist1, eps)
 

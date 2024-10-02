@@ -10,7 +10,7 @@ cymapper(mapperobject)
 \item{mapperobject}{A set of data frames representing a mapper object, returned by, say, \code{\link[=create_mapper_object]{create_mapper_object()}}.}
 }
 \value{
-Nothing; opens Cytoscape with information from the mapper object ported there. Note Cytoscape must be actively running for this method to work.
+Nothing; opens Cytoscape with information from the mapper object ported there. Cytoscape must be actively running in the background for this method to work.
 }
 \description{
 Open mapper graph in Cytoscape
