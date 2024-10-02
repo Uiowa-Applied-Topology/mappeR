@@ -42,7 +42,7 @@ get_clusters <- function(bins, dists, method) {
   dist_mats = dists
 
   # more than one bin, need more than one distance matrix
-  if (!is.null(dim(bins))) {
+  if (is.null(dim(bins))) {
     # subset the global distance matrix per bin
     dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists))
   }
