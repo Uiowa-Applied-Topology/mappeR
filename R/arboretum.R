@@ -47,7 +47,7 @@ cut_dendrogram <- function(dend, threshold) {
   dispersioncondition = indexofdispersion < .015
 
   # uncomment this to plot the dendrograms that come through here with their stats
-  plot(dend, xlab=paste("index of dispersion: ", round(indexofdispersion, 3), " too low? ", dispersioncondition, ", tallest branch: ", round(tallest_branch_height, 3), ", too short? ", thresholdcondition))
+  # plot(dend, xlab=paste("index of dispersion: ", round(indexofdispersion, 3), " too low? ", dispersioncondition, ", tallest branch: ", round(tallest_branch_height, 3), ", too short? ", thresholdcondition))
 
   if (thresholdcondition | dispersioncondition) {
     return(cutree(dend, k = 1))
@@ -62,7 +62,7 @@ cut_dendrogram <- function(dend, threshold) {
 #'
 #' @return A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels. This function determines a global minimum threshold based on the longest branches in all the input dendrograms, and uses that as a heuristic to gauge if the best number of clusters is 1, or the value obtained by cutting the longest branch.
 process_dendrograms <- function(dends) {
-  if (class(dends) == "hclust") {
+  if (inherits(dends, "hclust")) {
     return(cut_dendrogram(dends, 0))
   }
 
