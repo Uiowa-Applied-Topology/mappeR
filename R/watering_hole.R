@@ -40,7 +40,7 @@ subset_dists <- function(bin, dists) {
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
 get_clusters <- function(bins, dists, method) {
   # more than one bin, need more than one distance matrix
-  if (is.null(dim(bins))) {
+  if (is.list(bins)) {
     # subset the global distance matrix per bin
     dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists))
 
@@ -56,7 +56,8 @@ get_clusters <- function(bins, dists, method) {
   }
 
   # cluster the data
-  clusters = run_cluster_machine(dists, method)
+  clusters = run_cluster_machine(subset_dists(bins, dists), method) # this fixed everything????
+  print(names(dists))
 
   return(clusters)
 }
@@ -108,9 +109,9 @@ run_slink <- function(dist) {
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
 get_single_linkage_clusters <- function(dist_mats) {
-    if (!is.list(dist_mats)) {
-      return(process_dendrograms(list(run_slink(dist_mats))))
-    }
+      if (!is.list(dist_mats)) {
+        return(process_dendrograms(as.list(run_slink(dist_mats))))
+      }
   dends = lapply(dist_mats, run_slink)
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]
@@ -153,7 +154,7 @@ get_cluster_sizes <- function(binclust_data) {
 #' @return A vector of integers equal in length to the number of clusters, whose members identify which bin that cluster belongs to.
 get_bin_vector <- function(binclust_data) {
   if (!is.list(binclust_data)) {
-    return(1:(max(binclust_data)))
+    return(rep(1, max(binclust_data)))
   }
   num_unique_clusters_per_bin = sapply(lapply(binclust_data, unique), length)
   bin_by_clusters = unlist(mapply(
