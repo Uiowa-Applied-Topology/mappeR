@@ -233,11 +233,21 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' }
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   balls = create_balls(data, dist1, eps)
+
+  is_in_ball <- function(ball) {
+    return(function(x) x %in% ball)
+  }
+
   return(create_mapper_object(data, dist2, rownames(data), lapply(balls, is_in_ball), clustering_method))
 }
 
 # graph construction ------------------------------------------------------
 
+#' Find which triangular number you're on
+#'
+#' @param x A positive integer.
+#'
+#' @return The index of the next greatest or equal triangular number to \eqn{x}.
 next_triangular <- function(x) {
   next_triangle_indx = floor((1 + sqrt(1 + 8 * x)) / 2)
   prev_triangle_val = choose(next_triangle_indx, 2)
@@ -248,6 +258,11 @@ next_triangular <- function(x) {
   }
 }
 
+#' Get cluster overlaps
+#'
+#' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids.
+#'
+#' @return A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge.
 get_overlaps <- function(binclust_data) {
   num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
   flattened_data = unlist(binclust_data)
@@ -263,7 +278,14 @@ get_overlaps <- function(binclust_data) {
   return(overlaps)
 }
 
+#' Obtain edge list from cluster intersections
+#'
+#' @param overlaps A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge; output of [get_overlaps()].
+#' @param num_vertices The number of vertices in the graph.
+#'
+#' @return A 2D array representing the edge list of a graph.
 get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
+  print(typeof(overlaps))
   overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
   sources = sapply(overlap_names, function(x)
     num_vertices - next_triangular(x))
@@ -273,6 +295,7 @@ get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
     num_vertices - k + diff + 1
   })
   edges = cbind(rev(sources), rev(targets))
+  print(edges)
   return(edges)
 }
 

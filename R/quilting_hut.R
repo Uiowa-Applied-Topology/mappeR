@@ -104,7 +104,3 @@ create_balls <- function(data, dists, eps) {
   }
   return(balls)
 }
-
-is_in_ball <- function(ball) {
-  return(function(x) x %in% ball)
-}
