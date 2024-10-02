@@ -147,7 +147,7 @@ get_cluster_sizes <- function(binclust_data) {
 #'
 #' @return A vector of integers equal in length to the number of clusters, whose members identify which bin that cluster belongs to.
 get_bin_vector <- function(binclust_data) {
-  if (!is.null(binclust_data)) {
+  if (!is.null(dim(binclust_data))) {
     return(1:(max(binclust_data)))
   }
   num_unique_clusters_per_bin = sapply(lapply(binclust_data, unique), length)
