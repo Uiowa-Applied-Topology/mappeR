@@ -39,18 +39,25 @@ subset_dists <- function(bin, dists) {
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
 get_clusters <- function(bins, dists, method) {
-  # subset the global distance matrix per bin
-  dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists))
+  # more than one bin, need more than one distance matrix
+  if (is.null(dim(bins))) {
+    # subset the global distance matrix per bin
+    dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists))
+
+    # cluster the data
+    clusters = run_cluster_machine(dist_mats, method)
+
+    # accurately total up clusters
+    clusters_per_bin = sapply(clusters, max)
+    offset = c(0, cumsum(clusters_per_bin))
+    clusters = mapply(function(x, y)
+      x + y, clusters, offset[-length(offset)])
+    return(clusters)
+  }
 
   # cluster the data
-  clusters = run_cluster_machine(dist_mats, method)
-  # print(clusters)
+  clusters = run_cluster_machine(dists, method)
 
-  # accurately total up clusters
-  clusters_per_bin = sapply(clusters, max)
-  offset = c(0, cumsum(clusters_per_bin))
-  clusters = mapply(function(x, y)
-    x + y, clusters, offset[-length(offset)])
   return(clusters)
 }
 
@@ -96,6 +103,9 @@ run_slink <- function(dist) {
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
 get_single_linkage_clusters <- function(dist_mats) {
+  if (!is.null(dim(dist_mats))) {
+    return(cut_dendrogram(run_slink(as.dist(dist_mats)), 0))
+  }
   dends = lapply(dist_mats, run_slink)
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]
@@ -137,6 +147,9 @@ get_cluster_sizes <- function(binclust_data) {
 #'
 #' @return A vector of integers equal in length to the number of clusters, whose members identify which bin that cluster belongs to.
 get_bin_vector <- function(binclust_data) {
+  if (!is.list(binclust_data)) {
+    return(1:(max(binclust_data)))
+  }
   num_unique_clusters_per_bin = sapply(lapply(binclust_data, unique), length)
   bin_by_clusters = unlist(mapply(
     function(x, y)
@@ -154,11 +167,8 @@ get_bin_vector <- function(binclust_data) {
 #'
 #' @return A real number in \eqn{(0,\infty)} representing a measure of dispersion of a cluster. This method finds the medoid of the input data set, the point with the smallest sum of distances to all other points, and returns that sum divided by the size of the cluster. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{|C|}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{j}\, \sum_{i}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 compute_tightness <- function(dists, cluster) {
-  if (length(cluster) == 0) {
-    return(1)
-  }
-  if (length(cluster) == 1) {
-    return(1)
+  if ((length(cluster) == 0) | (length(cluster) == 1)) {
+    return(0)
   } else {
     cluster_names = names(cluster)
     these_dists = dists[cluster_names, cluster_names]
@@ -216,10 +226,19 @@ get_clustered_data <- function(binclust_data) {
 #'
 #' @return A vector of real numbers representing cluster overlap strength. This is calculated per edge by dividing the number of data points in the overlap by the number of points in the cluster on either end, and taking the maximum value.
 get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
+
+  if (length(edges) == 0) {
+    return(NULL)
+  }
+
   heads = edges[, 1]
   tails = edges[, 2]
   head_sizes = cluster_sizes[heads]
   tail_sizes = cluster_sizes[tails]
+
+  if (nrow(edges) == 1) {
+    return(max(length(overlap_lengths)/head_sizes, length(overlap_lengths)/tail_sizes))
+  }
 
   head_overlaps = overlap_lengths / head_sizes
   tail_overlaps = overlap_lengths / tail_sizes

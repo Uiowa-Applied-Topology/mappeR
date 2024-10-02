@@ -24,7 +24,7 @@ cut_dendrogram <- function(dend, threshold) {
   # TODO remove all the duplicate code lol
   heights = sort(unique(cophenetic(dend))) # merge heights of dendrogram
 
-  if (length(heights) <= 1) {
+  if (length(heights) <= 2) {
     if (max(heights) < threshold) {
       return(cutree(dend, k = 1))
     } else {
@@ -38,6 +38,10 @@ cut_dendrogram <- function(dend, threshold) {
   tallest_branch_id = which(branch_lengths == tallest_branch_height)
 
   cutval = (tallest_branch_height + heights[tallest_branch_id + 1]) / 2 # midpoint of tallest branch
+  if (length(cutval) > 1) {
+    cutval = sample(cutval, 1)
+  }
+
   thresholdcondition = tallest_branch_height < threshold
   indexofdispersion = sd(heights) ^ 2 / mean(heights)
   dispersioncondition = indexofdispersion < .015

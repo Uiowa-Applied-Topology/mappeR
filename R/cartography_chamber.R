@@ -90,17 +90,22 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #'  containing sources, targets, and weights representing overlap strength.
 run_mapper <- function(binclust_data, dists, binning=TRUE) {
   num_vertices = max(binclust_data[[length(binclust_data)]])
+
+  if (num_vertices == 1) {
+    num_vertices = max(binclust_data)
+  }
+
   node_ids = as.character(1:num_vertices)
   overlaps = get_overlaps(binclust_data)
-  edges = get_edgelist_from_overlaps(overlaps, num_vertices)
-  sources = as.character(edges[, 1])
-  targets = as.character(edges[, 2])
+  edgelist = get_edgelist_from_overlaps(overlaps, num_vertices)
+  sources = as.character(edgelist[, 1])
+  targets = as.character(edgelist[, 2])
 
   # calculate some cluster stats
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data)
   cluster_size = get_cluster_sizes(binclust_data)
   data_in_cluster = unlist(get_clustered_data(binclust_data))
-  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edges)
+  edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edgelist)
 
   # if you care about bins
   if (binning) {
@@ -233,11 +238,21 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' }
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   balls = create_balls(data, dist1, eps)
-  return(create_mapper_object(data, dist2, rownames(data), apply(balls, 1, is_in_ball)))
+
+  is_in_ball <- function(ball) {
+    return(function(x) x %in% ball)
+  }
+
+  return(create_mapper_object(data, dist2, rownames(data), lapply(balls, is_in_ball), clustering_method))
 }
 
 # graph construction ------------------------------------------------------
 
+#' Find which triangular number you're on
+#'
+#' @param x A positive integer.
+#'
+#' @return The index of the next greatest or equal triangular number to \eqn{x}.
 next_triangular <- function(x) {
   next_triangle_indx = floor((1 + sqrt(1 + 8 * x)) / 2)
   prev_triangle_val = choose(next_triangle_indx, 2)
@@ -248,8 +263,16 @@ next_triangular <- function(x) {
   }
 }
 
+#' Get cluster overlaps
+#'
+#' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids.
+#'
+#' @return A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge.
 get_overlaps <- function(binclust_data) {
   num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
+  if (num_vertices == 1) {
+    return(0)
+  }
   flattened_data = unlist(binclust_data)
   clusters = lapply(1:num_vertices, function(x)
     flattened_data[flattened_data == x]) # sort by cluster
@@ -263,16 +286,26 @@ get_overlaps <- function(binclust_data) {
   return(overlaps)
 }
 
+#' Obtain edge list from cluster intersections
+#'
+#' @param overlaps A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge; output of [get_overlaps()].
+#' @param num_vertices The number of vertices in the graph.
+#'
+#' @return A 2D array representing the edge list of a graph.
 get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
-  overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
-  sources = sapply(overlap_names, function(x)
-    num_vertices - next_triangular(x))
-  targets = sapply(overlap_names, function(x) {
-    k = next_triangular(x)
-    diff = k * (k + 1) / 2 - x
-    num_vertices - k + diff + 1
-  })
-  edges = cbind(rev(sources), rev(targets))
-  return(edges)
+  if (num_vertices == 2) {
+    return(matrix(c(1,2), nrow = 1, ncol = 2))
+  } else {
+    overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
+    sources = sapply(overlap_names, function(x)
+      num_vertices - next_triangular(x))
+    targets = sapply(overlap_names, function(x) {
+      k = next_triangular(x)
+      diff = k * (k + 1) / 2 - x
+      num_vertices - k + diff + 1
+    })
+    edges = cbind(rev(sources), rev(targets))
+    return(edges)
+  }
 }
 

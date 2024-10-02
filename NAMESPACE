@@ -2,6 +2,7 @@
 
 export(create_1D_mapper_object)
 export(create_ball_mapper_object)
+export(create_balls)
 export(create_clusterball_mapper_object)
 export(create_mapper_object)
 export(create_width_balanced_cover)
