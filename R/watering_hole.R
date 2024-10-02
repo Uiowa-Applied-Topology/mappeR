@@ -102,7 +102,7 @@ run_slink <- function(dist) {
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
 get_single_linkage_clusters <- function(dist_mats) {
   if (!is.null(dim(dist_mats))) {
-    return(cut_dendrogram(run_slink(dist_mats), 0))
+    return(cut_dendrogram(run_slink(as.dist(dist_mats)), 0))
   }
   dends = lapply(dist_mats, run_slink)
   real_dends = dends[lapply(dends, length) > 1]
