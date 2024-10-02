@@ -71,6 +71,11 @@ get_clusters <- function(bins, dists, method) {
 #'
 #' @return A named vector whose names are data point names and whose values are cluster labels
 convert_to_clusters <- function(bins) {
+  if (!is.list(bins)) {
+    res = rep(1, length(bins))
+    names(res) = bins[,1]
+    return(res)
+  }
   ball_sizes = lapply(bins, length)
   ballball_data = unlist(mapply(function(x, y)
     rep(x, y), 1:length(ball_sizes), ball_sizes))
@@ -103,9 +108,9 @@ run_slink <- function(dist) {
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
 get_single_linkage_clusters <- function(dist_mats) {
-  if (!is.null(dim(dist_mats))) {
-    return(cut_dendrogram(run_slink(as.dist(dist_mats)), 0))
-  }
+    if (!is.list(dist_mats)) {
+      return(process_dendrograms(list(run_slink(dist_mats))))
+    }
   dends = lapply(dist_mats, run_slink)
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]
@@ -188,7 +193,6 @@ compute_tightness <- function(dists, cluster) {
 #' @return A vector of real numbers in \eqn{(0,\infty)} representing a measure of dispersion of a cluster, calculated according to [compute_tightness()]
 get_cluster_tightness_vector <- function(dists, binclust_data) {
   flattened_data = unlist(binclust_data) # we don't care about bins here
-
   num_vertices = max(flattened_data)
 
   clusters = lapply(1:num_vertices, function(x)

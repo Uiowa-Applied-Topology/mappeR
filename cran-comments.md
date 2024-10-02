@@ -1,10 +1,10 @@
 ## CRAN Resubmission
 
-This is a resubmission to fix issues caught by `devtools::check_win_devel`. In this version I have:
+This is a resubmission to fix issues in the DESCRIPTION by Beni Altmann. Here I
 
--   Fixed link formatting in DESCRIPTION and the README.
-
--   Corrected a LaTeX error in a .Rd file
+* Reformatted URLS correctly
+* Removed `dontrun` to let most examples go through
+* Minor bug fixes for ballmapper
 
 ## R CMD check results
 

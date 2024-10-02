@@ -5,17 +5,17 @@ Description: Topological data analysis (TDA) is a method of data analysis that
   uses techniques from topology to analyze high-dimensional data. Here we
   implement Mapper, an algorithm from this area developed by Singh, Mémoli and 
   Carlsson (2007) 
-  (paper <[here]https://diglib.eg.org/items/d4e204e8-5dd2-4b5d-bccd-5da3c4a1e925>) 
+  (paper [here]<https://diglib.eg.org/items/d4e204e8-5dd2-4b5d-bccd-5da3c4a1e925>) 
   which generalizes the concept of a 
-  <[Reeb graph]https://en.wikipedia.org/wiki/Reeb_graph>. The output graph is 
-  able to be visualized in R using 'igraph' or using a free newtork analysis 
-  software called 'Cytoscape', available for download <[here]https://cytoscape.org/>.
+  [Reeb graph]<https://en.wikipedia.org/wiki/Reeb_graph>. The output graph is 
+  able to be visualized in R using 'igraph' or using a free network analysis 
+  software called 'Cytoscape', available for download [here]<https://cytoscape.org/>.
 Authors@R: person("George", "Clare Kennedy", email = "george-clarekennedy@uiowa.edu",
   role = c("aut", "cre"))
 License: MIT + file LICENSE
 URL: https://github.com/Uiowa-Applied-Topology/mappeR
 BugReports: https://github.com/Uiowa-Applied-Topology/mappeR/issues
-Version: 0.1.1
+Version: 0.1.2
 Encoding: UTF-8
 biocViews:
 Imports:

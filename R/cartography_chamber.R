@@ -40,7 +40,6 @@
 #' )
 create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
   bins = create_bins(data, filtered_data, cover_element_tests)
-
   if (method == "none") {
     return(run_mapper(convert_to_clusters(bins), dists, binning = FALSE))
   } else {
@@ -87,12 +86,12 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 run_mapper <- function(binclust_data, dists, binning=TRUE) {
-  num_vertices = max(binclust_data[[length(binclust_data)]])
-
-  if (num_vertices == 1) {
+  num_vertices = 0
+  if (is.list(binclust_data)) {
+    num_vertices = max(binclust_data[[length(binclust_data)]])
+  } else {
     num_vertices = max(binclust_data)
   }
-
   node_ids = as.character(1:num_vertices)
   overlaps = get_overlaps(binclust_data)
   edgelist = get_edgelist_from_overlaps(overlaps, num_vertices)
@@ -262,7 +261,8 @@ next_triangular <- function(x) {
 #' @return A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge.
 get_overlaps <- function(binclust_data) {
   num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
-  if (num_vertices == 1) {
+
+  if ((!is.list(binclust_data) | length(binclust_data) == 1)) {
     return(0)
   }
   flattened_data = unlist(binclust_data)
