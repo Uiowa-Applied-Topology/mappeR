@@ -76,7 +76,7 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #'
 #' @return A list of bins, each containing a vector of the names of the data inside it.
 create_bins <- function(data, filtered_data, cover_element_tests) {
-  return(lapply(cover_element_tests, create_single_bin, data = data, filtered_data = filtered_data))
+  return(mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data)))
 }
 
 #' Construct mapper graph from data
@@ -233,7 +233,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' }
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   balls = create_balls(data, dist1, eps)
-  return(create_mapper_object(data, dist2, rownames(data), apply(balls, 1, is_in_ball)))
+  return(create_mapper_object(data, dist2, rownames(data), apply(as.matrix(balls), 1, is_in_ball)))
 }
 
 # graph construction ------------------------------------------------------
