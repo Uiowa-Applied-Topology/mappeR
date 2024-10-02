@@ -90,6 +90,11 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #'  containing sources, targets, and weights representing overlap strength.
 run_mapper <- function(binclust_data, dists, binning=TRUE) {
   num_vertices = max(binclust_data[[length(binclust_data)]])
+
+  if (num_vertices == 1) {
+    num_vertices = max(binclust_data)
+  }
+
   node_ids = as.character(1:num_vertices)
   overlaps = get_overlaps(binclust_data)
   edgelist = get_edgelist_from_overlaps(overlaps, num_vertices)
