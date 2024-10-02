@@ -1,6 +1,6 @@
 ## CRAN Resubmission
 
-This is a resubmission to fix issues in the DESCRIPTION by Beni Altmann. Here I
+This is a resubmission to fix issues in the DESCRIPTION raised by Beni Altmann. Here I
 
 * Reformatted URLS correctly
 * Removed `dontrun` to let most examples go through
