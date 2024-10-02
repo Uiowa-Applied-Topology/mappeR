@@ -28,7 +28,7 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
     'node fill color',
     'tightness',
     'c',
-    c(0, mean(nodes$tightness), 1),
+    c(0, mean(nodes$tightness), max(nodes$tightness)),
     c("#ffffff", "#efefef", "#000000")
   )
 

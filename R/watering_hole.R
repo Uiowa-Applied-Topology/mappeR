@@ -154,11 +154,8 @@ get_bin_vector <- function(binclust_data) {
 #'
 #' @return A real number in \eqn{(0,\infty)} representing a measure of dispersion of a cluster. This method finds the medoid of the input data set, the point with the smallest sum of distances to all other points, and returns that sum divided by the size of the cluster. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{|C|}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \displaystyle\argmin_j\sum_{i}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 compute_tightness <- function(dists, cluster) {
-  if (length(cluster) == 0) {
-    return(1)
-  }
-  if (length(cluster) == 1) {
-    return(1)
+  if ((length(cluster) == 0) | (length(cluster) == 1)) {
+    return(0)
   } else {
     cluster_names = names(cluster)
     these_dists = dists[cluster_names, cluster_names]
