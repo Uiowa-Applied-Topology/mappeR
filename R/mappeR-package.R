@@ -3,6 +3,7 @@
 
 ## usethis namespace: start
 #' @importFrom grDevices colorRampPalette
+#' @importFrom grDevices rgb
 #' @importFrom igraph graph_from_data_frame
 #' @importFrom igraph set_vertex_attr
 #' @importFrom RCy3 createNetworkFromDataFrames
