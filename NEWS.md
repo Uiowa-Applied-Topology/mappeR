@@ -1,3 +1,8 @@
+# mappeR 0.1.4
+
+* Reduced edge widths for Cytoscape visualization.
+* Rescaled tightness calculation down a bit.
+
 # mappeR 0.1.3
 
 * Edge overlap data is now present in output mapper objects.
