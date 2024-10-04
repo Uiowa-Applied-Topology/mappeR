@@ -22,7 +22,7 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
                                  'd',
                                  1:nrow(nodes),
                                  100 * sqrt(nodes$cluster_size / max(nodes$cluster_size)))
-  edgeWidth <- mapVisualProperty('edge width', 'weight', 'c', c(0, .5, 1), c(0, 10, 20))
+  edgeWidth <- mapVisualProperty('edge width', 'weight', 'c', c(0, .5, 1), c(0, 5, 10))
 
   fill_colors = lapply(nodes$tightness/max(nodes$tightness), function(x) rgb(x, x, x))
 

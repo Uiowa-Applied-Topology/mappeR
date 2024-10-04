@@ -25,17 +25,21 @@ test_that("1D width balanced cover endpoints are correct", {
 
 test_that("1D width balanced cover intervals are equally sized", {
   # each interval in the cover should be the same length, so the same as the first interval
-  sapply(1:(num_bins - 1), function(i) expect_equal(as.numeric(abs(cover[i, 1] - cover[i, 2])), interval_length))
+  if (num_bins > 1) {
+    sapply(1:(num_bins - 1), function(i) expect_equal(as.numeric(abs(cover[i, 1] - cover[i, 2])), interval_length))
+  }
 })
 
 test_that("1D width balanced cover overlaps are correct and consistent", {
-  # check that bins have correct overlap with the bin behind them
-  sapply(2:num_bins, function(i) expect_equal(as.numeric(100*abs(cover[i, 1] - cover[i - 1, 2])/interval_length), percent_overlap))
+  if (num_bins > 1) {
+    # check that bins have correct overlap with the bin behind them
+    sapply(2:num_bins, function(i) expect_equal(as.numeric(100*abs(cover[i, 1] - cover[i - 1, 2])/interval_length), percent_overlap))
 
-  # check that bins have correct overlap with the bin ahead of them
-  sapply(1:(num_bins - 1), function(i) expect_equal(as.numeric(100*abs(cover[i, 2] - cover[i+1, 1])/interval_length), percent_overlap))
+    # check that bins have correct overlap with the bin ahead of them
+    sapply(1:(num_bins - 1), function(i) expect_equal(as.numeric(100*abs(cover[i, 2] - cover[i+1, 1])/interval_length), percent_overlap))
 
-  # first and last bin overlaps should also be correct
-  expect_equal(as.numeric(100*abs(cover[1, 2] - cover[2, 1])/interval_length), percent_overlap)
-  expect_equal(as.numeric(100*abs(cover[nrow(cover), 1] - cover[nrow(cover)-1, 2])/interval_length), percent_overlap)
+    # first and last bin overlaps should also be correct
+    expect_equal(as.numeric(100*abs(cover[1, 2] - cover[2, 1])/interval_length), percent_overlap)
+    expect_equal(as.numeric(100*abs(cover[nrow(cover), 1] - cover[nrow(cover)-1, 2])/interval_length), percent_overlap)
+  }
 })
