@@ -215,9 +215,9 @@ get_clustered_data <- function(binclust_data) {
 
   clusters = lapply(1:num_vertices, function(x)
     flattened_data[flattened_data == x]) # sort by cluster
-  data_in_cluster = lapply(lapply(clusters, names), toString)
 
-  return(data_in_cluster)
+  # TODO: put spaces in between data names?
+  data_in_cluster = lapply(lapply(clusters, names), toString)
 }
 
 ## edge data --------------------------------------------------------------
