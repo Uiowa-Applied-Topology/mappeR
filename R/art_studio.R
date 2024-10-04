@@ -14,8 +14,7 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
   defaults <- list(
     NODE_SHAPE = "ellipse",
     NODE_BORDER_WIDTH = 10,
-    NODE_BORDER_PAINT = "#000",
-    EDGE_WIDTH = 10
+    NODE_BORDER_PAINT = "#000"
   )
 
   nodeSizes <- mapVisualProperty('node size',
@@ -23,13 +22,16 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
                                  'd',
                                  1:nrow(nodes),
                                  100 * sqrt(nodes$cluster_size / max(nodes$cluster_size)))
-  edgeWidth <- mapVisualProperty('edge width', 'weight', 'c', c(0, .5, 1), c(0, 127, 255))
+  edgeWidth <- mapVisualProperty('edge width', 'weight', 'c', c(0, .5, 1), c(0, 5, 10))
+
+  fill_colors = lapply(nodes$tightness, function(x) (rgb(x,x,x)))
+
   nodeFillColors <- mapVisualProperty(
     'node fill color',
     'tightness',
-    'c',
-    c(0, mean(nodes$tightness), max(nodes$tightness)),
-    c("#ffffff", "#efefef", "#000000")
+    'd',
+    round(nodes$tightness, 7), # cytoscape rounds things so we will too
+    fill_colors
   )
 
   if (is_ballmapper) {
