@@ -116,7 +116,8 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 
     edges = data.frame(source = sources,
                        target = targets,
-                       weight = edge_weights)
+                       weight = edge_weights,
+                       overlap = overlaps)
 
     return(list(nodes, edges))
 
@@ -131,7 +132,8 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 
     edges = data.frame(source = sources,
                        target = targets,
-                       weight = edge_weights)
+                       weight = edge_weights,
+                       overlap = overlaps)
 
 
     return(list(nodes, edges))
