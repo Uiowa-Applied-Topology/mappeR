@@ -1,10 +1,9 @@
 ## CRAN Resubmission
 
-This is a resubmission to fix issues in the DESCRIPTION raised by Beni Altmann. Here I
+This is a resubmission to fix some final issues raised by Beni Altmann. Here I
 
-* Reformatted URLS correctly
-* Removed `dontrun` to let most examples go through
-* Minor bug fixes for ballmapper
+* Removed brackets for urls in DESCRIPTION file
+* Added comment on why `dontrun` is necessary for `cymapper`
 
 ## R CMD check results
 
