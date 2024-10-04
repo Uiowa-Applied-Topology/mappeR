@@ -170,7 +170,7 @@ get_bin_vector <- function(binclust_data) {
 #' @param dists A distance matrix for points in the cluster.
 #' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels
 #'
-#' @return A real number in \eqn{(0,\infty)} representing a measure of dispersion of a cluster. This method finds the medoid of the input data set, the point with the smallest sum of distances to all other points, and returns that sum divided by the size of the cluster. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{\displaystyle\max_{x_i\in C, i\neq j}{\text{dist}(x_i, x_j)}}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
+#' @return A real number in \eqn{(0,\infty)} representing a measure of dispersion of a cluster. This method finds the medoid of the input data set, the point with the smallest sum of distances to all other points, and returns that sum divided by the largest distance from the medoid to another point. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{\displaystyle\max_{x_i\in C, i\neq j}{\text{dist}(x_i, x_j)}}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 compute_tightness <- function(dists, cluster) {
   if ((length(cluster) == 0) | (length(cluster) == 1)) {
     return(0)
@@ -239,13 +239,14 @@ get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
   tails = edges[, 2]
   head_sizes = cluster_sizes[heads]
   tail_sizes = cluster_sizes[tails]
+  total_size = head_sizes + tail_sizes
 
   if (nrow(edges) == 1) {
-    return(max(length(overlap_lengths)/head_sizes, length(overlap_lengths)/tail_sizes))
+    return(max(length(overlap_lengths)/total_size, length(overlap_lengths)/total_size))
   }
 
-  head_overlaps = overlap_lengths / head_sizes
-  tail_overlaps = overlap_lengths / tail_sizes
+  head_overlaps = overlap_lengths / total_size
+  tail_overlaps = overlap_lengths / total_size
   edge_weights = mapply(max, head_overlaps, tail_overlaps)
 
   return(edge_weights)
