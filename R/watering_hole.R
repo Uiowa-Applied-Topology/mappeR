@@ -239,13 +239,14 @@ get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
   tails = edges[, 2]
   head_sizes = cluster_sizes[heads]
   tail_sizes = cluster_sizes[tails]
+  total_size = head_sizes + tail_sizes
 
   if (nrow(edges) == 1) {
-    return(max(length(overlap_lengths)/head_sizes, length(overlap_lengths)/tail_sizes))
+    return(max(length(overlap_lengths)/total_size, length(overlap_lengths)/total_size))
   }
 
-  head_overlaps = overlap_lengths / head_sizes
-  tail_overlaps = overlap_lengths / tail_sizes
+  head_overlaps = overlap_lengths / total_size
+  tail_overlaps = overlap_lengths / total_size
   edge_weights = mapply(max, head_overlaps, tail_overlaps)
 
   return(edge_weights)
