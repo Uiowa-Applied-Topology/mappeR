@@ -18,6 +18,12 @@ This is an implementation of the mapper algorithm by Singh, Mémoli, and Carlsso
 
 ## Setup
 
+To install from CRAN, run:
+
+`install.packages("mappeR")`
+
+`library(mappeR)`
+
 To install the latest version of this package from Github, run the following commands:
 
 `install.packages("devtools")`

@@ -12,6 +12,12 @@ Carlsson (2007).
 
 ## Setup
 
+To install from CRAN, run:
+
+`install.packages("mappeR")`
+
+`library(mappeR)`
+
 To install the latest version of this package from Github, run the
 following commands:
 
