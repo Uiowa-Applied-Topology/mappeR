@@ -170,7 +170,7 @@ get_bin_vector <- function(binclust_data) {
 #' @param dists A distance matrix for points in the cluster.
 #' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels
 #'
-#' @return A real number in \eqn{(0,\infty)} representing a measure of dispersion of a cluster. This method finds the medoid of the input data set, the point with the smallest sum of distances to all other points, and returns that sum divided by the size of the cluster. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{|C|}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{j}\, \sum_{i}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
+#' @return A real number in \eqn{(0,\infty)} representing a measure of dispersion of a cluster. This method finds the medoid of the input data set, the point with the smallest sum of distances to all other points, and returns that sum divided by the size of the cluster. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{\displaystyle\max_{x_i\in C, i\neq j}{\text{dist}(x_i, x_j)}}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 compute_tightness <- function(dists, cluster) {
   if ((length(cluster) == 0) | (length(cluster) == 1)) {
     return(0)
@@ -180,7 +180,7 @@ compute_tightness <- function(dists, cluster) {
     sums = apply(these_dists, 1, sum)
     min_sum = min(sums) # sum of distances of the medoid
     min_dists = these_dists[which(sums == min_sum), ] # distance matrix subset of medoid
-    closeness_factor = min_sum / length(cluster) # "normalized" so a score of 1 means the medoid is as close as possible to all the data in the cluster
+    closeness_factor = min_sum / max(min_dists)
     return(closeness_factor)
   }
 }
@@ -215,9 +215,9 @@ get_clustered_data <- function(binclust_data) {
 
   clusters = lapply(1:num_vertices, function(x)
     flattened_data[flattened_data == x]) # sort by cluster
-  data_in_cluster = lapply(lapply(clusters, names), toString)
 
-  return(data_in_cluster)
+  # TODO: put spaces in between data names?
+  data_in_cluster = lapply(lapply(clusters, names), toString)
 }
 
 ## edge data --------------------------------------------------------------

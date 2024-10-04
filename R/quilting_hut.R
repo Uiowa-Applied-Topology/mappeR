@@ -31,6 +31,13 @@ create_width_balanced_cover <- function(min_val,
                                         max_val,
                                         num_bins,
                                         percent_overlap) {
+
+  if ((num_bins <= 0) | (!(num_bins %% 1 == 0))) {
+    stop("number of bins must be a positive integer")
+  } else if ((percent_overlap < 0) | (percent_overlap > 100)) {
+    stop("percent overlap must be between 0 and 100")
+  }
+
   even_length = (max_val - min_val) / num_bins # widths with zero percent overlap
   nudge = (percent_overlap / 100) * even_length
 
@@ -77,6 +84,10 @@ check_in_interval <- function(endpoints) {
 #' P.dist = dist(P.data)
 #' balls = create_balls(data = P.data, dists = P.dist, eps = .25)
 create_balls <- function(data, dists, eps) {
+  if (eps <= 0) {
+    stop("epsilon needs to be positive")
+  }
+
   dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
   balls = list()
   marked = rep(FALSE, nrow(data)) # keep track of which points we've covered

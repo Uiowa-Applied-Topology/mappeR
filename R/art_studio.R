@@ -14,22 +14,24 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
   defaults <- list(
     NODE_SHAPE = "ellipse",
     NODE_BORDER_WIDTH = 10,
-    NODE_BORDER_PAINT = "#000",
-    EDGE_WIDTH = 10
+    NODE_BORDER_PAINT = "#000"
   )
 
   nodeSizes <- mapVisualProperty('node size',
                                  'id',
                                  'd',
                                  1:nrow(nodes),
-                                 100 * nodes$cluster_size / max(nodes$cluster_size))
-  edgeWidth <- mapVisualProperty('edge transparency', 'weight', 'c', c(0, .5, 1), c(0, 127, 255))
+                                 100 * sqrt(nodes$cluster_size / max(nodes$cluster_size)))
+  edgeWidth <- mapVisualProperty('edge width', 'weight', 'c', c(0, .5, 1), c(0, 10, 20))
+
+  fill_colors = lapply(nodes$tightness/max(nodes$tightness), function(x) rgb(x, x, x))
+
   nodeFillColors <- mapVisualProperty(
     'node fill color',
-    'tightness',
-    'c',
-    c(0, mean(nodes$tightness), max(nodes$tightness)),
-    c("#ffffff", "#efefef", "#000000")
+    'id',
+    'd',
+    1:nrow(nodes),
+    fill_colors
   )
 
   if (is_ballmapper) {
@@ -62,6 +64,8 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
 #'
 #' @examples
 #' \dontrun{
+#' # this example requires Cytoscape to be open and running in the background to work properly
+#'
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 #' projx = data$x
 #'
