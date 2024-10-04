@@ -12,7 +12,7 @@ compute_tightness(dists, cluster)
 \item{cluster}{A list containing named vectors, whose names are data point names and whose values are cluster labels}
 }
 \value{
-A real number in \eqn{(0,\infty)} representing a measure of dispersion of a cluster. This method finds the medoid of the input data set, the point with the smallest sum of distances to all other points, and returns that sum divided by the size of the cluster. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{|C|}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{j}\, \sum_{i}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
+A real number in \eqn{(0,\infty)} representing a measure of dispersion of a cluster. This method finds the medoid of the input data set, the point with the smallest sum of distances to all other points, and returns that sum divided by the size of the cluster. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{\displaystyle\max_{x_i\in C, i\neq j}{\text{dist}(x_i, x_j)}}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 }
 \description{
 Compute dispersion of a single cluster

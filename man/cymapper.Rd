@@ -17,6 +17,8 @@ Open mapper graph in Cytoscape
 }
 \examples{
 \dontrun{
+# this example requires Cytoscape to be open and running in the background to work properly
+
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 projx = data$x
 
