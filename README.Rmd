@@ -1,7 +1,7 @@
 ---
 title: "mappeR"
 output: rmarkdown::github_document
-date: "2024-09-29"
+date: "2024-10-04"
 ---
 
 <!-- badges: start -->
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = FALSE)
 devtools::load_all()
 ```
 
-This is an implementation of the [mapper](https://diglib.eg.org/items/d4e204e8-5dd2-4b5d-bccd-5da3c4a1e925) algorithm by Singh, Mémoli, and Carlsson.
+This is an implementation of the mapper algorithm by Singh, Mémoli, and Carlsson (2007).
 
 ## Setup
 

@@ -1,15 +1,14 @@
 mappeR
 ================
-2024-09-29
+2024-10-04
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-This is an implementation of the
-[mapper](https://diglib.eg.org/items/d4e204e8-5dd2-4b5d-bccd-5da3c4a1e925)
-algorithm by Singh, Mémoli, and Carlsson.
+This is an implementation of the mapper algorithm by Singh, Mémoli, and
+Carlsson (2007).
 
 ## Setup
 
