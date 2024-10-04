@@ -22,8 +22,8 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
                                  'id',
                                  'd',
                                  1:nrow(nodes),
-                                 100 * nodes$cluster_size / max(nodes$cluster_size))
-  edgeWidth <- mapVisualProperty('edge transparency', 'weight', 'c', c(0, .5, 1), c(0, 127, 255))
+                                 100 * sqrt(nodes$cluster_size / max(nodes$cluster_size)))
+  edgeWidth <- mapVisualProperty('edge width', 'weight', 'c', c(0, .5, 1), c(0, 127, 255))
   nodeFillColors <- mapVisualProperty(
     'node fill color',
     'tightness',
@@ -62,6 +62,8 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
 #'
 #' @examples
 #' \dontrun{
+#' # this example requires Cytoscape to be open and running in the background to work properly
+#'
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 #' projx = data$x
 #'
