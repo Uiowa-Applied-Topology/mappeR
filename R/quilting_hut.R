@@ -52,6 +52,11 @@ create_width_balanced_cover <- function(min_val,
   return(bin_ends)
 }
 
+#' Get a tester function for an interval.
+#'
+#' @param endpoints A vector of interval endpoints, namely a left and a right. Must be in order.
+#'
+#' @return A function that eats a data point and outputs TRUE if the datapoint is in the interval and FALSE if not.
 check_in_interval <- function(endpoints) {
   return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
 }
@@ -112,4 +117,13 @@ create_balls <- function(data, dists, eps) {
     balls = append(balls, list(balled_data_names)) # add the ball to our big list of balls
   }
   return(balls)
+}
+
+#' Get a tester function for a ball.
+#'
+#' @param ball A list of data points.
+#'
+#' @return A function that eats a data point and returns TRUE or FALSE depending if the point is in the ball or not.
+is_in_ball <- function(ball) {
+  return(function(x) x %in% ball)
 }

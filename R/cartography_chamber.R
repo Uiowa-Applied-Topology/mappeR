@@ -232,10 +232,6 @@ create_ball_mapper_object <- function(data, dists, eps) {
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   balls = create_balls(data, dist1, eps)
 
-  is_in_ball <- function(ball) {
-    return(function(x) x %in% ball)
-  }
-
   return(create_mapper_object(data, dist2, rownames(data), lapply(balls, is_in_ball), clustering_method))
 }
 
