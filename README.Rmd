@@ -268,4 +268,13 @@ plot(mapper_object_to_igraph(ballmapper3), main = TeX(r"($\epsilon=1$)"))
 plot(mapper_object_to_igraph(ballmapper4), main = TeX(r"($\epsilon=2$)"))
 ```
 
+```{r}
+ data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+ data.dists = dist(data)
+ eps = 1
+ m = create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
+ plot(mapper_object_to_igraph(m))
+```
+
+
 

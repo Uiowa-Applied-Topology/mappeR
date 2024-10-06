@@ -1,7 +1,6 @@
 #' Compute eccentricity of data points
-#'
-#' @param data A data frame.
-#' @param dists A distance matrix associated to the input data frame.
+
+#' @param dists A distance matrix associated to a data frame.
 #'
 #' @return A vector of centrality measures of data points. Lower values indicate higher centrality.
 #' @export

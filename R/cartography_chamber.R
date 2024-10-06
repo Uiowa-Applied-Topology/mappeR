@@ -80,7 +80,12 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #'
 #' @return A list of bins, each containing a vector of the names of the data inside it.
 create_bins <- function(data, filtered_data, cover_element_tests) {
-  return(mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data)))
+  res = mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data))
+  if (is.matrix(res)) {
+    # thanks https://stackoverflow.com/questions/6819804/convert-a-matrix-to-a-list-of-column-vectors
+    return(lapply(seq_len(ncol(res)), function(i) res[,i]))
+  }
+  return(res)
 }
 
 #' Construct mapper graph from data
@@ -110,6 +115,17 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
   cluster_size = get_cluster_sizes(binclust_data)
   data_in_cluster = unlist(get_clustered_data(binclust_data))
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edgelist)
+  data_in_overlap = 0
+
+  if (is.list(overlaps)) {
+    data_in_overlap = sapply(overlaps, function(x) paste(x, collapse = ", "))
+    edges = data.frame(source = sources,
+                       target = targets,
+                       weight = edge_weights,
+                       overlap = data_in_overlap)
+  } else {
+    edges = data.frame(source = "", target = "")
+  }
 
   # if you care about bins
   if (binning) {
@@ -121,11 +137,6 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
       bin = get_bin_vector(binclust_data)
     )
 
-    edges = data.frame(source = sources,
-                       target = targets,
-                       weight = edge_weights,
-                       overlap = sapply(overlaps, function(x) paste(x, collapse = ", ")))
-
     return(list(nodes, edges))
 
   # if you don't
@@ -136,12 +147,6 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
       tightness = cluster_tightness,
       data = data_in_cluster
     )
-
-    edges = data.frame(source = sources,
-                       target = targets,
-                       weight = edge_weights,
-                       overlap = sapply(overlaps, function(x) paste(x, collapse = ", ")))
-
 
     return(list(nodes, edges))
   }
@@ -282,9 +287,13 @@ get_overlaps <- function(binclust_data) {
   pairs = combn(cluster_names, 2) # get all pairs of clusters
   raw_overlaps = apply(pairs, 2, function(x)
     intersect(x[[1]], x[[2]])) # get all intersections between clusters
-  names(raw_overlaps) = 1:length(raw_overlaps)
-  overlaps = Filter(length, raw_overlaps) # filter out the empty intersections
-  return(overlaps)
+  if (length(raw_overlaps) == 0) {
+    return(0)
+  } else {
+    names(raw_overlaps) = 1:length(raw_overlaps)
+    overlaps = Filter(length, raw_overlaps) # filter out the empty intersections
+    return(overlaps)
+  }
 }
 
 #' Obtain edge list from cluster intersections

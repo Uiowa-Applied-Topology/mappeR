@@ -97,13 +97,15 @@ cymapper <- function(mapperobject) {
 #' @export
 #' @examples
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
-#' eps = .5
 #'
-#' mapperobj = create_ball_mapper_object(data, dist(data), eps)
+#' mapperobj = create_1D_mapper_object(data, dist(data), data$y, create_width_balanced_cover(min(data$y), max(data$y), 10, 25), "single")
+#'
 #' mapper_object_to_igraph(mapperobj)
 mapper_object_to_igraph <- function(mapperobject) {
   vertices = mapperobject[[1]]
   edges = mapperobject[[2]]
+
+ print(edges)
 
   mappergraph = graph_from_data_frame(d = edges, directed = FALSE, vertices = vertices)
   mappergraph = set_vertex_attr(mappergraph, "label", value=NA)
