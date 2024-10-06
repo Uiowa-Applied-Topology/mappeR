@@ -12,7 +12,8 @@ Carlsson (2007).
 
 ## Setup
 
-To install from CRAN, run:
+To install the most recent CRAN upload of this package, run the
+following:
 
 `install.packages("mappeR")`
 
@@ -27,7 +28,7 @@ following commands:
 
 `devtools::install_github("Uiowa-Applied-Topology/mappeR", upgrade=FALSE)`
 
-`library("mappeR")`
+`library(mappeR)`
 
 If you’re installing from Github, you might need to do some more stuff:
 
