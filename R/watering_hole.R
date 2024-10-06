@@ -77,8 +77,11 @@ convert_to_clusters <- function(bins) {
     return(res)
   }
   ball_sizes = lapply(bins, length)
-  ballball_data = unlist(mapply(function(x, y)
-    rep(x, y), 1:length(ball_sizes), ball_sizes))
+  if (length(unique(ball_sizes)) == 1) {
+    ballball_data = c(mapply(rep, 1:length(ball_sizes), MoreArgs = list(ball_sizes[1])))
+  } else {
+    ballball_data = unlist(mapply(rep, 1:length(ball_sizes), ball_sizes))
+  }
   names(ballball_data) = unlist(bins)
   return(ballball_data)
 }
