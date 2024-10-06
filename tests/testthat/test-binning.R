@@ -5,7 +5,7 @@ generate_random_intervals <- function(num_bins, min_val, max_val) {
   return(t(replicate(num_bins, sort(runif(2, min_val, max_val)))))
 }
 
-num_intervals = 100
+num_intervals = round(100*runif(1)) + 1 # to avoid zero case
 
 # generate 1000 random data points between -2 and 2
 data = data.frame(x = runif(1000, -2, 2), drop = FALSE)
