@@ -1,7 +1,7 @@
 ---
 title: "mappeR"
 output: rmarkdown::github_document
-date: "2024-10-04"
+date: "2024-10-06"
 ---
 
 <!-- badges: start -->
@@ -124,7 +124,8 @@ Parameters:
 projx = P.data$x
 projy = P.data$y
 projz = P.data$z
-eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
+# eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
+eccentricity = eccentricity_filter(P.dist)
 
 # cover parameters to generate a width-balanced cover
 num_bins = 10
