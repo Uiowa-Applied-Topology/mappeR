@@ -10,8 +10,8 @@ right_end = vars[2]
 ethan_left = 0
 ethan_right = 1
 
-# get a random number of bins between 1 and 100
-num_bins = 5
+# get a random number of bins between 1 and 200
+num_bins = sample(1:200, 1)
 ethan_bins = 5
 
 # get a random percent overlap between 0 and 100

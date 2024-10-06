@@ -105,9 +105,12 @@ mapper_object_to_igraph <- function(mapperobject) {
   vertices = mapperobject[[1]]
   edges = mapperobject[[2]]
 
- print(edges)
+  if (nrow(edges) == 0) {
+    mappergraph = graph_from_data_frame(vertices, what = c("vertices"))
+  } else {
+    mappergraph = graph_from_data_frame(d = edges, directed = FALSE, vertices = vertices)
+  }
 
-  mappergraph = graph_from_data_frame(d = edges, directed = FALSE, vertices = vertices)
   mappergraph = set_vertex_attr(mappergraph, "label", value=NA)
   mappergraph = set_vertex_attr(mappergraph, "size", value=sqrt(vertices$cluster_size))
   if ("bin" %in% colnames(vertices)) {
