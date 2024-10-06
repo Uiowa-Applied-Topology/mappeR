@@ -39,6 +39,13 @@
 #'   method = "single"
 #' )
 create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
+  if (!is.data.frame(data)) {
+    stop("input data needs to be a data frame.")
+  } else if (length(filtered_data) != nrow(data)) {
+    stop("there should be as many filtered data points as there are data points.")
+  } else if (all(sapply(cover_element_tests, typeof) == "function")) {
+    stop("cover element tests need to be boolean functions.")
+  }
   bins = create_bins(data, filtered_data, cover_element_tests)
   if (method == "none") {
     return(run_mapper(convert_to_clusters(bins), dists, binning = FALSE))
@@ -197,6 +204,9 @@ create_1D_mapper_object <- function(data, dists, filtered_data, cover, clusterin
 #'
 #' create_ball_mapper_object(data, dist(data), eps)
 create_ball_mapper_object <- function(data, dists, eps) {
+  if (!is.data.frame(data)) {
+    stop("input data needs to be a data frame.")
+  }
   balled_data = create_balls(data, dists, eps)
 
   ball_mapper_object = run_mapper(convert_to_clusters(balled_data), dists, binning = FALSE)
