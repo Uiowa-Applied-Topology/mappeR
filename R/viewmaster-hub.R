@@ -2,7 +2,7 @@
 
 #' @param dists A distance matrix associated to a data frame.
 #'
-#' @return A vector of centrality measures of data points. Lower values indicate higher centrality.
+#' @return A vector of centrality measures, calcuated per data point as the sum of its distances to every other data point, divided by the number of points.
 #' @export
 #'
 #' @examples
