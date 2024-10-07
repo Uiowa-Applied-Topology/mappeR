@@ -1,8 +1,8 @@
-# mappeR (development version)
+# mappeR 1.0.0
 
 * Balls/bins with equal amounts of data no longer cause wonkiness
-* Zero overlap situations should work correctly
-* Added eccentricity lens/filter fuction and a new file for these sorts of things
+* Zero overlap situations should work correctly with `igraph`
+* Added eccentricity lens/filter fuction
 
 # mappeR 0.1.5
 
