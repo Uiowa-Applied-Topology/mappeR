@@ -1,3 +1,9 @@
+# mappeR (development version)
+
+* Balls/bins with equal amounts of data no longer cause wonkiness
+* Zero overlap situations should work correctly
+* Added eccentricity lens/filter fuction and a new file for these sorts of things
+
 # mappeR 0.1.5
 
 * 1D tests will not fail due to a one interval cover
