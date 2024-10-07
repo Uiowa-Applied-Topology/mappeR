@@ -105,9 +105,14 @@ mapper_object_to_igraph <- function(mapperobject) {
   vertices = mapperobject[[1]]
   edges = mapperobject[[2]]
 
-  if (nrow(edges) == 0) {
-    mappergraph = graph_from_data_frame(vertices, what = c("vertices"))
+  if (edges$source == "") {
+    print("wooo")
+    print(vertices)
+    print(rownames(vertices))
+    mappergraph = graph_from_data_frame(d = data.frame(id = rownames(vertices), id = rownames(vertices)), vertices = vertices)
+    mappergraph = delete_edges(mappergraph, E(mappergraph))
   } else {
+    print("not woo")
     mappergraph = graph_from_data_frame(d = edges, directed = FALSE, vertices = vertices)
   }
 
