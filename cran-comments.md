@@ -1,5 +1,7 @@
 ## mappeR 1.0.0
 
+The single note from the win-dev check was due to the recency of this requested package update (3 days). I believe it has merit.
+
 I noticed some of the examples were breaking sporadically on my machine and did not seem to be caught during checks. This was due to the example being small enough to generate an edge case which was not dealt with properly. That has now been done. In a nutshell:
 
 * mapper examples no longer break sporadically
@@ -14,4 +16,4 @@ I don't anticipate releasing a new version to CRAN for a little while unless som
 
 ## R CMD check results
 
-0 errors \| 0 warnings \| 0 notes
+0 errors \| 0 warnings \| 1 NOTE
