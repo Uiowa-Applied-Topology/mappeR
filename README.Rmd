@@ -1,13 +1,14 @@
 ---
 title: "mappeR"
 output: rmarkdown::github_document
-date: "2024-10-04"
+date: "2024-10-06"
 ---
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
 
+[![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
+
+<!-- badges: end -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -18,62 +19,80 @@ This is an implementation of the mapper algorithm by Singh, Mémoli, and Carlsso
 
 ## Setup
 
-To install the latest version of this package from Github, run the following commands:
+To install the most recent CRAN upload of this package, run the following:
+
+`install.packages("mappeR")`
+
+`library(mappeR)`
+
+To install the latest development version of this package from Github, run the following commands:
 
 `install.packages("devtools")`
 
 `library(devtools)`
 
-`devtools::install_github("Uiowa-Applied-Topology/mappeR", upgrade=FALSE)`
+`devtools::install_github("https://github.com/Uiowa-Applied-Topology/mappeR/tree/dev", upgrade=FALSE)`
 
-`library("mappeR")`
+`library(mappeR)`
 
 If you're installing from Github, you might need to do some more stuff:
 
-- **Windows:** install Rtools (https://cran.r-project.org/bin/windows/Rtools/)
-- **OS X:** install Xcode (from the Mac App Store)
-- **Linux:** run `apt-get install r-base-dev` (or similar).
+-   **Windows:** install Rtools (<https://cran.r-project.org/bin/windows/Rtools/>)
+-   **OS X:** install Xcode (from the Mac App Store)
+-   **Linux:** run `apt-get install r-base-dev` (or similar).
 
 ## Mathy Overview
 
 Mapper is a way to view a point cloud $P$ through a "lens" of our choice.
 
 Consider a function
-```math
+
+``` math
 f: P \to \mathbb{R}
 ```
+
 Cover $\mathbb{R}$ in a set of intervals $`\{I_i\}_{i=1}^n`$, so that every point in $P$ is contained in some level set $L_i = f^{-1}(I_i)$. We may then construct a graph
-```math
+
+``` math
 G = (V,E)
 ```
+
 based on this cover to reflect the original data, where
-```math
+
+``` math
 V = \{L_i \mid L_i \neq \varnothing\}
 ```
+
 and
-```math
+
+``` math
 E = \{\{L_i, L_j\}\mid L_i\cap L_j \neq \varnothing,\ i\neq j\}
 ```
 
 This is the basic idea of the mapper algorithm, with the addition that each level set is first refined into clusters based on the intrinsic pairwise distances of the data according to some clustering algorithm. That is, we partition each level set $L_i$ into $k_i$ disjoint clusters
-```math
+
+``` math
 L_i = \bigsqcup_{j=1}^{k_i} C_j
 ```
+
 and build a new graph $G' = (V', E')$ that is homomorphic to $G$ defined by
-```math
+
+``` math
 V' = \bigsqcup_{i=1}^{n}\{C_j\}_{j=1}^{k_i}
 ```
+
 and
-```math
+
+``` math
 E' = \{\{C_i, C_j\}\mid C_i\cap C_j \neq \varnothing\}
 ```
 
 So in general, the ingredients to construct a mapper graph are
 
-* A data set, along with their pairwise distances
-* A *lens* function with the data as its domain (above this was real-valued, but it does not have to be)
-* A cover of the codomain of the lens function
-* A clustering algorithm
+-   A data set, along with their pairwise distances
+-   A *lens* function with the data as its domain (above this was real-valued, but it does not have to be)
+-   A cover of the codomain of the lens function
+-   A clustering algorithm
 
 ## Example 1: 1D Mapper
 
@@ -94,31 +113,34 @@ P.dist = dist(P.data)
 
 Here is a point cloud $P$ formed by adding a bit of uniform noise to 5000 points regularly sampled from the parametric curve
 
-```math
+``` math
 \gamma(t) = \begin{cases}x = 10\ \sin(t)\\ y=10\ \sin(t)\ \cos^2(t)\\ z=10\ \sin^2(t)\ \cos(t) \end{cases}
 ```
-<img src="README_files/figure-gfm/fig8-1.png" />
+
+<img src="README_files/figure-gfm/fig8-1.png"/>
 
 This seems to form a kind of figure-8 curve just based on this projection. But as we can see from the 2D projections, the "shape" of the data set we're seeing really does depend on how we're looking at it:
 
 ```{r plotting_the_curve, fig.align='center'}
 plot(P.data, pch = 20, asp = 1)
 ```
+
 We will build graphs using the outline of the mapper algorithm described, with real-valued lens functions.
 
 Parameters:
 
-* Data: figure-8
-* Lens: Projection to each factor, or eccentricity (a measure of centrality per data point)
-* Cover: A cover of $\mathbb{R}$ (just up to the extremes of the function values) using 10 equally spaced intervals with 25\% overlap between each consecutive interval
-* Clustering method: Single-linkage hierarchical clustering
+-   Data: figure-8
+-   Lens: Projection to each factor, or eccentricity (a measure of centrality per data point)
+-   Cover: A cover of $\mathbb{R}$ (just up to the extremes of the function values) using 10 equally spaced intervals with 25% overlap between each consecutive interval
+-   Clustering method: Single-linkage hierarchical clustering
 
 ```{r mapper_parameters, echo=TRUE}
 # lens functions
 projx = P.data$x
 projy = P.data$y
 projz = P.data$z
-eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
+# eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
+eccentricity = eccentricity_filter(P.dist)
 
 # cover parameters to generate a width-balanced cover
 num_bins = 10
@@ -227,10 +249,10 @@ By toying with the general mapper parameters, we can obtain different flavors of
 
 Parameters:
 
-* Data: figure-8
-* Cover: set of $\varepsilon$-balls in $\mathbb{R^3}$
-* Lens function: inclusion from $P\hookrightarrow\mathbb{R}^3$
-* Clustering method: none (or, "any data set is one big cluster"-type clustering)
+-   Data: figure-8
+-   Cover: set of $\varepsilon$-balls in $\mathbb{R^3}$
+-   Lens function: inclusion from $P\hookrightarrow\mathbb{R}^3$
+-   Clustering method: none (or, "any data set is one big cluster"-type clustering)
 
 There's a secret parameter here, which is $\varepsilon$. Below are output graphs for varying values of $\varepsilon$; the sizing is as with the 1D mapper, but no coloring is done as each vertex would have to receive its own color in this flavor, which is redundant.
 
@@ -261,4 +283,40 @@ plot(mapper_object_to_igraph(ballmapper3), main = TeX(r"($\epsilon=1$)"))
 plot(mapper_object_to_igraph(ballmapper4), main = TeX(r"($\epsilon=2$)"))
 ```
 
+## Built-ins
 
+# Mapper Flavors
+
+`mappeR` has built-in methods for:
+
+**1D mapper**
+
+`create_1D_mapper_object(data, dists, filtered_data, cover, clustering_method)`
+
+-   Lens: $P \to \mathbb{R}$
+-   Cover: intervals
+-   Clustering: yes
+
+**Ball mapper**
+
+`create_ball_mapper_object(data, dists, eps)`
+
+-   Lens: $P \to P$ by identity
+-   Cover: $\varepsilon$-balls in ambient $P$-space
+-   Clustering: no
+
+**Clusterball mapper**
+
+`create_clusterball_mapper_object(data, ball_dists, clustering_dists, eps, clustering_method)`
+
+-   Lens: $P \to P$ by identity
+-   Cover: $\varepsilon$-balls in ambient $P$-space
+-   Clustering: yes
+
+# Clustering
+
+`mappeR` supports:
+
+**Hierarchical Clustering**
+
+-   `"single"`: single linkage

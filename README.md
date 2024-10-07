@@ -1,10 +1,11 @@
 mappeR
 ================
-2024-10-04
+2024-10-06
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
 This is an implementation of the mapper algorithm by Singh, Mémoli, and
@@ -12,16 +13,23 @@ Carlsson (2007).
 
 ## Setup
 
-To install the latest version of this package from Github, run the
-following commands:
+To install the most recent CRAN upload of this package, run the
+following:
+
+`install.packages("mappeR")`
+
+`library(mappeR)`
+
+To install the latest development version of this package from Github,
+run the following commands:
 
 `install.packages("devtools")`
 
 `library(devtools)`
 
-`devtools::install_github("Uiowa-Applied-Topology/mappeR", upgrade=FALSE)`
+`devtools::install_github("https://github.com/Uiowa-Applied-Topology/mappeR/tree/dev", upgrade=FALSE)`
 
-`library("mappeR")`
+`library(mappeR)`
 
 If you’re installing from Github, you might need to do some more stuff:
 
@@ -115,13 +123,14 @@ Here is a point cloud $P$ formed by adding a bit of uniform noise to
 \gamma(t) = \begin{cases}x = 10\ \sin(t)\\ y=10\ \sin(t)\ \cos^2(t)\\ z=10\ \sin^2(t)\ \cos(t) \end{cases}
 ```
 
-<img src="README_files/figure-gfm/fig8-1.png" />
+<img src="README_files/figure-gfm/fig8-1.png"/>
 
 This seems to form a kind of figure-8 curve just based on this
 projection. But as we can see from the 2D projections, the “shape” of
 the data set we’re seeing really does depend on how we’re looking at it:
 
 <img src="README_files/figure-gfm/plotting_the_curve-1.png" style="display: block; margin: auto;" />
+
 We will build graphs using the outline of the mapper algorithm
 described, with real-valued lens functions.
 
@@ -140,7 +149,8 @@ Parameters:
 projx = P.data$x
 projy = P.data$y
 projz = P.data$z
-eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
+# eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
+eccentricity = eccentricity_filter(P.dist)
 
 # cover parameters to generate a width-balanced cover
 num_bins = 10
@@ -231,3 +241,41 @@ ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 ```
 
 <img src="README_files/figure-gfm/ballmapper_time-1.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-2.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-3.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-4.png" width="50%" />
+
+## Built-ins
+
+# Mapper Flavors
+
+`mappeR` has built-in methods for:
+
+**1D mapper**
+
+`create_1D_mapper_object(data, dists, filtered_data, cover, clustering_method)`
+
+- Lens: $P \to \mathbb{R}$
+- Cover: intervals
+- Clustering: yes
+
+**Ball mapper**
+
+`create_ball_mapper_object(data, dists, eps)`
+
+- Lens: $P \to P$ by identity
+- Cover: $\varepsilon$-balls in ambient $P$-space
+- Clustering: no
+
+**Clusterball mapper**
+
+`create_clusterball_mapper_object(data, ball_dists, clustering_dists, eps, clustering_method)`
+
+- Lens: $P \to P$ by identity
+- Cover: $\varepsilon$-balls in ambient $P$-space
+- Clustering: yes
+
+# Clustering
+
+`mappeR` supports:
+
+**Hierarchical Clustering**
+
+- `"single"`: single linkage

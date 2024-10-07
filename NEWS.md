@@ -1,3 +1,9 @@
+# mappeR 1.0.0
+
+* Balls/bins with equal amounts of data no longer cause wonkiness
+* Zero overlap situations should work correctly with `igraph`
+* Added eccentricity lens/filter fuction
+
 # mappeR 0.1.5
 
 * 1D tests will not fail due to a one interval cover

@@ -25,7 +25,8 @@ subset_dists <- function(bin, dists) {
   } else if (bin_length == 1) {
     return(bin)
   } else {
-    return(as.dist(as.matrix(dists)[bin, bin]))
+    res = as.dist(as.matrix(dists)[bin, bin])
+    return(res)
   }
 }
 
@@ -42,7 +43,7 @@ get_clusters <- function(bins, dists, method) {
   # more than one bin, need more than one distance matrix
   if (is.list(bins)) {
     # subset the global distance matrix per bin
-    dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists))
+    dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists), SIMPLIFY = FALSE)
 
     # cluster the data
     clusters = run_cluster_machine(dist_mats, method)
@@ -108,9 +109,9 @@ run_slink <- function(dist) {
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
 get_single_linkage_clusters <- function(dist_mats) {
-      if (!is.list(dist_mats)) {
-        return(process_dendrograms(as.list(run_slink(dist_mats))))
-      }
+  if (!is.list(dist_mats)) {
+    return(process_dendrograms(as.list(run_slink(dist_mats))))
+  }
   dends = lapply(dist_mats, run_slink)
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]

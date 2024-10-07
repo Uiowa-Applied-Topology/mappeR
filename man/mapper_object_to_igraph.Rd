@@ -17,8 +17,12 @@ make igraph
 }
 \examples{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
-eps = .5
 
-mapperobj = create_ball_mapper_object(data, dist(data), eps)
+projy = data$y
+
+cover = create_width_balanced_cover(min(projy), max(projy), 10, 25)
+
+mapperobj = create_1D_mapper_object(data, dist(data), data$y, cover, "single")
+
 mapper_object_to_igraph(mapperobj)
 }
