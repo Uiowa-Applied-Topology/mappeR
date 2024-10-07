@@ -24,15 +24,10 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
                                  100 * sqrt(nodes$cluster_size / max(nodes$cluster_size)))
   edgeWidth <- mapVisualProperty('edge width', 'weight', 'c', c(0, .5, 1), c(0, 5, 10))
 
-  fill_colors = lapply(nodes$tightness/max(nodes$tightness), function(x) rgb(x, x, x))
+  fill_colors = lapply(nodes$tightness / max(nodes$tightness), function(x)
+    rgb(x, x, x))
 
-  nodeFillColors <- mapVisualProperty(
-    'node fill color',
-    'id',
-    'd',
-    1:nrow(nodes),
-    fill_colors
-  )
+  nodeFillColors <- mapVisualProperty('node fill color', 'id', 'd', 1:nrow(nodes), fill_colors)
 
   if (is_ballmapper) {
     # ballmapper needs no more styling
@@ -78,7 +73,6 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
 #' cymapper(mapperobj)
 #' }
 cymapper <- function(mapperobject) {
-
   # pass to visualizer for........visualizing...
   visualize_mapper_data(mapperobject, is_ballmapper = FALSE)
 
@@ -98,30 +92,38 @@ cymapper <- function(mapperobject) {
 #' @examples
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 #'
-#' mapperobj = create_1D_mapper_object(data, dist(data), data$y, create_width_balanced_cover(min(data$y), max(data$y), 10, 25), "single")
+#' projy = data$y
+#'
+#' cover = create_width_balanced_cover(min(projy), max(projy), 10, 25)
+#'
+#' mapperobj = create_1D_mapper_object(data, dist(data), data$y, cover, "single")
 #'
 #' mapper_object_to_igraph(mapperobj)
 mapper_object_to_igraph <- function(mapperobject) {
   vertices = mapperobject[[1]]
   edges = mapperobject[[2]]
 
-  if (edges$source == "") {
-    print("wooo")
-    print(vertices)
-    print(rownames(vertices))
-    mappergraph = graph_from_data_frame(d = data.frame(id = rownames(vertices), id = rownames(vertices)), vertices = vertices)
-    mappergraph = delete_edges(mappergraph, E(mappergraph))
+  if (length(edges$source) <= 1) {
+    if (edges$source == "") {
+      mappergraph = graph_from_data_frame(d = data.frame(id = rownames(vertices), id = rownames(vertices)),
+                                          vertices = vertices)
+      mappergraph = delete_edges(mappergraph, E(mappergraph))
+    }
   } else {
-    print("not woo")
-    mappergraph = graph_from_data_frame(d = edges, directed = FALSE, vertices = vertices)
+    mappergraph = graph_from_data_frame(d = edges,
+                                        directed = FALSE,
+                                        vertices = vertices)
   }
 
-  mappergraph = set_vertex_attr(mappergraph, "label", value=NA)
-  mappergraph = set_vertex_attr(mappergraph, "size", value=sqrt(vertices$cluster_size))
+  mappergraph = set_vertex_attr(mappergraph, "label", value = NA)
+  mappergraph = set_vertex_attr(mappergraph, "size", value = sqrt(vertices$cluster_size))
   if ("bin" %in% colnames(vertices)) {
     num_bins = max(vertices$bin)
     colfunc = colorRampPalette(c("blue", "gold", "red"))
-    mappergraph = set_vertex_attr(mappergraph, "color", value=sapply(vertices$bin, function(x) colfunc(num_bins)[x]))
+    mappergraph = set_vertex_attr(mappergraph,
+                                  "color",
+                                  value = sapply(vertices$bin, function(x)
+                                    colfunc(num_bins)[x]))
   }
 
   return(mappergraph)

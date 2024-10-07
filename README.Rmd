@@ -24,13 +24,13 @@ To install the most recent CRAN upload of this package, run the following:
 
 `library(mappeR)`
 
-To install the latest version of this package from Github, run the following commands:
+To install the latest development version of this package from Github, run the following commands:
 
 `install.packages("devtools")`
 
 `library(devtools)`
 
-`devtools::install_github("Uiowa-Applied-Topology/mappeR", upgrade=FALSE)`
+`devtools::install_github("https://github.com/Uiowa-Applied-Topology/mappeR/tree/dev", upgrade=FALSE)`
 
 `library(mappeR)`
 
@@ -266,14 +266,6 @@ plot(mapper_object_to_igraph(ballmapper1), main = TeX(r"($\epsilon=.25$)"))
 plot(mapper_object_to_igraph(ballmapper2), main = TeX(r"($\epsilon=.5$)"))
 plot(mapper_object_to_igraph(ballmapper3), main = TeX(r"($\epsilon=1$)"))
 plot(mapper_object_to_igraph(ballmapper4), main = TeX(r"($\epsilon=2$)"))
-```
-
-```{r}
- data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
- data.dists = dist(data)
- eps = 1
- m = create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
- plot(mapper_object_to_igraph(m))
 ```
 
 

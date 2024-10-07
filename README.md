@@ -19,14 +19,14 @@ following:
 
 `library(mappeR)`
 
-To install the latest version of this package from Github, run the
-following commands:
+To install the latest development version of this package from Github,
+run the following commands:
 
 `install.packages("devtools")`
 
 `library(devtools)`
 
-`devtools::install_github("Uiowa-Applied-Topology/mappeR", upgrade=FALSE)`
+`devtools::install_github("https://github.com/Uiowa-Applied-Topology/mappeR/tree/dev", upgrade=FALSE)`
 
 `library(mappeR)`
 
@@ -147,7 +147,8 @@ Parameters:
 projx = P.data$x
 projy = P.data$y
 projz = P.data$z
-eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
+# eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
+eccentricity = eccentricity_filter(P.dist)
 
 # cover parameters to generate a width-balanced cover
 num_bins = 10
