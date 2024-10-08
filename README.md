@@ -21,7 +21,7 @@ following:
 
 `install.packages("BiocManager", repos = "https://cloud.r-project.org"/)`
 
-`BiocManager::install("mappeR")`
+`BiocManager::install("mappeR", update = FALSE)`
 
 `library(mappeR)`
 
