@@ -19,7 +19,7 @@ be downloaded here: <https://cytoscape.org/>.
 To install the most recent CRAN upload of this package, run the
 following:
 
-`install.packages("BiocManager", repos = "https://cloud.r-project.org"/)`
+`install.packages("BiocManager", repos = "https://cloud.r-project.org")`
 
 `BiocManager::install("mappeR", update = FALSE)`
 
