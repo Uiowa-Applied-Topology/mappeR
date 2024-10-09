@@ -13,22 +13,24 @@ Carlsson (2007).
 
 ## Setup
 
-You’re on the branch of `mappeR` that does not include functionality to
+You’re on the branch of `mappeR` that includes functionality to
 interface with `Cytoscape`, which can be downloaded here:
 <https://cytoscape.org/>.
 
 To install this version of the package from Github, run the following
 commands:
 
+`install.packages("BiocManager", repos = "https://cloud.r-project.org")`
+
 `install.packages("devtools")`
 
-`library(devtools)`
+`BiocManager::install("RCy3")`
 
-`devtools::install_github("https://github.com/Uiowa-Applied-Topology/mappeR/tree/no-cytoscape", upgrade=FALSE)`
+`devtools::install_github("https://github.com/Uiowa-Applied-Topology/mappeR/tree/cytoscape", upgrade=FALSE)`
 
 `library(mappeR)`
 
-If you’re installing from Github, you might need to do some more stuff:
+You might also need to do some more stuff:
 
 - **Windows:** install Rtools
   (<https://cran.r-project.org/bin/windows/Rtools/>)
