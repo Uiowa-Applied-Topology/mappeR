@@ -41,12 +41,30 @@
 create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
+  } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
+    stop("cover element tests need to be boolean functions.")
+  } else if (any(is.na(filtered_data))) {
+    stop("filtered data cannot have NA values.")
+  }
+
+  if (any(is.na(dists))) {
+    stop("no distance value can be NA")
+  }
+
+  if ((is.matrix(filtered_data))) {
+    if (dim(filtered_data)[1] != nrow(data)) {
+      stop("there should be as many filtered data points as there are data points.")
+    }
+  } else if (is.data.frame(filtered_data)) {
+    if (nrow(filtered_data) != nrow(data)) {
+      stop(("there should be as many filtered data points as there are data points."))
+    }
   } else if (length(filtered_data) != nrow(data)) {
     stop("there should be as many filtered data points as there are data points.")
-  } else if (all(sapply(cover_element_tests, typeof) == "function")) {
-    stop("cover element tests need to be boolean functions.")
   }
+
   bins = create_bins(data, filtered_data, cover_element_tests)
+
   if (method == "none") {
     return(run_mapper(convert_to_clusters(bins), dists, binning = FALSE))
   } else {
@@ -183,6 +201,10 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #' create_1D_mapper_object(data, dist(data), projx, cover, "single")
 create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
 
+  if (!all(cover[,1] - cover[,2] <= 0)) {
+    stop("left endpoints must be less than or equal to right endpoints")
+  }
+
   cover = apply(cover, 1, check_in_interval)
 
   return(create_mapper_object(data, dists, filtered_data, cover, clustering_method))
@@ -211,7 +233,16 @@ create_1D_mapper_object <- function(data, dists, filtered_data, cover, clusterin
 create_ball_mapper_object <- function(data, dists, eps) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
+  } else if(!is.numeric(eps)) {
+    stop("epsilon needs to be a number")
+  } else if (eps <= 0) {
+    stop("epsilon needs to be positive")
   }
+
+  if (any(is.na(dists))) {
+    stop("no distance value can be NA")
+  }
+
   balled_data = create_balls(data, dists, eps)
 
   ball_mapper_object = run_mapper(convert_to_clusters(balled_data), dists, binning = FALSE)
@@ -245,6 +276,17 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #'
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
+  if (!is.data.frame(data)) {
+    stop("input data needs to be a data frame.")
+  } else if(!is.numeric(eps)) {
+    stop("epsilon needs to be a number")
+  } else if (eps <= 0) {
+    stop("epsilon needs to be positive")
+  }
+
+  if ((any(is.na(dist1))) | (any(is.na(dist2)))) {
+    stop("no distance value can be NA")
+  }
   balls = create_balls(data, dist1, eps)
 
   return(create_mapper_object(data, dist2, rownames(data), lapply(balls, is_in_ball), clustering_method))

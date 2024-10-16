@@ -1,6 +1,6 @@
 mappeR
 ================
-2024-10-06
+2024-10-15
 
 <!-- badges: start -->
 
@@ -13,15 +13,10 @@ Carlsson (2007).
 
 ## Setup
 
-`mappeR` includes functionality to interface with `Cytoscape`, which can
-be downloaded here: <https://cytoscape.org/>.
-
-To install the most recent CRAN upload of this package, run the
+To install and use the most recent CRAN upload of this package, run the
 following:
 
-`install.packages("BiocManager", repos = "https://cloud.r-project.org")`
-
-`BiocManager::install("mappeR", update = FALSE)`
+`install.packages("mappeR")`
 
 `library(mappeR)`
 
