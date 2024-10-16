@@ -1,6 +1,7 @@
 # mappeR (development version)
 
 * Added safety checks for mapper input functions (no `NA` inputs, etc)
+* Removed Cytoscape interfacing for the release version; will remain in a separate branch
 
 # mappeR 1.0.0
 

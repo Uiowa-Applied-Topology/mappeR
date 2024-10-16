@@ -1,7 +1,7 @@
 ---
 title: "mappeR"
 output: rmarkdown::github_document
-date: "2024-10-06"
+date: "2024-10-15"
 ---
 
 <!-- badges: start -->
@@ -19,13 +19,9 @@ This is an implementation of the mapper algorithm by Singh, Mémoli, and Carlsso
 
 ## Setup
 
-`mappeR` includes functionality to interface with `Cytoscape`, which can be downloaded here: <https://cytoscape.org/>.
+To install and use the most recent CRAN upload of this package, run the following:
 
-To install the most recent CRAN upload of this package, run the following:
-
-`install.packages("BiocManager", repos = "https://cloud.r-project.org")`
-
-`BiocManager::install("mappeR", update = FALSE)`
+`install.packages("mappeR")`
 
 `library(mappeR)`
 
