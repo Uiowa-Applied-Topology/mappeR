@@ -1,3 +1,5 @@
+# mappeR (development version)
+
 # mappeR 1.1.0
 
 * Added safety checks for mapper input functions (no `NA` inputs, etc)
