@@ -1,3 +1,7 @@
+# mappeR (development version)
+
+* Added safety checks for mapper input functions (no `NA` inputs, etc)
+
 # mappeR 1.0.0
 
 * Balls/bins with equal amounts of data no longer cause wonkiness
