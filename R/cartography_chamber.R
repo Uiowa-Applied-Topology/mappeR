@@ -52,12 +52,10 @@ create_mapper_object <- function(data, dists, filtered_data, cover_element_tests
   }
 
   if ((is.matrix(filtered_data))) {
-    print("matrix!")
     if (dim(filtered_data)[1] != nrow(data)) {
       stop("there should be as many filtered data points as there are data points.")
     }
   } else if (is.data.frame(filtered_data)) {
-    print("dataframe!")
     if (nrow(filtered_data) != nrow(data)) {
       stop(("there should be as many filtered data points as there are data points."))
     }
