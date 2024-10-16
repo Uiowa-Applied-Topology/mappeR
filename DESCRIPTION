@@ -20,6 +20,7 @@ Imports:
     fastcluster,
     grDevices,
     igraph,
+    RCy3,
     stats,
     utils
 Suggests: 
