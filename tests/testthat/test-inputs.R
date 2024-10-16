@@ -17,8 +17,15 @@ test_that("mapper happens ok with distance matrix as a dist", {
   expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, cover, "single"))
 })
 
-test_that("1D mapper is ok with no clustering method", {
+test_that("mapper is ok with no clustering method", {
   expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, cover))
+})
+
+test_that("mapper works with differently formatted filtered data", {
+  expect_no_warning(create_1D_mapper_object(data, dist(data), as.data.frame(data$x), cover))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), as.list(data$x), cover))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), as.vector(data$x), cover))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), as.matrix(data$x), cover))
 })
 
 test_that("we can ball with equal sized bins", {
