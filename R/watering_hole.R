@@ -52,7 +52,7 @@ get_clusters <- function(bins, dists, method) {
     clusters_per_bin = sapply(clusters, max)
     offset = c(0, cumsum(clusters_per_bin))
     clusters = mapply(function(x, y)
-      x + y, clusters, offset[-length(offset)])
+      x + y, clusters, offset[-length(offset)], SIMPLIFY = FALSE)
     return(clusters)
   }
 
@@ -110,7 +110,7 @@ run_slink <- function(dist) {
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
 get_single_linkage_clusters <- function(dist_mats) {
   if (!is.list(dist_mats)) {
-    return(process_dendrograms(as.list(run_slink(dist_mats))))
+    return(process_dendrograms(run_slink(dist_mats)))
   }
   dends = lapply(dist_mats, run_slink)
   real_dends = dends[lapply(dends, length) > 1]
