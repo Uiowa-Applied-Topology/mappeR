@@ -131,7 +131,7 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edgelist)
   data_in_overlap = 0
 
-  if (is.list(overlaps)) {
+  if ((is.list(overlaps)) & length(overlaps) != 0) {
     data_in_overlap = sapply(overlaps, function(x) paste(x, collapse = ", "))
     edges = data.frame(source = sources,
                        target = targets,
@@ -320,9 +320,9 @@ get_overlaps <- function(binclust_data) {
   if (length(cluster_names) < 2) {
     return(0)
   }
-  pairs = combn(cluster_names, 2) # get all pairs of clusters
-  raw_overlaps = apply(pairs, 2, function(x)
-    intersect(x[[1]], x[[2]]), simplify = FALSE) # get all intersections between clusters
+  pairs = combn(cluster_names, 2, simplify = FALSE) # get all pairs of clusters
+  raw_overlaps = lapply(pairs, function(x)
+    intersect(x[[1]], x[[2]])) # get all intersections between clusters
   if (length(raw_overlaps) == 0) {
     return(0)
   } else {
