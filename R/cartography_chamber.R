@@ -1,4 +1,5 @@
 
+
 # mapper mapper -----------------------------------------------------------
 
 #' Create a mapper object
@@ -38,7 +39,11 @@
 #'   cover_element_tests = xcovercheck,
 #'   method = "single"
 #' )
-create_mapper_object <- function(data, dists, filtered_data, cover_element_tests, method="none") {
+create_mapper_object <- function(data,
+                                 dists,
+                                 filtered_data,
+                                 cover_element_tests,
+                                 method = "none") {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
@@ -57,7 +62,9 @@ create_mapper_object <- function(data, dists, filtered_data, cover_element_tests
     }
   } else if (is.data.frame(filtered_data)) {
     if (nrow(filtered_data) != nrow(data)) {
-      stop(("there should be as many filtered data points as there are data points."))
+      stop((
+        "there should be as many filtered data points as there are data points."
+      ))
     }
   } else if (length(filtered_data) != nrow(data)) {
     stop("there should be as many filtered data points as there are data points.")
@@ -98,7 +105,12 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #'
 #' @return A list of bins, each containing a vector of the names of the data inside it.
 create_bins <- function(data, filtered_data, cover_element_tests) {
-  res = mapply(create_single_bin, cover_element_test = cover_element_tests, SIMPLIFY = FALSE, MoreArgs = list(data = data, filtered_data = filtered_data))
+  res = mapply(
+    create_single_bin,
+    cover_element_test = cover_element_tests,
+    SIMPLIFY = FALSE,
+    MoreArgs = list(data = data, filtered_data = filtered_data)
+  )
   return(res)
 }
 
@@ -111,7 +123,7 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
-run_mapper <- function(binclust_data, dists, binning=TRUE) {
+run_mapper <- function(binclust_data, dists, binning = TRUE) {
   num_vertices = 0
   if (is.list(binclust_data)) {
     num_vertices = max(binclust_data[[length(binclust_data)]])
@@ -132,11 +144,14 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
   data_in_overlap = 0
 
   if ((is.list(overlaps)) & length(overlaps) != 0) {
-    data_in_overlap = sapply(overlaps, function(x) paste(x, collapse = ", "))
-    edges = data.frame(source = sources,
-                       target = targets,
-                       weight = edge_weights,
-                       overlap = data_in_overlap)
+    data_in_overlap = sapply(overlaps, function(x)
+      paste(x, collapse = ", "))
+    edges = data.frame(
+      source = sources,
+      target = targets,
+      weight = edge_weights,
+      overlap = data_in_overlap
+    )
   } else {
     edges = data.frame(source = "", target = "")
   }
@@ -153,7 +168,7 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 
     return(list(nodes, edges))
 
-  # if you don't
+    # if you don't
   } else {
     nodes = data.frame(
       id = node_ids,
@@ -195,9 +210,12 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #' cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 #'
 #' create_1D_mapper_object(data, dist(data), projx, cover, "single")
-create_1D_mapper_object <- function(data, dists, filtered_data, cover, clustering_method="single") {
-
-  if (!all(cover[,1] - cover[,2] <= 0)) {
+create_1D_mapper_object <- function(data,
+                                    dists,
+                                    filtered_data,
+                                    cover,
+                                    clustering_method = "single") {
+  if (!all(cover[, 1] - cover[, 2] <= 0)) {
     stop("left endpoints must be less than or equal to right endpoints")
   }
 
@@ -229,7 +247,7 @@ create_1D_mapper_object <- function(data, dists, filtered_data, cover, clusterin
 create_ball_mapper_object <- function(data, dists, eps) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
-  } else if(!is.numeric(eps)) {
+  } else if (!is.numeric(eps)) {
     stop("epsilon needs to be a number")
   } else if (eps <= 0) {
     stop("epsilon needs to be positive")
@@ -274,7 +292,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
-  } else if(!is.numeric(eps)) {
+  } else if (!is.numeric(eps)) {
     stop("epsilon needs to be a number")
   } else if (eps <= 0) {
     stop("epsilon needs to be positive")
@@ -285,7 +303,13 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
   }
   balls = create_balls(data, dist1, eps)
 
-  return(create_mapper_object(data, dist2, rownames(data), lapply(balls, is_in_ball), clustering_method))
+  return(create_mapper_object(
+    data,
+    dist2,
+    rownames(data),
+    lapply(balls, is_in_ball),
+    clustering_method
+  ))
 }
 
 # graph construction ------------------------------------------------------
@@ -311,7 +335,6 @@ next_triangular <- function(x) {
 #'
 #' @return A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge.
 get_overlaps <- function(binclust_data) {
-
   num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
   flattened_data = unlist(binclust_data)
   clusters = lapply(1:num_vertices, function(x)
@@ -339,19 +362,15 @@ get_overlaps <- function(binclust_data) {
 #'
 #' @return A 2D array representing the edge list of a graph.
 get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
-  if (num_vertices == 2) {
-    return(matrix(c(1,2), nrow = 1, ncol = 2))
-  } else {
-    overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
-    sources = sapply(overlap_names, function(x)
-      num_vertices - next_triangular(x))
-    targets = sapply(overlap_names, function(x) {
-      k = next_triangular(x)
-      diff = k * (k + 1) / 2 - x
-      num_vertices - k + diff + 1
-    })
-    edges = cbind(rev(sources), rev(targets))
-    return(edges)
-  }
-}
+  overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
+  sources = sapply(overlap_names, function(x)
+    num_vertices - next_triangular(x))
+  targets = sapply(overlap_names, function(x) {
+    k = next_triangular(x)
+    diff = k * (k + 1) / 2 - x
+    num_vertices - k + diff + 1
+  })
+  edges = cbind(rev(sources), rev(targets))
+  return(edges)
 
+}
