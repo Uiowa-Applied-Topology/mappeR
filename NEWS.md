@@ -1,5 +1,7 @@
 # mappeR (development version)
 
+* Fix issues with 100 percent overlap situtations caused by `mapply` simplifications
+
 # mappeR 1.1.0
 
 * Added safety checks for mapper input functions (no `NA` inputs, etc)
