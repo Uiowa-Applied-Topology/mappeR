@@ -22,11 +22,9 @@ mapper_object_to_igraph <- function(mapperobject) {
   edges = mapperobject[[2]]
 
   if (length(edges$source) <= 1) {
-    if (edges$source == "") {
       mappergraph = graph_from_data_frame(d = data.frame(id = rownames(vertices), id = rownames(vertices)),
                                           vertices = vertices)
       mappergraph = delete_edges(mappergraph, E(mappergraph))
-    }
   } else {
     mappergraph = graph_from_data_frame(d = edges,
                                         directed = FALSE,
