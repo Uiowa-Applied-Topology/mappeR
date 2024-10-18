@@ -79,7 +79,7 @@ convert_to_clusters <- function(bins) {
   }
   ball_sizes = lapply(bins, length)
   ballball_data = unlist(mapply(function(x, y)
-    rep(x, y), 1:length(ball_sizes), ball_sizes))
+    rep(x, y), 1:length(ball_sizes), ball_sizes, SIMPLIFY = FALSE))
   names(ballball_data) = unlist(bins)
   return(ballball_data)
 }
@@ -161,8 +161,7 @@ get_bin_vector <- function(binclust_data) {
     function(x, y)
       rep(x, y),
     1:length(num_unique_clusters_per_bin),
-    num_unique_clusters_per_bin
-  ))
+    num_unique_clusters_per_bin, SIMPLIFY = FALSE))
   return(bin_by_clusters)
 }
 
@@ -248,7 +247,7 @@ get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
 
   head_overlaps = overlap_lengths / total_size
   tail_overlaps = overlap_lengths / total_size
-  edge_weights = mapply(max, head_overlaps, tail_overlaps)
+  edge_weights = mapply(max, head_overlaps, tail_overlaps, SIMPLIFY = FALSE)
 
   return(edge_weights)
 }

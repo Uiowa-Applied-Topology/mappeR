@@ -21,5 +21,5 @@
 #' eccentricity = eccentricity_filter(P.dist)
 eccentricity_filter <- function(dists) {
   dists = as.matrix(dists)
-  apply(dists, 1, sum) / nrow(dists)
+  apply(dists, 1, sum, simplify = FALSE) / nrow(dists)
 }

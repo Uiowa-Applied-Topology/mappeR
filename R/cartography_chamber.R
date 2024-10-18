@@ -98,11 +98,7 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #'
 #' @return A list of bins, each containing a vector of the names of the data inside it.
 create_bins <- function(data, filtered_data, cover_element_tests) {
-  res = mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data))
-  if (is.matrix(res)) {
-    # thanks https://stackoverflow.com/questions/6819804/convert-a-matrix-to-a-list-of-column-vectors
-    return(lapply(seq_len(ncol(res)), function(i) res[,i]))
-  }
+  res = mapply(create_single_bin, cover_element_test = cover_element_tests, SIMPLIFY = FALSE, MoreArgs = list(data = data, filtered_data = filtered_data))
   return(res)
 }
 
