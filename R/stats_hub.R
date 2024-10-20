@@ -1,5 +1,3 @@
-# TODO: add options for what clustering math is given to mapper graph
-
 # goblin data processing center -------------------------------------------
 
 ## node data --------------------------------------------------------------
@@ -35,8 +33,7 @@ get_bin_vector <- function(binclust_data) {
     function(x, y)
       rep(x, y),
     1:length(num_unique_clusters_per_bin),
-    num_unique_clusters_per_bin
-  ))
+    num_unique_clusters_per_bin, SIMPLIFY = FALSE))
   return(bin_by_clusters)
 }
 
@@ -122,7 +119,7 @@ get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
 
   head_overlaps = overlap_lengths / total_size
   tail_overlaps = overlap_lengths / total_size
-  edge_weights = mapply(max, head_overlaps, tail_overlaps)
+  edge_weights = mapply(max, head_overlaps, tail_overlaps, SIMPLIFY = FALSE)
 
   return(edge_weights)
 }
