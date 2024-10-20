@@ -10,8 +10,11 @@ process_dendrograms(dends)
 \item{dends}{A list of dendrograms to be cut.}
 }
 \value{
-A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels. This function determines a global minimum threshold based on the longest branches in all the input dendrograms, and uses that as a heuristic to gauge if the best number of clusters is 1, or the value obtained by cutting the longest branch.
+A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels.
 }
 \description{
 Cut many dendrograms
+}
+\details{
+This function uses a value of 10 percent of the tallest branch across dendrograms as a threshold for \link{cut_dendrogram}.
 }

@@ -12,7 +12,7 @@ get_cluster_tightness_vector(dists, binclust_data)
 \item{binclust_data}{A list of named vectors whose names are those of data points and whose values are cluster ids}
 }
 \value{
-A vector of real numbers in \eqn{(0,\infty)} representing a measure of dispersion of a cluster, calculated according to \code{\link[=compute_tightness]{compute_tightness()}}.
+A vector of real numbers in \eqn{(0,\infty)} representing a measure of dispersion of a cluster, calculated according to \link{compute_tightness}.
 }
 \description{
 Compute dispersion measures of a list of clusters

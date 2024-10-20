@@ -81,7 +81,7 @@ compute_tightness <- function(dists, cluster) {
 #' @param dists A distance matrix for the data points inside all the input clusters
 #' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster ids
 #'
-#' @return A vector of real numbers in \eqn{(0,\infty)} representing a measure of dispersion of a cluster, calculated according to [compute_tightness()].
+#' @return A vector of real numbers in \eqn{(0,\infty)} representing a measure of dispersion of a cluster, calculated according to [compute_tightness].
 get_cluster_tightness_vector <- function(dists, binclust_data) {
 
   # no need to list by level set
