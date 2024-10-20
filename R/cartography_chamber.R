@@ -7,13 +7,11 @@
 #'
 #' @param data A data frame.
 #' @param dists A distance matrix for the data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
-#' @param cover_element_tests A list of membership test functions for a list of cover elements. Each member of `cover_element_tests` should be able to identify (return `TRUE` or `FALSE`) if a single input data point is a member of the cover element it represents.
-#' @param method The desired clustering method to use. e.g., "single"
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
+#' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
+#' @param method Your favorite clustering algorithm; options are "single" (for single linkage hierarchical clustering) or "none" for no clustering.
 #'
-#' @return A list of two dataframes, one with node data containing bin membership,
-#'  datapoints per cluster, and cluster dispersion, and one with edge data
-#'  containing sources, targets, and weights representing overlap strength.
+#' @return A list of two dataframes, one with node data and one with edge data.
 #' @export
 #' @examples
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
@@ -76,11 +74,13 @@ create_mapper_object <- function(data, dists, filtered_data, cover_element_tests
 #' Create a bin of data
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
-#' @param cover_element_test A membership test function for a cover element. It should identify (return `TRUE` or `FALSE`) if a single input data point, is a member of the cover element it represents.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
+#' @param cover_element_test A membership test function for a cover element. It should return `TRUE` or `FALSE` when given a filtered data point.
 #'
-#' @return A vector of names of points from the data frame, representing a bin.
+#' @return A vector of names of points from the data frame, representing a level set.
 create_single_bin <- function(data, filtered_data, cover_element_test) {
+
+  # find which data points are part of the cover element
   in_bin = sapply(filtered_data, cover_element_test)
   bin_assignments = which(in_bin)
   if (length(bin_assignments) != 0) {
@@ -93,16 +93,12 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #' Create bins of data
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
-#' @param cover_element_tests A list of membership test functions for a list of cover elements. Each member of `cover_element_tests` should be able to identify (return `TRUE` or `FALSE`) if a single input data point is a member of the cover element it represents.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
+#' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #'
-#' @return A list of bins, each containing a vector of the names of the data inside it.
+#' @return A list of level sets, each containing a vector of the names of the data inside it.
 create_bins <- function(data, filtered_data, cover_element_tests) {
-  res = mapply(create_single_bin, cover_element_test = cover_element_tests, MoreArgs = list(data = data, filtered_data = filtered_data))
-  if (is.matrix(res)) {
-    # thanks https://stackoverflow.com/questions/6819804/convert-a-matrix-to-a-list-of-column-vectors
-    return(lapply(seq_len(ncol(res)), function(i) res[,i]))
-  }
+  res = mapply(create_single_bin, cover_element_test = cover_element_tests, SIMPLIFY = FALSE, MoreArgs = list(data = data, filtered_data = filtered_data))
   return(res)
 }
 
@@ -181,9 +177,9 @@ run_mapper <- function(binclust_data, dists, binning=TRUE) {
 #'
 #' @param data A data frame.
 #' @param dists A distance matrix for the data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one row per observation in the original data frame.
-#' @param cover A 2D array of interval left and right endpoints.
-#' @param clustering_method Your favorite clustering algorithm.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
+#' @param cover A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).
+#' @param clustering_method Your favorite clustering algorithm; options are "single" (for single linkage hierarchical clustering) or "none" for no clustering.
 #'
 #' @return A list of two data frames, one with node data containing bin membership,
 #'  data points per cluster, and cluster dispersion, and one with edge data
@@ -263,7 +259,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param dist1 A distance matrix for the data frame; this will be used to ball the data.
 #' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
 #' @param eps A positive real number for your desired ball radius.
-#' @param clustering_method Your favorite clustering algorithm.
+#' @param clustering_method Your favorite clustering algorithm; options are "single" (for single linkage hierarchical clustering) or "none" for no clustering.
 #'
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
