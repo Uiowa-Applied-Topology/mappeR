@@ -1,6 +1,6 @@
 mappeR
 ================
-2024-10-15
+2024-10-20
 
 <!-- badges: start -->
 
@@ -279,3 +279,10 @@ ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 **Hierarchical Clustering**
 
 - `"single"`: single linkage
+- `"complete"`: complete linkage
+- `"average"`: average linkage
+- `"mcquitty"`: McQuitty linkage
+- `"centroid"`: centroid linkage
+- `"median"`: median linkage
+- `"ward.D"`: Ward linkage (assumes squared distances)
+- `"ward.D2"`: Ward linkage (assumes nonsquared distances)

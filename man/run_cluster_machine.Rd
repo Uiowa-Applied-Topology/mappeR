@@ -9,7 +9,7 @@ run_cluster_machine(dist_mats, method)
 \arguments{
 \item{dist_mats}{A list of distance matrices of each bin that is to be clustered.}
 
-\item{method}{A string that suggests how the goblins will handle the data.}
+\item{method}{A string to pass to \code{fastcluster} to determine clustering method.}
 }
 \value{
 A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)

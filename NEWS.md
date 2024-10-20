@@ -1,6 +1,7 @@
 # mappeR (development version)
 
 * Fix issues with 100 percent overlap situtations caused by `mapply` simplifications
+* Add other hierarchical clustering methods (those available from `fastcluster`)
 
 # mappeR 1.1.0
 
