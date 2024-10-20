@@ -1,4 +1,4 @@
-# generate 1000 random data points between -2 and 2
+# # generate 1000 random data points between -2 and 2
 data = data.frame(x = runif(1000, -2, 2), drop = FALSE)
 cover = create_width_balanced_cover(min(data$x), max(data$x), 10, 25)
 
@@ -37,6 +37,10 @@ test_that("we can ball with equal sized bins", {
 
 test_that("two bins does not cause error", {
   expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(min(data$x), max(data$x), 2, 0), "single"))
+})
+
+test_that("one bin does not cause error", {
+  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(min(data$x), max(data$x), 1, runif(1)*100), "single"))
 })
 
 
