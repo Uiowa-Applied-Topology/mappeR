@@ -75,15 +75,15 @@ get_clusters <- function(bins, dists, method) {
 #'
 #' @return A named vector whose names are data point names and whose values are cluster labels
 convert_to_clusters <- function(bins) {
-  if (!is.list(bins)) {
-    res = rep(1, length(bins))
-    names(res) = bins[,1]
-    return(res)
-  }
   ball_sizes = lapply(bins, length)
+
+  # repeat the cluster id for as many data points belonging to that bin
   ballball_data = unlist(mapply(function(x, y)
     rep(x, y), 1:length(ball_sizes), ball_sizes))
+
+  # make sure names match up
   names(ballball_data) = unlist(bins)
+
   return(ballball_data)
 }
 
@@ -171,7 +171,10 @@ cut_dendrogram <- function(dend, threshold) {
     cutval = sample(cutval, 1)
   }
 
+  # one cluster condition: dendrogram has no sufficiently tall branches
   thresholdcondition = tallest_branch_height < threshold
+
+  # one cluster condition: lengths of branches are not well-dispersed
   indexofdispersion = sd(heights) ^ 2 / mean(heights)
   dispersioncondition = indexofdispersion < .015
 

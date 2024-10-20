@@ -127,25 +127,24 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 run_mapper <- function(binclust_data, dists, binning = TRUE) {
-  num_vertices = 0
-  if (is.list(binclust_data)) {
-    num_vertices = max(binclust_data[[length(binclust_data)]])
-  } else {
-    num_vertices = max(binclust_data)
-  }
+
+  # basic node info
+  num_vertices = max(binclust_data[[length(binclust_data)]])
   node_ids = as.character(1:num_vertices)
+
+  # basic edge info
   overlaps = get_overlaps(binclust_data)
   edgelist = get_edgelist_from_overlaps(overlaps, num_vertices)
   sources = as.character(edgelist[, 1])
   targets = as.character(edgelist[, 2])
 
-  # calculate some cluster stats
+  # calculate extra statistics
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data)
   cluster_size = get_cluster_sizes(binclust_data)
   data_in_cluster = unlist(get_clustered_data(binclust_data))
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edgelist)
-  data_in_overlap = 0
 
+  # assemble edge dataframe
   if ((is.list(overlaps)) & length(overlaps) != 0) {
     data_in_overlap = sapply(overlaps, function(x)
       paste(x, collapse = ", "))
@@ -159,7 +158,7 @@ run_mapper <- function(binclust_data, dists, binning = TRUE) {
     edges = data.frame(source = "", target = "")
   }
 
-  # if you care about bins
+  # assemble node dataframe
   if (binning) {
     nodes = data.frame(
       id = node_ids,
@@ -171,7 +170,6 @@ run_mapper <- function(binclust_data, dists, binning = TRUE) {
 
     return(list(nodes, edges))
 
-    # if you don't
   } else {
     nodes = data.frame(
       id = node_ids,
@@ -195,9 +193,9 @@ next_triangular <- function(x) {
   next_triangle_indx = floor((1 + sqrt(1 + 8 * x)) / 2)
   prev_triangle_val = choose(next_triangle_indx, 2)
   if (prev_triangle_val == x) {
-    return (next_triangle_indx - 1)
+    return(next_triangle_indx - 1)
   } else {
-    return (next_triangle_indx)
+    return(next_triangle_indx)
   }
 }
 
@@ -207,17 +205,26 @@ next_triangular <- function(x) {
 #'
 #' @return A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge.
 get_overlaps <- function(binclust_data) {
-  num_vertices = max(binclust_data[[length(binclust_data)]]) # id of last cluster in the last bin
+
+  # no need to list by level set
+  num_vertices = max(binclust_data[[length(binclust_data)]])
   flattened_data = unlist(binclust_data)
+
+  # find data points with a specific cluster id
   clusters = lapply(1:num_vertices, function(x)
-    flattened_data[flattened_data == x]) # sort by cluster
-  cluster_names = lapply(clusters, names) # it doesn't work if you don't do this
+    flattened_data[flattened_data == x])
+  cluster_names = lapply(clusters, names)
+
+  # we need at least 2 nodes to make an edge
   if (length(cluster_names) < 2) {
     return(0)
   }
-  pairs = combn(cluster_names, 2, simplify = FALSE) # get all pairs of clusters
+
+  # get all pairs of data points between clusters and find intersections
+  pairs = combn(cluster_names, 2, simplify = FALSE)
   raw_overlaps = lapply(pairs, function(x)
-    intersect(x[[1]], x[[2]])) # get all intersections between clusters
+    intersect(x[[1]], x[[2]]))
+
   if (length(raw_overlaps) == 0) {
     return(0)
   } else {
@@ -234,7 +241,11 @@ get_overlaps <- function(binclust_data) {
 #'
 #' @return A 2D array representing the edge list of a graph.
 get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
+
+  # label all edges in order
   overlap_names = rev(-as.numeric(names(overlaps)) + choose(num_vertices, 2) + 1)
+
+  # create source and target node list from edge labels
   sources = sapply(overlap_names, function(x)
     num_vertices - next_triangular(x))
   targets = sapply(overlap_names, function(x) {
@@ -242,6 +253,8 @@ get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
     diff = k * (k + 1) / 2 - x
     num_vertices - k + diff + 1
   })
+
+  # assemble edge list
   edges = cbind(rev(sources), rev(targets))
   return(edges)
 

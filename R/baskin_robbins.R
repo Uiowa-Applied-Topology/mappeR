@@ -123,6 +123,7 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
   if ((any(is.na(dist1))) | (any(is.na(dist2)))) {
     stop("no distance value can be NA")
   }
+
   balls = create_balls(data, dist1, eps)
 
   return(create_mapper_object(

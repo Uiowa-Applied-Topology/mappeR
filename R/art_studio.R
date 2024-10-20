@@ -25,6 +25,7 @@ mapper_object_to_igraph <- function(mapperobject) {
   vertices = mapperobject[[1]]
   edges = mapperobject[[2]]
 
+  # deal with edgeless graphs
   if (length(edges$source) <= 1 & any(edges$source == "")) {
       mappergraph = graph_from_data_frame(d = data.frame(id = rownames(vertices), id = rownames(vertices)),
                                           vertices = vertices)
@@ -35,8 +36,13 @@ mapper_object_to_igraph <- function(mapperobject) {
                                         vertices = vertices)
   }
 
+  # don't label nodes
   mappergraph = set_vertex_attr(mappergraph, "label", value = NA)
+
+  # set node size to square root of cluster size
   mappergraph = set_vertex_attr(mappergraph, "size", value = sqrt(vertices$cluster_size))
+
+  # color nodes if binning
   if ("bin" %in% colnames(vertices)) {
     num_bins = max(vertices$bin)
     colfunc = colorRampPalette(c("blue", "gold", "red"))

@@ -42,16 +42,20 @@ create_width_balanced_cover <- function(min_val,
     stop("percent overlap must be between 0 and 100")
   }
 
-  even_length = (max_val - min_val) / num_bins # widths with zero percent overlap
+  # calculate widths as if percent overlap is zero
+  even_length = (max_val - min_val) / num_bins
+
+  # calculate appropriate extension length to ends of zero overlap intervals
   nudge = (percent_overlap / 100) * even_length
 
-  left_ends = min_val + (even_length - nudge) * (0:(num_bins - 1)) # construct correctly overlapping bins
-  right_ends = left_ends + even_length # we will scale everything after
+  # construct intervals with the correct overlap but wrong width
+  left_ends = min_val + (even_length - nudge) * (0:(num_bins - 1))
+  right_ends = left_ends + even_length
 
-  scale_factor = (max_val - min_val) / (right_ends[num_bins] - min_val) # scale by pretending min_val = 0
+  # scale intervals to correct width by translating to zero, scaling, then translating back
+  scale_factor = (max_val - min_val) / (right_ends[num_bins] - min_val)
   bin_ends = cbind(left_ends, right_ends) # make bins
-
-  bin_ends = scale_factor * (bin_ends - min_val) + min_val # translate to zero, scale, then translate back
+  bin_ends = scale_factor * (bin_ends - min_val) + min_val
 
   return(bin_ends)
 }
@@ -93,6 +97,8 @@ check_in_interval <- function(endpoints) {
 #' P.dist = dist(P.data)
 #' balls = create_balls(data = P.data, dists = P.dist, eps = .25)
 create_balls <- function(data, dists, eps) {
+
+  # safety first
   if (eps <= 0) {
     stop("epsilon needs to be positive")
   }
