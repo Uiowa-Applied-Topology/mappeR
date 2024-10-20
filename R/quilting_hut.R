@@ -1,6 +1,7 @@
-# TODO: add n-D covering
-# TODO: add data-balanced covers
-# TODO: add other types of covers
+###########################################################################
+# QUILTING HUT
+# methods to make covers
+###########################################################################
 
 # 1D filtering --------------------------------------------------------------
 

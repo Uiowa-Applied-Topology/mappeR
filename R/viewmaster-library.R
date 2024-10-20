@@ -1,3 +1,8 @@
+###########################################################################
+# VIEWMASTER LIBRARY
+# lens/filter functions
+###########################################################################
+
 #' Compute eccentricity of data points
 
 #' @param dists A distance matrix associated to a data frame.
