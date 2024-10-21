@@ -13,7 +13,7 @@
 #' @param dists A distance matrix for the data frame.
 #' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
-#' @param method Your favorite clustering algorithm; options are "single" (for single linkage hierarchical clustering) or "none" for no clustering.
+#' @param method A string to pass to [hclust] to determine clustering method.
 #'
 #' @return A list of two dataframes, one with node data and one with edge data.
 #' @export
