@@ -1,3 +1,5 @@
+# mappeR (development version)
+
 # mappeR 1.2.0
 
 * Add other hierarchical clustering methods (those available from `fastcluster`)
