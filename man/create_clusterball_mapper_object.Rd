@@ -15,7 +15,7 @@ create_clusterball_mapper_object(data, dist1, dist2, eps, clustering_method)
 
 \item{eps}{A positive real number for your desired ball radius.}
 
-\item{clustering_method}{Your favorite clustering algorithm; options are "single" (for single linkage hierarchical clustering) or "none" for no clustering.}
+\item{clustering_method}{A string to pass to \link{hclust} to determine clustering method.}
 }
 \value{
 A list of two dataframes, one with node data containing bin membership,

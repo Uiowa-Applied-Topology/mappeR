@@ -9,7 +9,7 @@ get_hierarchical_clusters(dist_mats, method)
 \arguments{
 \item{dist_mats}{A list of distance matrices to be used for clustering.}
 
-\item{method}{A string to pass to \code{fastcluster} to determine clustering method.}
+\item{method}{A string to pass to \link{hclust} to determine clustering method.}
 }
 \value{
 A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
