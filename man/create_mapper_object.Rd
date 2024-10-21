@@ -21,7 +21,7 @@ create_mapper_object(
 
 \item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 
-\item{method}{Your favorite clustering algorithm; options are "single" (for single linkage hierarchical clustering) or "none" for no clustering.}
+\item{method}{A string to pass to \link{hclust} to determine clustering method.}
 }
 \value{
 A list of two dataframes, one with node data and one with edge data.

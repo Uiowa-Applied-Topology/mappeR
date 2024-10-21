@@ -11,7 +11,7 @@ get_clusters(bins, dists, method)
 
 \item{dists}{A distance matrix containing pairwise distances between named data points.}
 
-\item{method}{A clue!}
+\item{method}{A string to pass to \link{hclust} to determine clustering method.}
 }
 \value{
 A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
