@@ -114,6 +114,9 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
     SIMPLIFY = FALSE,
     MoreArgs = list(data = data, filtered_data = filtered_data)
   )
+  if (length(res) == 0) {
+    stop("No filtered data is covered!")
+  }
   return(res)
 }
 
