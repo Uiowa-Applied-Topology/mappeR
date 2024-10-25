@@ -36,14 +36,15 @@ create_1D_mapper_object <- function(data,
                                     dists,
                                     filtered_data,
                                     cover,
-                                    clustering_method = "single") {
+                                    clustering_method = "single",
+                                    global_clustering = TRUE) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
     stop("left endpoints must be less than or equal to right endpoints")
   }
 
   cover = apply(cover, 1, check_in_interval)
 
-  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method))
+  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method, global_clustering))
 }
 
 # ball mapper --------------------------------------------------------------
@@ -111,7 +112,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' eps = 1
 #'
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
-create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
+create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method, global_clustering = TRUE) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!is.numeric(eps)) {
@@ -131,6 +132,7 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
     dist2,
     rownames(data),
     lapply(balls, is_in_ball),
-    clustering_method
+    clustering_method,
+    global_clustering
   ))
 }

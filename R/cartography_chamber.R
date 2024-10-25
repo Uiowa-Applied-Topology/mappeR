@@ -44,7 +44,8 @@ create_mapper_object <- function(data,
                                  dists,
                                  filtered_data,
                                  cover_element_tests,
-                                 method = "none") {
+                                 method = "none",
+                                 global_clustering = TRUE) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
