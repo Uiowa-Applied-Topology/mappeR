@@ -4,10 +4,12 @@
 \alias{process_dendrograms}
 \title{Cut many dendrograms}
 \usage{
-process_dendrograms(dends)
+process_dendrograms(dends, global_clustering = TRUE)
 }
 \arguments{
 \item{dends}{A list of dendrograms to be cut.}
+
+\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.}
 }
 \value{
 A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels.

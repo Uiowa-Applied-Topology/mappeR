@@ -4,12 +4,14 @@
 \alias{run_cluster_machine}
 \title{Ship data off to the clustering goblins}
 \usage{
-run_cluster_machine(dist_mats, method)
+run_cluster_machine(dist_mats, method, global_clustering = TRUE)
 }
 \arguments{
 \item{dist_mats}{A list of distance matrices of each bin that is to be clustered.}
 
 \item{method}{A string to pass to \code{fastcluster} to determine clustering method.}
+
+\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context}
 }
 \value{
 A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)

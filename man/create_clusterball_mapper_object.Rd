@@ -4,7 +4,14 @@
 \alias{create_clusterball_mapper_object}
 \title{Run clusterball mapper}
 \usage{
-create_clusterball_mapper_object(data, dist1, dist2, eps, clustering_method)
+create_clusterball_mapper_object(
+  data,
+  dist1,
+  dist2,
+  eps,
+  clustering_method,
+  global_clustering = TRUE
+)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -16,6 +23,8 @@ create_clusterball_mapper_object(data, dist1, dist2, eps, clustering_method)
 \item{eps}{A positive real number for your desired ball radius.}
 
 \item{clustering_method}{A string to pass to \link{hclust} to determine clustering method.}
+
+\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.}
 }
 \value{
 A list of two dataframes, one with node data containing bin membership,
