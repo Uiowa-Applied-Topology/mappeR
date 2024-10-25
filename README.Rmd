@@ -1,7 +1,7 @@
 ---
 title: "mappeR"
 output: rmarkdown::github_document
-date: "2024-10-15"
+date: "2024-10-20"
 ---
 
 <!-- badges: start -->
@@ -318,3 +318,10 @@ plot(mapper_object_to_igraph(ballmapper4), main = TeX(r"($\epsilon=2$)"))
 **Hierarchical Clustering**
 
 -   `"single"`: single linkage
+-   `"complete"`: complete linkage
+-   `"average"`: average linkage
+-   `"mcquitty"`: McQuitty linkage
+-   `"centroid"`: centroid linkage
+-   `"median"`: median linkage
+-   `"ward.D"`: Ward linkage (assumes squared distances)
+-   `"ward.D2"`: Ward linkage (assumes nonsquared distances)

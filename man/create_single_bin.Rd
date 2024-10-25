@@ -9,12 +9,12 @@ create_single_bin(data, filtered_data, cover_element_test)
 \arguments{
 \item{data}{A data frame.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one row per observation in the original data frame.}
+\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.}
 
-\item{cover_element_test}{A membership test function for a cover element. It should identify (return \code{TRUE} or \code{FALSE}) if a single input data point, is a member of the cover element it represents.}
+\item{cover_element_test}{A membership test function for a cover element. It should return \code{TRUE} or \code{FALSE} when given a filtered data point.}
 }
 \value{
-A vector of names of points from the data frame, representing a bin.
+A vector of names of points from the data frame, representing a level set.
 }
 \description{
 Create a bin of data
