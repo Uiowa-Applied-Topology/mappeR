@@ -1,5 +1,7 @@
 # mappeR (development version)
 
+* Adjust `compute_tightness` to no longer normalize by the maximum distance from the medoid (easier to see behavior in a single mapper graph, may add options in future)
+
 # mappeR 1.2.0
 
 * Add other hierarchical clustering methods (those available from `fastcluster`)
