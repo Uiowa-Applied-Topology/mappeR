@@ -18,5 +18,5 @@ A real number in \eqn{[0,1]} representing a measure of dispersion of a cluster.
 Compute dispersion of a single cluster
 }
 \details{
-This method computes a measure of cluster dispersion. It finds the medoid of the input data set and returns the sum of distances from the medoid divided by the largest distance from the medoid. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{\displaystyle\sum_{i}\text{dist}(x_i, x_j)}{\left(\displaystyle\max_{x_i\in C, i\neq j}{\text{dist}(x_i, x_j)}\right)\left(|C| - 1\right)}} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
+This method computes a measure of cluster dispersion. It finds the medoid of the input data set and returns the sum of distances from the medoid scaled by the size of the data set. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{\displaystyle\sum_{i}\text{dist}(x_i, x_j)}{\left(|C| - 1\right)}} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 }

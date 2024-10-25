@@ -4,12 +4,14 @@
 \alias{get_hierarchical_clusters}
 \title{Perform hierarchical clustering and process dendrograms}
 \usage{
-get_hierarchical_clusters(dist_mats, method)
+get_hierarchical_clusters(dist_mats, method, global_clustering = TRUE)
 }
 \arguments{
 \item{dist_mats}{A list of distance matrices to be used for clustering.}
 
 \item{method}{A string to pass to \link{hclust} to determine clustering method.}
+
+\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context}
 }
 \value{
 A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels

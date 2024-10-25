@@ -14,6 +14,7 @@
 #' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #' @param method A string to pass to [hclust] to determine clustering method.
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
 #'
 #' @return A list of two dataframes, one with node data and one with edge data.
 #' @export
@@ -44,7 +45,8 @@ create_mapper_object <- function(data,
                                  dists,
                                  filtered_data,
                                  cover_element_tests,
-                                 method = "none") {
+                                 method = "none",
+                                 global_clustering = TRUE) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
