@@ -17,6 +17,7 @@
 #' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
 #' @param cover A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).
 #' @param clustering_method A string to pass to [hclust] to determine clustering method.
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
 #'
 #' @return A list of two data frames, one with node data containing bin membership,
 #'  data points per cluster, and cluster dispersion, and one with edge data
@@ -101,6 +102,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
 #' @param eps A positive real number for your desired ball radius.
 #' @param clustering_method A string to pass to [hclust] to determine clustering method.
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
 #'
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data

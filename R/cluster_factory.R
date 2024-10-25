@@ -11,6 +11,7 @@
 #'
 #' @param dist_mats A list of distance matrices of each bin that is to be clustered.
 #' @param method A string to pass to `fastcluster` to determine clustering method.
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
 run_cluster_machine <- function(dist_mats, method, global_clustering = TRUE) {
@@ -46,6 +47,7 @@ subset_dists <- function(bin, dists) {
 #' @param bins A list containing "bins" of vectors of names of data points.
 #' @param dists A distance matrix containing pairwise distances between named data points.
 #' @param method A string to pass to [hclust] to determine clustering method.
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
 get_clusters <- function(bins, dists, method, global_clustering = TRUE) {
@@ -99,6 +101,7 @@ convert_to_clusters <- function(bins) {
 #'
 #' @param dist_mats A list of distance matrices to be used for clustering.
 #' @param method A string to pass to [hclust] to determine clustering method.
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
 get_hierarchical_clusters <- function(dist_mats, method, global_clustering = TRUE) {
@@ -200,6 +203,7 @@ cut_dendrogram <- function(dend, threshold) {
 #'
 #' @return A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels.
 #' @details This function uses a value of 10 percent of the tallest branch across dendrograms as a threshold for [cut_dendrogram].
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
 process_dendrograms <- function(dends, global_clustering = TRUE) {
   if (inherits(dends, "hclust")) {
     return(cut_dendrogram(dends, 0))
