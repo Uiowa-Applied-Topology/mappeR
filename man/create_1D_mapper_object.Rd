@@ -21,7 +21,7 @@ create_1D_mapper_object(
 
 \item{cover}{A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
 
-\item{clustering_method}{Your favorite clustering algorithm; options are "single" (for single linkage hierarchical clustering) or "none" for no clustering.}
+\item{clustering_method}{A string to pass to \link{hclust} to determine clustering method.}
 }
 \value{
 A list of two data frames, one with node data containing bin membership,
