@@ -9,7 +9,8 @@ create_mapper_object(
   dists,
   filtered_data,
   cover_element_tests,
-  method = "none"
+  method = "none",
+  global_clustering = TRUE
 )
 }
 \arguments{
@@ -17,16 +18,16 @@ create_mapper_object(
 
 \item{dists}{A distance matrix for the data frame.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one row per observation in the original data frame.}
+\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.}
 
-\item{cover_element_tests}{A list of membership test functions for a list of cover elements. Each member of \code{cover_element_tests} should be able to identify (return \code{TRUE} or \code{FALSE}) if a single input data point is a member of the cover element it represents.}
+\item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 
-\item{method}{The desired clustering method to use. e.g., "single"}
+\item{method}{A string to pass to \link{hclust} to determine clustering method.}
+
+\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context}
 }
 \value{
-A list of two dataframes, one with node data containing bin membership,
-datapoints per cluster, and cluster dispersion, and one with edge data
-containing sources, targets, and weights representing overlap strength.
+A list of two dataframes, one with node data and one with edge data.
 }
 \description{
 Run the mapper algorithm on a data frame.
