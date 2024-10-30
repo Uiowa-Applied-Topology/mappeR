@@ -17,6 +17,7 @@
 #' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
 #' @param cover A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).
 #' @param clustering_method A string to pass to [hclust] to determine clustering method.
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
 #'
 #' @return A list of two data frames, one with node data containing bin membership,
 #'  data points per cluster, and cluster dispersion, and one with edge data
@@ -36,14 +37,15 @@ create_1D_mapper_object <- function(data,
                                     dists,
                                     filtered_data,
                                     cover,
-                                    clustering_method = "single") {
+                                    clustering_method = "single",
+                                    global_clustering = TRUE) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
     stop("left endpoints must be less than or equal to right endpoints")
   }
 
   cover = apply(cover, 1, check_in_interval)
 
-  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method))
+  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method, global_clustering))
 }
 
 # ball mapper --------------------------------------------------------------
@@ -100,6 +102,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
 #' @param eps A positive real number for your desired ball radius.
 #' @param clustering_method A string to pass to [hclust] to determine clustering method.
+#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
 #'
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
@@ -111,7 +114,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' eps = 1
 #'
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
-create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
+create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method, global_clustering = TRUE) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!is.numeric(eps)) {
@@ -131,6 +134,7 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
     dist2,
     rownames(data),
     lapply(balls, is_in_ball),
-    clustering_method
+    clustering_method,
+    global_clustering
   ))
 }

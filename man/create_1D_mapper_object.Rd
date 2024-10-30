@@ -9,7 +9,8 @@ create_1D_mapper_object(
   dists,
   filtered_data,
   cover,
-  clustering_method = "single"
+  clustering_method = "single",
+  global_clustering = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ create_1D_mapper_object(
 \item{cover}{A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
 
 \item{clustering_method}{A string to pass to \link{hclust} to determine clustering method.}
+
+\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.}
 }
 \value{
 A list of two data frames, one with node data containing bin membership,

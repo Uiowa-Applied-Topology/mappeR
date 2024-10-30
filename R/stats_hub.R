@@ -52,11 +52,11 @@ get_bin_vector <- function(binclust_data) {
 #' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels
 #'
 #' @return A real number in \eqn{[0,1]} representing a measure of dispersion of a cluster.
-#' @details This method computes a measure of cluster dispersion. It finds the medoid of the input data set and returns the sum of distances from the medoid divided by the largest distance from the medoid. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{\displaystyle\sum_{i}\text{dist}(x_i, x_j)}{\left(\displaystyle\max_{x_i\in C, i\neq j}{\text{dist}(x_i, x_j)}\right)\left(|C| - 1\right)}} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
+#' @details This method computes a measure of cluster dispersion. It finds the medoid of the input data set and returns the average distance to the medoid. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{\left(|C|-1\right)}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 compute_tightness <- function(dists, cluster) {
 
-  # empty, singleton, or doubleton clusters have trivial tightness
-  if (length(cluster) <= 2) {
+  # empty or singleton clusters have trivial tightness
+  if (length(cluster) <= 1) {
     return(0)
   } else {
     # get the distances associated to points in this cluster
@@ -70,7 +70,7 @@ compute_tightness <- function(dists, cluster) {
     # use the maximum distance to the medoid to calculate tightness
     medoid_dists = sample(which(sums == min_sum), 1) # pick a medoid
     min_dists = these_dists[medoid_dists, ]
-    closeness_factor = min_sum / (max(min_dists) * (length(cluster) - 1))
+    closeness_factor = min_sum / (length(cluster) - 1)
 
     return(closeness_factor)
   }

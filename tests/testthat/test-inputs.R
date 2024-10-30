@@ -43,4 +43,8 @@ test_that("one bin does not cause error", {
   expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(min(data$x), max(data$x), 1, runif(1)*100), "single"))
 })
 
+test_that("bad bins quits", {
+  expect_error(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(max(data$x) + 1, max(data$x) + 2, 10, runif(1)*100), "single"))
+})
+
 
