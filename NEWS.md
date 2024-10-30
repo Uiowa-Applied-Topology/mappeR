@@ -1,4 +1,4 @@
-# mappeR (development version)
+# mappeR 1.3.0
 
 * Adjust `compute_tightness` to no longer normalize by the maximum distance from the medoid (easier to see behavior in a single mapper graph, may add options in future)
 * Add option to consider each level set locally when clustering; default is still to do it globally
@@ -6,7 +6,7 @@
 # mappeR 1.2.0
 
 * Add other hierarchical clustering methods (those available from `fastcluster`)
-* Fix issues with 100 percent overlap situtations caused by `mapply` simplifications
+* Fix issues with 100 percent overlap situations caused by `mapply` simplifications
 
 # mappeR 1.1.0
 
