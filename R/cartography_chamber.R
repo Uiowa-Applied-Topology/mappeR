@@ -157,8 +157,8 @@ run_mapper <- function(binclust_data, dists, binning = TRUE) {
       source = sources,
       target = targets,
       weight = edge_weights,
-      overlap = data_in_overlap,
-      overlap_size = length(overlaps)
+      overlap_data = data_in_overlap,
+      overlap_size = sapply(overlaps, length)
     )
   } else {
     edges = data.frame(source = "", target = "")
