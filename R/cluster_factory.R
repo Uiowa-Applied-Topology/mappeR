@@ -188,13 +188,13 @@ cut_dendrogram <- function(dend, threshold) {
   dispersioncondition = indexofdispersion < .015
 
   # uncomment this to plot the dendrograms that come through here with their stats
-  print("plotting dendrograms...")
-  plot(dend, xlab=paste("index of dispersion: ", round(indexofdispersion, 3), " too low? ", dispersioncondition, ", tallest branch: ", round(tallest_branch_height, 3), ", too short? ", thresholdcondition))
+  plot(dend, xlab=paste("index of dispersion: ", round(indexofdispersion, 3), " lower than 0.015? ", dispersioncondition, ", tallest branch: ", round(tallest_branch_height, 3), "threshold: ", threshold, ", lower than threshold? ", thresholdcondition))
   # add horiz (well, vertical) line:
-  abline(h = cutval, lty = 2)
   if (thresholdcondition | dispersioncondition) {
+    abline(h = max(heights), lty = 2)
     return(cutree(dend, k = 1))
   } else {
+    abline(h = cutval, lty = 2)
     return(cutree(dend, h = cutval))
   }
 }
