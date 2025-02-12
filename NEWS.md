@@ -1,3 +1,5 @@
+# mappeR (development version)
+
 # mappeR 1.3.0
 
 * Adjust `compute_tightness` to no longer normalize by the maximum distance from the medoid (easier to see behavior in a single mapper graph, may add options in future)

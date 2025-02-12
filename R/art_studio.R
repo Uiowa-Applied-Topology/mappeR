@@ -1,3 +1,8 @@
+###########################################################################
+# ART STUDIO
+# graph visualization
+###########################################################################
+
 # Cytoscape ---------------------------------------------------------------
 
 
@@ -69,9 +74,9 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
 #' mapperobj = create_1D_mapper_object(data, dist(data), projx, cover, "single")
 #' cymapper(mapperobj)
 #' }
-cymapper <- function(mapperobject) {
+cymapper <- function(mapperobject, is_ballmapper = FALSE) {
   # pass to visualizer for........visualizing...
-  visualize_mapper_data(mapperobject, is_ballmapper = FALSE)
+  visualize_mapper_data(mapperobject, is_ballmapper)
 
   # if this isn't here R will print something useless
   return(invisible(NULL))
