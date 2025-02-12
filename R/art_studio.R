@@ -31,7 +31,7 @@ visualize_mapper_data <- function(mapper_data, is_ballmapper = TRUE) {
 
   nodeFillColors <- mapVisualProperty('node fill color', 'id', 'd', 1:nrow(nodes), fill_colors)
 
-  if ("bin" %in% colnames(nodes)) {
+  if (is_ballmapper) {
     # ballmapper needs no more styling
     createVisualStyle(style.name,
                       defaults,
