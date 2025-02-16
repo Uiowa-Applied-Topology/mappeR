@@ -45,8 +45,7 @@ create_mapper_object <- function(data,
                                  dists,
                                  filtered_data,
                                  cover_element_tests,
-                                 method = "none",
-                                 local_clustering = TRUE) {
+                                 clusterer) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
@@ -74,8 +73,7 @@ create_mapper_object <- function(data,
   }
 
   bins = create_bins(data, filtered_data, cover_element_tests)
-
-  clusters = get_clusters(bins, dists, method)
+  clusters = get_clusters(bins, dists, clusterer)
   return(assemble_mapper_object(clusters, dists, binning = TRUE))
 }
 

@@ -16,8 +16,7 @@
 #' @param dists A distance matrix for the data frame.
 #' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
 #' @param cover A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).
-#' @param clustering_method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
+#' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
 #'
 #' @return A list of two data frames, one with node data containing bin membership,
 #'  data points per cluster, and cluster dispersion, and one with edge data
@@ -37,20 +36,38 @@ create_1D_mapper_object <- function(data,
                                     dists,
                                     filtered_data,
                                     cover,
-                                    clustering_method = get_hierarchical_clusters,
-                                    local_clustering = TRUE) {
+                                    clusterer = get_hierarchical_clusters) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
     stop("left endpoints must be less than or equal to right endpoints")
   }
 
   cover = apply(cover, 1, check_in_interval)
 
-  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method, local_clustering))
+  return(create_mapper_object(data, dists, filtered_data, cover, clusterer))
 }
 
 # ball mapper --------------------------------------------------------------
 #
 # a flavor of mapper all about the balls
+
+#' "Clustering" for ballmapper just means treating each bin as its own cluster.
+#'
+#' @param bins A list of bins, each containing names of data from some data frame.
+#'
+#' @return A named vector whose names are data point names and whose values are cluster labels
+convert_to_clusters <- function(bins) {
+  ball_sizes = lapply(bins, length)
+
+  # repeat the cluster id for as many data points belonging to that bin
+  ballball_data = unlist(mapply(function(x, y)
+    rep(x, y), 1:length(ball_sizes), ball_sizes))
+
+  # make sure names match up
+  names(ballball_data) = unlist(bins)
+
+  return(ballball_data)
+}
+
 
 #' Run mapper using a trivial filter, a cover of balls, and no clustering algorithm.
 #'
@@ -101,8 +118,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param dist1 A distance matrix for the data frame; this will be used to ball the data.
 #' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
 #' @param eps A positive real number for your desired ball radius.
-#' @param clustering_method A string to pass to [hclust] to determine clustering method.
-#' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
+#' @param clustering_method A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
 #'
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
@@ -114,7 +130,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' eps = 1
 #'
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
-create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method, local_clustering = TRUE) {
+create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!is.numeric(eps)) {
@@ -134,7 +150,6 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
     dist2,
     rownames(data),
     lapply(balls, is_in_ball),
-    clustering_method,
-    local_clustering
+    clustering_method
   ))
 }
