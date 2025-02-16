@@ -38,14 +38,14 @@ create_1D_mapper_object <- function(data,
                                     filtered_data,
                                     cover,
                                     clustering_method = "single",
-                                    global_clustering = TRUE) {
+                                    local_clustering = TRUE) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
     stop("left endpoints must be less than or equal to right endpoints")
   }
 
   cover = apply(cover, 1, check_in_interval)
 
-  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method, global_clustering))
+  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method, local_clustering))
 }
 
 # ball mapper --------------------------------------------------------------
@@ -83,7 +83,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 
   balled_data = create_balls(data, dists, eps)
 
-  ball_mapper_object = run_mapper(convert_to_clusters(balled_data), dists, binning = FALSE)
+  ball_mapper_object = assemble_mapper_object(convert_to_clusters(balled_data), dists, binning = FALSE)
 
   return(ball_mapper_object)
 }
@@ -102,7 +102,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
 #' @param eps A positive real number for your desired ball radius.
 #' @param clustering_method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
+#' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
 #'
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
@@ -114,7 +114,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' eps = 1
 #'
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
-create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method, global_clustering = TRUE) {
+create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method, local_clustering = TRUE) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!is.numeric(eps)) {
@@ -135,6 +135,6 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
     rownames(data),
     lapply(balls, is_in_ball),
     clustering_method,
-    global_clustering
+    local_clustering
   ))
 }

@@ -32,7 +32,7 @@ test_that("we can ball with equal sized bins", {
   data = data.frame(x = 1:100, drop = FALSE)
   cover = create_width_balanced_cover(1, 100, 10, 0)
   bins = create_bins(data, data$x, apply(cover, 1, check_in_interval))
-  expect_no_warning(run_mapper(convert_to_clusters(bins), dist(data), binning = FALSE))
+  expect_no_warning(assemble_mapper_object(convert_to_clusters(bins), dist(data), binning = FALSE))
 })
 
 test_that("two bins does not cause error", {

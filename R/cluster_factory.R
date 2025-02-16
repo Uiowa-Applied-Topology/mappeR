@@ -15,6 +15,9 @@
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
 run_cluster_machine <- function(dist_mats, method, local_clustering = TRUE) {
+  switch (method,
+    case = action
+  )
   if (method %in% c("single", "complete", "average", "mcquitty", "centroid", "median", "ward.D", "ward.D2")) {
     return(get_hierarchical_clusters(dist_mats, method, local_clustering))
   } else {
