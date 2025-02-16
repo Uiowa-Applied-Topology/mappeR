@@ -10,7 +10,7 @@ create_clusterball_mapper_object(
   dist2,
   eps,
   clustering_method,
-  global_clustering = TRUE
+  local_clustering = TRUE
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ create_clusterball_mapper_object(
 
 \item{clustering_method}{A string to pass to \link{hclust} to determine clustering method.}
 
-\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.}
+\item{local_clustering}{Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to \code{TRUE}.}
 }
 \value{
 A list of two dataframes, one with node data containing bin membership,

@@ -46,7 +46,7 @@ create_mapper_object <- function(data,
                                  filtered_data,
                                  cover_element_tests,
                                  method = "none",
-                                 global_clustering = TRUE) {
+                                 local_clustering = TRUE) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
@@ -75,12 +75,8 @@ create_mapper_object <- function(data,
 
   bins = create_bins(data, filtered_data, cover_element_tests)
 
-  if (method == "none") {
-    return(run_mapper(convert_to_clusters(bins), dists, binning = FALSE))
-  } else {
-    clusters = get_clusters(bins, dists, method)
-    return(run_mapper(clusters, dists, binning = TRUE))
-  }
+  clusters = get_clusters(bins, dists, method)
+  return(assemble_mapper_object(clusters, dists, binning = TRUE))
 }
 
 #' Create a bin of data
@@ -131,7 +127,7 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
-run_mapper <- function(binclust_data, dists, binning = TRUE) {
+assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
 
   # basic node info
   num_vertices = max(binclust_data[[length(binclust_data)]])

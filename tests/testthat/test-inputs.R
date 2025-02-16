@@ -6,15 +6,15 @@ test_that("we can clusterball with equal sized bins", {
   data = data.frame(x = 1:100, drop = FALSE)
   cover = create_width_balanced_cover(1, 100, 10, 0)
   bins = create_bins(data, data$x, apply(cover, 1, check_in_interval))
-  expect_no_warning(create_mapper_object(data, dist(data), data$x, lapply(bins, is_in_ball), "single"))
+  expect_no_warning(create_mapper_object(data, dist(data), data$x, lapply(bins, is_in_ball), get_hierarchical_clusters))
 })
 
 test_that("mapper happens ok with distance matrix as a matrix", {
-  expect_no_warning(create_1D_mapper_object(data, as.matrix(dist(data)), data$x, cover, "single"))
+  expect_no_warning(create_1D_mapper_object(data, as.matrix(dist(data)), data$x, cover, get_hierarchical_clusters))
 })
 
 test_that("mapper happens ok with distance matrix as a dist", {
-  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, cover, "single"))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, cover, get_hierarchical_clusters))
 })
 
 test_that("mapper is ok with no clustering method", {
@@ -32,19 +32,19 @@ test_that("we can ball with equal sized bins", {
   data = data.frame(x = 1:100, drop = FALSE)
   cover = create_width_balanced_cover(1, 100, 10, 0)
   bins = create_bins(data, data$x, apply(cover, 1, check_in_interval))
-  expect_no_warning(run_mapper(convert_to_clusters(bins), dist(data), binning = FALSE))
+  expect_no_warning(assemble_mapper_object(convert_to_clusters(bins), dist(data), binning = FALSE))
 })
 
 test_that("two bins does not cause error", {
-  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(min(data$x), max(data$x), 2, 0), "single"))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(min(data$x), max(data$x), 2, 0), get_hierarchical_clusters))
 })
 
 test_that("one bin does not cause error", {
-  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(min(data$x), max(data$x), 1, runif(1)*100), "single"))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(min(data$x), max(data$x), 1, runif(1)*100), get_hierarchical_clusters))
 })
 
 test_that("bad bins quits", {
-  expect_error(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(max(data$x) + 1, max(data$x) + 2, 10, runif(1)*100), "single"))
+  expect_error(create_1D_mapper_object(data, dist(data), data$x, create_width_balanced_cover(max(data$x) + 1, max(data$x) + 2, 10, runif(1)*100), get_hierarchical_clusters))
 })
 
 
