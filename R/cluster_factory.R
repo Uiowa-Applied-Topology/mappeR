@@ -14,10 +14,7 @@
 #' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
-run_cluster_machine <- function(dist_mats, method, local_clustering = TRUE) {
-  switch (method,
-    case = action
-  )
+get_raw_clusters <- function(dist_mats, method, local_clustering = TRUE) {
   if (method %in% c("single", "complete", "average", "mcquitty", "centroid", "median", "ward.D", "ward.D2")) {
     return(get_hierarchical_clusters(dist_mats, method, local_clustering))
   } else {
@@ -60,7 +57,7 @@ get_clusters <- function(bins, dists, method, local_clustering = TRUE) {
     dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists), SIMPLIFY = FALSE)
 
     # cluster the data
-    clusters = run_cluster_machine(dist_mats, method, local_clustering)
+    clusters = get_raw_clusters(dist_mats, method, local_clustering)
 
     # accurately total up clusters
     clusters_per_bin = sapply(clusters, max)
@@ -71,7 +68,7 @@ get_clusters <- function(bins, dists, method, local_clustering = TRUE) {
   }
 #
   # cluster the data
-  clusters = run_cluster_machine(subset_dists(bins, dists), method, local_clustering) # this fixed everything????
+  clusters = get_raw_clusters(subset_dists(bins, dists), method, local_clustering) # this fixed everything????
 
   return(clusters)
 }
