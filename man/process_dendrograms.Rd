@@ -4,12 +4,12 @@
 \alias{process_dendrograms}
 \title{Cut many dendrograms in context}
 \usage{
-process_dendrograms(dends, local_clustering = TRUE)
+process_dendrograms(dends, semi_local_clustering = TRUE)
 }
 \arguments{
 \item{dends}{A list of dendrograms to be cut.}
 
-\item{local_clustering}{Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to \code{TRUE}.}
+\item{semi_local_clustering}{Whether you want clustering to happen in a semi-local (entire dataset visible) or strictly local (only current level set visible) context. Defaults to semi-local.}
 }
 \value{
 A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels.
