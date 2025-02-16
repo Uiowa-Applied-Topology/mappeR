@@ -9,7 +9,7 @@ create_mapper_object(
   dists,
   filtered_data,
   cover_element_tests,
-  clusterer = hierarchical_clusterer("single")
+  clusterer = NULL
 )
 }
 \arguments{
