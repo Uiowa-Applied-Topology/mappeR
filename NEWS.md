@@ -1,5 +1,8 @@
 # mappeR (development version)
 
+* Clustering is now handled by a `clusterer`, which is a function that can handle a list of distance matrices (one for each bin/level set) and output clustering results for each one. The hierarchical clustering included previously is now available as a clusterer called `hierarchical_clusterer` because I am very creative.
+* User-defined clusterers are possible as long as they can handle inputs/outputs correctly. The basic idea is that the output of a `clusterer` should look like a list of calls to `cutree` from the `hclust` package. Look to the clusterer farm for more examples in the future.
+
 # mappeR 1.3.0
 
 * Adjust `compute_tightness` to no longer normalize by the maximum distance from the medoid (easier to see behavior in a single mapper graph, may add options in future)
