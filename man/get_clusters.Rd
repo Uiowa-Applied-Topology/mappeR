@@ -4,7 +4,7 @@
 \alias{get_clusters}
 \title{Initate the clustering process}
 \usage{
-get_clusters(bins, dists, method, global_clustering = TRUE)
+get_clusters(bins, dists, method, local_clustering = TRUE)
 }
 \arguments{
 \item{bins}{A list containing "bins" of vectors of names of data points.}
@@ -13,7 +13,7 @@ get_clusters(bins, dists, method, global_clustering = TRUE)
 
 \item{method}{A string to pass to \link{hclust} to determine clustering method.}
 
-\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context}
+\item{local_clustering}{Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to \code{TRUE}.}
 }
 \value{
 A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
