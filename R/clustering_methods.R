@@ -124,12 +124,12 @@ process_dendrograms <- function(dends, local_clustering = TRUE) {
   return(snipped_dends)
 }
 
-#' Perform single-linkage hierarchical clustering and process dendrograms in a semi-global context
+#' Perform single-linkage hierarchical clustering and process dendrograms in a semi-global context.
 #'
 #' @param dist_mats A list of distance matrices to be used for clustering.
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels.
-get_hierarchical_clusters <- function(dist_mats) {
+get_single_hierarchical_clusters <- function(dist_mats) {
   # do agglomerative clustering on distance matrices
   dends = lapply(dist_mats, run_link, method = "single")
 

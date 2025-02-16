@@ -31,12 +31,12 @@
 #'
 #' cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 #'
-#' create_1D_mapper_object(data, dist(data), projx, cover, "single")
+#' create_1D_mapper_object(data, dist(data), projx, cover)
 create_1D_mapper_object <- function(data,
                                     dists,
                                     filtered_data,
                                     cover,
-                                    clusterer = get_hierarchical_clusters) {
+                                    clusterer = get_single_hierarchical_clusters) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
     stop("left endpoints must be less than or equal to right endpoints")
   }
@@ -130,7 +130,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' eps = 1
 #'
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
-create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method) {
+create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clusterer = get_single_hierarchical_clusters) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!is.numeric(eps)) {
@@ -150,6 +150,6 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
     dist2,
     rownames(data),
     lapply(balls, is_in_ball),
-    clustering_method
+    clusterer
   ))
 }

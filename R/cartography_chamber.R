@@ -13,8 +13,7 @@
 #' @param dists A distance matrix for the data frame.
 #' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
-#' @param method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
+#' @param method A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
 #'
 #' @return A list of two dataframes, one with node data and one with edge data.
 #' @export
@@ -38,14 +37,13 @@
 #'   data = data,
 #'   dists = dist(data),
 #'   filtered_data = projx,
-#'   cover_element_tests = xcovercheck,
-#'   method = "single"
+#'   cover_element_tests = xcovercheck
 #' )
 create_mapper_object <- function(data,
                                  dists,
                                  filtered_data,
                                  cover_element_tests,
-                                 clusterer) {
+                                 clusterer = get_single_hierarchical_clusters) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {

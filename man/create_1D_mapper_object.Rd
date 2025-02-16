@@ -9,8 +9,7 @@ create_1D_mapper_object(
   dists,
   filtered_data,
   cover,
-  clustering_method = get_hierarchical_clusters,
-  local_clustering = TRUE
+  clusterer = get_single_hierarchical_clusters
 )
 }
 \arguments{
@@ -22,9 +21,7 @@ create_1D_mapper_object(
 
 \item{cover}{A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
 
-\item{clustering_method}{A string to pass to \link{hclust} to determine clustering method.}
-
-\item{global_clustering}{Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.}
+\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
 }
 \value{
 A list of two data frames, one with node data containing bin membership,
@@ -43,5 +40,5 @@ percent_overlap = 25
 
 cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 
-create_1D_mapper_object(data, dist(data), projx, cover, "single")
+create_1D_mapper_object(data, dist(data), projx, cover)
 }

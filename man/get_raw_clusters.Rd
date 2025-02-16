@@ -9,7 +9,7 @@ get_raw_clusters(dist_mats, clusterer)
 \arguments{
 \item{dist_mats}{A list of distance matrices of each bin that is to be clustered.}
 
-\item{clusterer}{A function which handles a list of distance matrices.}
+\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix in a list.}
 }
 \value{
 The output of \code{clusterer(dist_mats)}, which needs to be a list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
