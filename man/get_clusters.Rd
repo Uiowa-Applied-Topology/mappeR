@@ -2,21 +2,19 @@
 % Please edit documentation in R/cluster_factory.R
 \name{get_clusters}
 \alias{get_clusters}
-\title{Initate the clustering process}
+\title{Perform the clustering step in mapper}
 \usage{
-get_clusters(bins, dists, method, local_clustering = TRUE)
+get_clusters(bins, dists, clusterer)
 }
 \arguments{
 \item{bins}{A list containing "bins" of vectors of names of data points.}
 
 \item{dists}{A distance matrix containing pairwise distances between named data points.}
 
-\item{method}{A string to pass to \link{hclust} to determine clustering method.}
-
-\item{local_clustering}{Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to \code{TRUE}.}
+\item{clusterer}{A function which handles a list of distance matrices.}
 }
 \value{
-A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
+The output of \code{clusterer} applied to a list of distance matrices, which should be a list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels.
 }
 \description{
 This function processes the binned data and global distance matrix to return freshly clustered data.

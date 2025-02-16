@@ -10,7 +10,7 @@ create_mapper_object(
   filtered_data,
   cover_element_tests,
   method = "none",
-  global_clustering = TRUE
+  local_clustering = TRUE
 )
 }
 \arguments{
