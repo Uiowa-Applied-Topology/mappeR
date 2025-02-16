@@ -48,7 +48,7 @@ test_that("bad bins quits", {
 })
 
 test_that("we can hierarchically cluster differently", {
-  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, cover, clusterer =))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, cover, clusterer = hierarchical_clusterer("mcquitty")))
 })
 
 

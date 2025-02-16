@@ -23,6 +23,28 @@ subset_dists <- function(bin, dists) {
 }
 
 
+
+# caveman clustering ------------------------------------------------------
+
+#' "Clustering" for ballmapper just means treating each bin as its own cluster.
+#'
+#' @param bins A list of bins, each containing names of data from some data frame.
+#'
+#' @return A named vector whose names are data point names and whose values are cluster labels
+convert_to_clusters <- function(bins) {
+  ball_sizes = lapply(bins, length)
+
+  # repeat the cluster id for as many data points belonging to that bin
+  ballball_data = unlist(mapply(function(x, y)
+    rep(x, y), 1:length(ball_sizes), ball_sizes))
+
+  # make sure names match up
+  names(ballball_data) = unlist(bins)
+
+  return(ballball_data)
+}
+
+
 # hierarchical clustering -------------------------------------------------
 
 #' Create a little dude to perform hierarchical clustering in a semi-global context using the [hclust] package.
