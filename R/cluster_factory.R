@@ -11,12 +11,12 @@
 #'
 #' @param dist_mats A list of distance matrices of each bin that is to be clustered.
 #' @param method A string to pass to `fastcluster` to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
+#' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
-run_cluster_machine <- function(dist_mats, method, global_clustering = TRUE) {
+run_cluster_machine <- function(dist_mats, method, local_clustering = TRUE) {
   if (method %in% c("single", "complete", "average", "mcquitty", "centroid", "median", "ward.D", "ward.D2")) {
-    return(get_hierarchical_clusters(dist_mats, method, global_clustering))
+    return(get_hierarchical_clusters(dist_mats, method, local_clustering))
   } else {
     stop("not a valid clustering method")
   }
@@ -47,17 +47,17 @@ subset_dists <- function(bin, dists) {
 #' @param bins A list containing "bins" of vectors of names of data points.
 #' @param dists A distance matrix containing pairwise distances between named data points.
 #' @param method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
+#' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
-get_clusters <- function(bins, dists, method, global_clustering = TRUE) {
+get_clusters <- function(bins, dists, method, local_clustering = TRUE) {
   # more than one bin, need more than one distance matrix
   if (is.list(bins)) {
     # subset the global distance matrix per bin
     dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists), SIMPLIFY = FALSE)
 
     # cluster the data
-    clusters = run_cluster_machine(dist_mats, method, global_clustering)
+    clusters = run_cluster_machine(dist_mats, method, local_clustering)
 
     # accurately total up clusters
     clusters_per_bin = sapply(clusters, max)
@@ -68,7 +68,7 @@ get_clusters <- function(bins, dists, method, global_clustering = TRUE) {
   }
 #
   # cluster the data
-  clusters = run_cluster_machine(subset_dists(bins, dists), method, global_clustering) # this fixed everything????
+  clusters = run_cluster_machine(subset_dists(bins, dists), method, local_clustering) # this fixed everything????
 
   return(clusters)
 }
@@ -101,14 +101,14 @@ convert_to_clusters <- function(bins) {
 #'
 #' @param dist_mats A list of distance matrices to be used for clustering.
 #' @param method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
+#' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
-get_hierarchical_clusters <- function(dist_mats, method, global_clustering = TRUE) {
+get_hierarchical_clusters <- function(dist_mats, method, local_clustering = TRUE) {
   dends = lapply(dist_mats, run_link, method = method)
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]
-  processed_dends = process_dendrograms(real_dends, global_clustering)
+  processed_dends = process_dendrograms(real_dends, local_clustering)
   if (length(imposter_dends) != 0) {
     return(append(processed_dends, sapply(imposter_dends, function(x)
       list(unlist(x))))) # LMAO what is this
@@ -203,15 +203,15 @@ cut_dendrogram <- function(dend, threshold) {
 #'
 #' @return A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels.
 #' @details This function uses a value of 10 percent of the tallest branch across dendrograms as a threshold for [cut_dendrogram].
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
-process_dendrograms <- function(dends, global_clustering = TRUE) {
+#' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
+process_dendrograms <- function(dends, local_clustering = TRUE) {
   if (inherits(dends, "hclust")) {
     return(cut_dendrogram(dends, 0))
   }
 
   tallest_branches = sapply(dends, get_tallest_branch)
   biggest_branch_length = max(tallest_branches)
-  threshold = ifelse(global_clustering, biggest_branch_length * .1, 0)
+  threshold = ifelse(local_clustering, biggest_branch_length * .1, 0)
 
   snipped_dends = mapply(cut_dendrogram,
                          dend = dends, SIMPLIFY = FALSE,
