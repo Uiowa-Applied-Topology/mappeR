@@ -1,6 +1,5 @@
 ###########################################################################
-# CLUSTERER FARM
-# here we nuture young clusterers to maturity
+# CLUSTERING METHODS
 # included clustering methods that can be used with mapper
 ###########################################################################
 
@@ -130,15 +129,15 @@ process_dendrograms <- function(dends, local_clustering = TRUE) {
 #' @param dist_mats A list of distance matrices to be used for clustering.
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels.
-get_hierarchical_clusters <- function(dist_mats, method) {
+get_single_hierarchical_clusters <- function(dist_mats) {
   # do agglomerative clustering on distance matrices
-  dends = lapply(dist_mats, run_link, method)
+  dends = lapply(dist_mats, run_link, method = "single")
 
   # we would like to cut non-trivial dendrograms to determine number of clusters
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]
 
-  # cut nontrival dendrograms and get clusters
+  # cut nontrival dendrograms
   processed_dends = process_dendrograms(real_dends, TRUE)
 
   # combine nontrival and trivial clusterings and return results
@@ -148,17 +147,4 @@ get_hierarchical_clusters <- function(dist_mats, method) {
   } else {
     return(processed_dends)
   }
-}
-
-
-#' Perform hierarchical clustering using the [hclust] package.
-#'
-#' @param method A string to pass to [hclust] to tell it what kind of clustering to do.
-#'
-#' @returns A clusterer, which is a function that handles a list of distance matrices and returns a list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin).
-#' @export
-#'
-#' @examples
-hierarchical_clusterer <- function(method) {
-  return(function(dist_mats) get_hierarchical_clusters(dist_mats, method))
 }
