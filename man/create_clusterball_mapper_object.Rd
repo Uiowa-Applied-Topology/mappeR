@@ -9,8 +9,7 @@ create_clusterball_mapper_object(
   dist1,
   dist2,
   eps,
-  clustering_method,
-  local_clustering = TRUE
+  clusterer = get_single_hierarchical_clusters
 )
 }
 \arguments{
@@ -22,9 +21,7 @@ create_clusterball_mapper_object(
 
 \item{eps}{A positive real number for your desired ball radius.}
 
-\item{clustering_method}{A string to pass to \link{hclust} to determine clustering method.}
-
-\item{local_clustering}{Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to \code{TRUE}.}
+\item{clustering_method}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
 }
 \value{
 A list of two dataframes, one with node data containing bin membership,

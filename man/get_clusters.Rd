@@ -11,7 +11,7 @@ get_clusters(bins, dists, clusterer)
 
 \item{dists}{A distance matrix containing pairwise distances between named data points.}
 
-\item{clusterer}{A function which handles a list of distance matrices.}
+\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
 }
 \value{
 The output of \code{clusterer} applied to a list of distance matrices, which should be a list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels.
