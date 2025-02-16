@@ -14,12 +14,8 @@
 #' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
-get_raw_clusters <- function(dist_mats, method, local_clustering = TRUE) {
-  if (method %in% c("single", "complete", "average", "mcquitty", "centroid", "median", "ward.D", "ward.D2")) {
-    return(get_hierarchical_clusters(dist_mats, method, local_clustering))
-  } else {
-    stop("not a valid clustering method")
-  }
+get_raw_clusters <- function(dist_mats, clusterer) {
+  return(clusterer(dist_mats))
 }
 
 #' Subset a distance matrix
@@ -50,14 +46,14 @@ subset_dists <- function(bin, dists) {
 #' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
 #'
 #' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
-get_clusters <- function(bins, dists, method, local_clustering = TRUE) {
+get_clusters <- function(bins, dists, clusterer) {
   # more than one bin, need more than one distance matrix
   if (is.list(bins)) {
     # subset the global distance matrix per bin
     dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists), SIMPLIFY = FALSE)
 
     # cluster the data
-    clusters = get_raw_clusters(dist_mats, method, local_clustering)
+    clusters = get_raw_clusters(dist_mats, clusterer)
 
     # accurately total up clusters
     clusters_per_bin = sapply(clusters, max)
@@ -68,7 +64,7 @@ get_clusters <- function(bins, dists, method, local_clustering = TRUE) {
   }
 #
   # cluster the data
-  clusters = get_raw_clusters(subset_dists(bins, dists), method, local_clustering) # this fixed everything????
+  clusters = get_raw_clusters(subset_dists(bins, dists), clusterer) # this fixed everything????
 
   return(clusters)
 }
@@ -104,11 +100,11 @@ convert_to_clusters <- function(bins) {
 #' @param local_clustering Whether you want clustering to happen in a global (entire dataset visible) or local (only current level set visible) context. Defaults to `TRUE`.
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
-get_hierarchical_clusters <- function(dist_mats, method, local_clustering = TRUE) {
-  dends = lapply(dist_mats, run_link, method = method)
+get_hierarchical_clusters <- function(dist_mats) {
+  dends = lapply(dist_mats, run_link, method = "single")
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]
-  processed_dends = process_dendrograms(real_dends, local_clustering)
+  processed_dends = process_dendrograms(real_dends, TRUE)
   if (length(imposter_dends) != 0) {
     return(append(processed_dends, sapply(imposter_dends, function(x)
       list(unlist(x))))) # LMAO what is this

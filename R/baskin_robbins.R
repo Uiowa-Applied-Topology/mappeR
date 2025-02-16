@@ -37,7 +37,7 @@ create_1D_mapper_object <- function(data,
                                     dists,
                                     filtered_data,
                                     cover,
-                                    clustering_method = "single",
+                                    clustering_method = get_hierarchical_clusters,
                                     local_clustering = TRUE) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
     stop("left endpoints must be less than or equal to right endpoints")

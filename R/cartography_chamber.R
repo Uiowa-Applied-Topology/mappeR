@@ -75,12 +75,8 @@ create_mapper_object <- function(data,
 
   bins = create_bins(data, filtered_data, cover_element_tests)
 
-  if (method == "none") {
-    return(assemble_mapper_object(convert_to_clusters(bins), dists, binning = FALSE))
-  } else {
-    clusters = get_clusters(bins, dists, method)
-    return(assemble_mapper_object(clusters, dists, binning = TRUE))
-  }
+  clusters = get_clusters(bins, dists, method)
+  return(assemble_mapper_object(clusters, dists, binning = TRUE))
 }
 
 #' Create a bin of data
