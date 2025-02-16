@@ -9,7 +9,7 @@ create_mapper_object(
   dists,
   filtered_data,
   cover_element_tests,
-  clusterer = get_single_hierarchical_clusters
+  clusterer = hierarchical_clusterer("single")
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ create_mapper_object(
 
 \item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 
-\item{method}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
+\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
 }
 \value{
 A list of two dataframes, one with node data and one with edge data.

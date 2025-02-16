@@ -18,7 +18,7 @@
 #'
 #' cover = create_width_balanced_cover(min(projy), max(projy), 10, 25)
 #'
-#' mapperobj = create_1D_mapper_object(data, dist(data), data$y, cover, "single")
+#' mapperobj = create_1D_mapper_object(data, dist(data), data$y, cover)
 #'
 #' mapper_object_to_igraph(mapperobj)
 mapper_object_to_igraph <- function(mapperobject) {

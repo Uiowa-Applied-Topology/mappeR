@@ -1,5 +1,6 @@
 ###########################################################################
-# CLUSTERING METHODS
+# CLUSTERER FARM
+# here we nuture young clusterers to maturity
 # included clustering methods that can be used with mapper
 ###########################################################################
 
@@ -23,6 +24,27 @@ subset_dists <- function(bin, dists) {
 
 
 # hierarchical clustering -------------------------------------------------
+
+#' Perform hierarchical clustering using the [hclust] package.
+#'
+#' @param method A string to pass to [hclust] to tell it what kind of clustering to do.
+#'
+#' @returns A function that inputs a list of distance matrices and returns a list containing one vector per bin, whose element names are data point names and whose values are cluster labels (within each bin).
+#' @export
+#'
+#' @examples
+#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' projx = data$x
+#'
+#' num_bins = 10
+#' percent_overlap = 25
+#'
+#' cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+#'
+#' create_1D_mapper_object(data, dist(data), projx, cover, hierarchical_clusterer("mcquitty"))
+hierarchical_clusterer <- function(method) {
+  return(function(dist_mats) get_hierarchical_clusters(dist_mats, method))
+}
 
 #' Perform agglomerative clustering on a single distance matrix.
 #'
@@ -127,17 +149,18 @@ process_dendrograms <- function(dends, local_clustering = TRUE) {
 #' Perform single-linkage hierarchical clustering and process dendrograms in a semi-global context.
 #'
 #' @param dist_mats A list of distance matrices to be used for clustering.
+#' @param method A string to pass to [hclust] to tell it what kind of clustering to do.
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels.
-get_single_hierarchical_clusters <- function(dist_mats) {
+get_hierarchical_clusters <- function(dist_mats, method) {
   # do agglomerative clustering on distance matrices
-  dends = lapply(dist_mats, run_link, method = "single")
+  dends = lapply(dist_mats, run_link, method)
 
   # we would like to cut non-trivial dendrograms to determine number of clusters
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]
 
-  # cut nontrival dendrograms
+  # cut nontrival dendrograms and get clusters
   processed_dends = process_dendrograms(real_dends, TRUE)
 
   # combine nontrival and trivial clusterings and return results

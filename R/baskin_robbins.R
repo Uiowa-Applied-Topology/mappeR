@@ -118,7 +118,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param dist1 A distance matrix for the data frame; this will be used to ball the data.
 #' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
 #' @param eps A positive real number for your desired ball radius.
-#' @param clustering_method A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
+#' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
 #'
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
@@ -129,7 +129,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' data.dists = dist(data)
 #' eps = 1
 #'
-#' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
+#' create_clusterball_mapper_object(data, data.dists, data.dists, eps)
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clusterer = hierarchical_clusterer("single")) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
