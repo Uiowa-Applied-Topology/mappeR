@@ -1,6 +1,6 @@
 ###########################################################################
 # CLUSTER FACTORY
-# clustering
+# cluster assembly and mapper graph statistics
 ###########################################################################
 
 # goblin clustering mines -------------------------------------------------
@@ -10,54 +10,32 @@
 #' This function tells the computer to look away for a second, so the goblins come and cluster your data while it's not watching.
 #'
 #' @param dist_mats A list of distance matrices of each bin that is to be clustered.
-#' @param method A string to pass to `fastcluster` to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
+#' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix in a list.
 #'
-#' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
-run_cluster_machine <- function(dist_mats, method, global_clustering = TRUE) {
-  if (method %in% c("single", "complete", "average", "mcquitty", "centroid", "median", "ward.D", "ward.D2")) {
-    return(get_hierarchical_clusters(dist_mats, method, global_clustering))
-  } else {
-    stop("not a valid clustering method")
-  }
+#' @return The output of `clusterer(dist_mats)`, which needs to be a list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
+get_raw_clusters <- function(dist_mats, clusterer) {
+  return(clusterer(dist_mats))
 }
 
-#' Subset a distance matrix
-#'
-#' @param bin A list of names of data points.
-#' @param dists A distance matrix for data points in the bin, possibly including extra points.
-#'
-#' @return A distance matrix for only the data points in the input bin.
-subset_dists <- function(bin, dists) {
-  bin_length = length(bin)
-  if (bin_length == 0) {
-    return(NA)
-  } else if (bin_length == 1) {
-    return(bin)
-  } else {
-    res = as.dist(as.matrix(dists)[bin, bin]) # this is how it's done in the usedist package
-    return(res)
-  }
-}
 
-#' Initate the clustering process
+
+#' Perform the clustering step in mapper
 #'
 #' This function processes the binned data and global distance matrix to return freshly clustered data.
 #'
 #' @param bins A list containing "bins" of vectors of names of data points.
 #' @param dists A distance matrix containing pairwise distances between named data points.
-#' @param method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
+#' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
 #'
-#' @return A list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels
-get_clusters <- function(bins, dists, method, global_clustering = TRUE) {
+#' @return The output of `clusterer` applied to a list of distance matrices, which should be a list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels.
+get_clusters <- function(bins, dists, clusterer) {
   # more than one bin, need more than one distance matrix
   if (is.list(bins)) {
     # subset the global distance matrix per bin
     dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists), SIMPLIFY = FALSE)
 
     # cluster the data
-    clusters = run_cluster_machine(dist_mats, method, global_clustering)
+    clusters = get_raw_clusters(dist_mats, clusterer)
 
     # accurately total up clusters
     clusters_per_bin = sapply(clusters, max)
@@ -68,155 +46,156 @@ get_clusters <- function(bins, dists, method, global_clustering = TRUE) {
   }
 #
   # cluster the data
-  clusters = run_cluster_machine(subset_dists(bins, dists), method, global_clustering) # this fixed everything????
+  clusters = get_raw_clusters(subset_dists(bins, dists), clusterer) # this fixed everything????
 
   return(clusters)
 }
 
-# caveman clustering ------------------------------------------------------
+# node data --------------------------------------------------------------
 
-#' The easiest clustering method
+
+#' Compute cluster sizes
 #'
-#' @param bins A list of bins, each containing names of data from some data frame.
+#' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids.
 #'
-#' @return A named vector whose names are data point names and whose values are cluster labels
-convert_to_clusters <- function(bins) {
-  ball_sizes = lapply(bins, length)
+#' @return A vector of integers representing the lengths of the clusters in the input data.
+get_cluster_sizes <- function(binclust_data) {
 
-  # repeat the cluster id for as many data points belonging to that bin
-  ballball_data = unlist(mapply(function(x, y)
-    rep(x, y), 1:length(ball_sizes), ball_sizes))
+  # no need to list by level set
+  flattened_data = unlist(binclust_data)
+  num_vertices = max(flattened_data)
 
-  # make sure names match up
-  names(ballball_data) = unlist(bins)
+  # find data points with a specific cluster id
+  clusters = lapply(1:num_vertices, function(x)
+    flattened_data[flattened_data == x])
 
-  return(ballball_data)
+  # return counts of the different clusters
+  return(sapply(clusters, length))
 }
 
-
-# hierarchical clustering -------------------------------------------------
-
-
-#' Perform hierarchical clustering and process dendrograms
+#' Recover bins
 #'
-#' @param dist_mats A list of distance matrices to be used for clustering.
-#' @param method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context
+#' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids.
 #'
-#' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels
-get_hierarchical_clusters <- function(dist_mats, method, global_clustering = TRUE) {
-  dends = lapply(dist_mats, run_link, method = method)
-  real_dends = dends[lapply(dends, length) > 1]
-  imposter_dends = dends[lapply(dends, length) == 1]
-  processed_dends = process_dendrograms(real_dends, global_clustering)
-  if (length(imposter_dends) != 0) {
-    return(append(processed_dends, sapply(imposter_dends, function(x)
-      list(unlist(x))))) # LMAO what is this
+#' @return A vector of integers equal in length to the number of clusters, whose members identify which bin that cluster belongs to.
+get_bin_vector <- function(binclust_data) {
+
+  # find unique clusters in each bin, then count how many
+  num_unique_clusters_per_bin = sapply(lapply(binclust_data, unique), length)
+
+  # repeat the bin id for as many clusters belonging to that bin
+  bin_by_clusters = unlist(mapply(
+    function(x, y)
+      rep(x, y),
+    1:length(num_unique_clusters_per_bin),
+    num_unique_clusters_per_bin, SIMPLIFY = FALSE))
+
+  return(bin_by_clusters)
+}
+
+#' Compute dispersion of a single cluster
+#'
+#' @param dists A distance matrix for points in the cluster.
+#' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels
+#'
+#' @return A real number in \eqn{[0,1]} representing a measure of dispersion of a cluster.
+#' @details This method computes a measure of cluster dispersion. It finds the medoid of the input data set and returns the average distance to the medoid. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{\left(|C|-1\right)}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
+compute_tightness <- function(dists, cluster) {
+
+  # empty or singleton clusters have trivial tightness
+  if (length(cluster) <= 1) {
+    return(0)
   } else {
-    return(processed_dends)
+    # get the distances associated to points in this cluster
+    cluster_names = names(cluster)
+    these_dists = dists[cluster_names, cluster_names]
+
+    # find minimum sum of distances
+    sums = apply(these_dists, 1, sum)
+    min_sum = min(sums)
+
+    # use the maximum distance to the medoid to calculate tightness
+    medoid_dists = sample(which(sums == min_sum), 1) # pick a medoid
+    min_dists = these_dists[medoid_dists, ]
+    closeness_factor = min_sum / (length(cluster) - 1)
+
+    return(closeness_factor)
   }
 }
 
-#' Perform single linkage clustering
+#' Compute dispersion measures of a list of clusters
 #'
-#' @param dist A distance matrix.
-#' @param method A string to pass to [hclust] to determine clustering method.
+#' @param dists A distance matrix for the data points inside all the input clusters
+#' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster ids
 #'
-#' @return A dendrogram generated by `fastcluster`.
-run_link <- function(dist, method) {
-  if (!(inherits(dist, "dist")) & (any(is.na(dist)))) {
-    return(vector())
-  } else if (!(inherits(dist, "dist"))) {
-    res = list(1)
-    names(res) = dist
-    return(res)
-  } else {
-    return(fastcluster::hclust(dist, method))
-  }
+#' @return A vector of real numbers in \eqn{(0,\infty)} representing a measure of dispersion of a cluster, calculated according to [compute_tightness].
+get_cluster_tightness_vector <- function(dists, binclust_data) {
+
+  # no need to list by level set
+  flattened_data = unlist(binclust_data)
+  num_vertices = max(flattened_data)
+
+  # grab the data per cluster
+  clusters = lapply(1:num_vertices, function(x)
+    flattened_data[flattened_data == x])
+
+  # compute tightness of all clusters
+  tightness_vector = sapply(clusters, function(x)
+    compute_tightness(dists, x))
+
+  return(tightness_vector)
 }
 
-# dendrogram processing ---------------------------------------------------
+#' Get data within a cluster
+#'
+#' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids
+#'
+#' @return A list of strings, each a comma separated list of the toString values of the data point names.
+get_clustered_data <- function(binclust_data) {
 
-#' Find the tallest branch of a dendrogram
-#'
-#' @param dend A single dendrogram.
-#'
-#' @return The height of the tallest branch (longest time between merge heights) of the input dendrogram.
-get_tallest_branch <- function(dend) {
-  heights = sort(unique(cophenetic(dend)))
-  if (length(heights) <= 1) {
-    return(max(heights))
-  }
-  branch_lengths = diff(heights)
-  return(max(branch_lengths))
+  # no need to list by level set
+  flattened_data = unlist(binclust_data)
+  num_vertices = max(flattened_data)
+
+  # grab the data per cluster
+  clusters = lapply(1:num_vertices, function(x)
+    flattened_data[flattened_data == x])
+
+  # make a big list of the names of the data in the cluster
+  data_in_cluster = lapply(lapply(clusters, names), toString)
+
+  return(data_in_cluster)
 }
 
-#' Cut a dendrogram
+# edge data --------------------------------------------------------------
+
+#' Calculate edge weights
 #'
-#' @param dend A single dendrogram.
-#' @param threshold A mininum tallest branch value.
+#' @param overlap_lengths A named vector of cluster overlap lengths, obtained by calling [length()] on the output from \code{[get_overlaps()]}.
+#' @param cluster_sizes A vector of cluster sizes.
+#' @param edges A 2D array of source and target nodes, representing an edge list. Should be ordered consistently with the `overlap_lengths` parameter.
 #'
-#' @return A named vector whose names are data point names and whose values are cluster labels.
-#' @details The number of clusters is determined to be 1 if the tallest branch of the dendrogram is less than the threshold, or if the index of dispersion (standard deviation squared divided by mean) of the branch heights is below 0.015. Otherwise, we cut at the longest branch of the dendrogram to determine the number of clusters.
-cut_dendrogram <- function(dend, threshold) {
-  # TODO remove all the duplicate code lol
-  heights = sort(unique(cophenetic(dend))) # merge heights of dendrogram
+#' @return A vector of real numbers representing cluster overlap strength.
+#' @details This value is calculated per edge by dividing the number of data points in the overlap by the number of points in the cluster on either end, and taking the maximum value. Formally, \deqn{w(\{c_i, c_j\}) = \displaystyle\max\left\{\dfrac{|c_i \cap c_j|}{|c_i|}, \dfrac{|c_i\cap c_j|}{|c_j|}\right\}}
+get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
 
-  if (length(heights) <= 2) {
-    if (max(heights) < threshold) {
-      return(cutree(dend, k = 1))
-    } else {
-      return(cutree(dend, k = 2))
-    }
+  # no edges? no weights
+  if (length(edges) == 0) {
+    return(NULL)
   }
 
-  branch_lengths = diff(heights) # differences are branch lengths
+  # grab source and target cluster sizes
+  heads = edges[, 1]
+  tails = edges[, 2]
+  head_sizes = cluster_sizes[heads]
+  tail_sizes = cluster_sizes[tails]
+  total_size = head_sizes + tail_sizes
 
-  tallest_branch_height = max(branch_lengths)
-  tallest_branch_id = which(branch_lengths == tallest_branch_height)
+  # compute edge weight as maximum relative overlap
+  head_overlaps = overlap_lengths / total_size
+  tail_overlaps = overlap_lengths / total_size
+  edge_weights = mapply(max, head_overlaps, tail_overlaps)
 
-  cutval = (tallest_branch_height + heights[tallest_branch_id + 1]) / 2 # midpoint of tallest branch
-  if (length(cutval) > 1) {
-    cutval = sample(cutval, 1)
-  }
-
-  # one cluster condition: dendrogram has no sufficiently tall branches
-  thresholdcondition = tallest_branch_height < threshold
-
-  # one cluster condition: lengths of branches are not well-dispersed
-  indexofdispersion = sd(heights) ^ 2 / mean(heights)
-  dispersioncondition = indexofdispersion < .015
-
-  # uncomment this to plot the dendrograms that come through here with their stats
-  plot(dend, xlab=paste("dispersion: ", round(indexofdispersion, 3), " <0.015? ", dispersioncondition, ", tallest: ", round(tallest_branch_height, 3), "threshold: ", round(threshold, 3), ", <threshold? ", thresholdcondition))
-  # add horiz (well, vertical) line:
-  if (thresholdcondition | dispersioncondition) {
-    abline(h = max(heights), lty = 2)
-    return(cutree(dend, k = 1))
-  } else {
-    abline(h = cutval, lty = 2)
-    return(cutree(dend, h = cutval))
-  }
+  return(edge_weights)
 }
 
-#' Cut many dendrograms
-#'
-#' @param dends A list of dendrograms to be cut.
-#'
-#' @return A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels.
-#' @details This function uses a value of 10 percent of the tallest branch across dendrograms as a threshold for [cut_dendrogram].
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
-process_dendrograms <- function(dends, global_clustering = TRUE) {
-  if (inherits(dends, "hclust")) {
-    return(cut_dendrogram(dends, 0))
-  }
-
-  tallest_branches = sapply(dends, get_tallest_branch)
-  biggest_branch_length = max(tallest_branches)
-  threshold = ifelse(global_clustering, biggest_branch_length * .1, 0)
-
-  snipped_dends = mapply(cut_dendrogram,
-                         dend = dends, SIMPLIFY = FALSE,
-                         MoreArgs = list(threshold = threshold))
-  return(snipped_dends)
-}

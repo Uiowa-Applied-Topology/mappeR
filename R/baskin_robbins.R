@@ -16,8 +16,7 @@
 #' @param dists A distance matrix for the data frame.
 #' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
 #' @param cover A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).
-#' @param clustering_method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
+#' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
 #'
 #' @return A list of two data frames, one with node data containing bin membership,
 #'  data points per cluster, and cluster dispersion, and one with edge data
@@ -32,25 +31,25 @@
 #'
 #' cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 #'
-#' create_1D_mapper_object(data, dist(data), projx, cover, "single")
+#' create_1D_mapper_object(data, dist(data), projx, cover)
 create_1D_mapper_object <- function(data,
                                     dists,
                                     filtered_data,
                                     cover,
-                                    clustering_method = "single",
-                                    global_clustering = TRUE) {
+                                    clusterer = hierarchical_clusterer("single")) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
     stop("left endpoints must be less than or equal to right endpoints")
   }
 
   cover = apply(cover, 1, check_in_interval)
 
-  return(create_mapper_object(data, dists, filtered_data, cover, clustering_method, global_clustering))
+  return(create_mapper_object(data, dists, filtered_data, cover, clusterer = clusterer))
 }
 
 # ball mapper --------------------------------------------------------------
 #
 # a flavor of mapper all about the balls
+
 
 #' Run mapper using a trivial filter, a cover of balls, and no clustering algorithm.
 #'
@@ -83,7 +82,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 
   balled_data = create_balls(data, dists, eps)
 
-  ball_mapper_object = run_mapper(convert_to_clusters(balled_data), dists, binning = FALSE)
+  ball_mapper_object = assemble_mapper_object(convert_to_clusters(balled_data), dists, binning = FALSE)
 
   return(ball_mapper_object)
 }
@@ -101,8 +100,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param dist1 A distance matrix for the data frame; this will be used to ball the data.
 #' @param dist2 Another distance matrix for the data frame; this will be used to cluster the data after balling.
 #' @param eps A positive real number for your desired ball radius.
-#' @param clustering_method A string to pass to [hclust] to determine clustering method.
-#' @param global_clustering Whether you want clustering to happen in a global (all level visible) or local (only current level set visible) context.
+#' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
 #'
 #' @return A list of two dataframes, one with node data containing bin membership,
 #'  datapoints per cluster, and cluster dispersion, and one with edge data
@@ -113,8 +111,8 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' data.dists = dist(data)
 #' eps = 1
 #'
-#' create_clusterball_mapper_object(data, data.dists, data.dists, eps, "single")
-create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering_method, global_clustering = TRUE) {
+#' create_clusterball_mapper_object(data, data.dists, data.dists, eps)
+create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clusterer = hierarchical_clusterer("single")) {
   if (!is.data.frame(data)) {
     stop("input data needs to be a data frame.")
   } else if (!is.numeric(eps)) {
@@ -134,7 +132,6 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clustering
     dist2,
     rownames(data),
     lapply(balls, is_in_ball),
-    clustering_method,
-    global_clustering
+    clusterer = clusterer
   ))
 }
