@@ -13,7 +13,7 @@
 #' @param dists A distance matrix for the data frame.
 #' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
-#' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.
+#' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix. Defaults to `NULL`, meaning no all data in each bin will be lumped into a single cluster.
 #'
 #' @return A list of two dataframes, one with node data and one with edge data.
 #' @export

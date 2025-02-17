@@ -21,7 +21,7 @@ create_mapper_object(
 
 \item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 
-\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
+\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix. Defaults to \code{NULL}, meaning no all data in each bin will be lumped into a single cluster.}
 }
 \value{
 A list of two dataframes, one with node data and one with edge data.
