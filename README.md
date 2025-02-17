@@ -1,6 +1,6 @@
 mappeR
 ================
-2024-10-20
+2025-02-16
 
 <!-- badges: start -->
 
@@ -179,13 +179,13 @@ xmapper = create_mapper_object(
   dists = P.dist,
   filtered_data = projx,
   cover_element_tests = xcovercheck,
-  method = "single"
+  clusterer = hierarchical_clusterer("single") # built-in mappeR method
 )
 
-# mappeR also has a built-in 1D mapper function that will do the above for you
-ymapper = create_1D_mapper_object(P.data, P.dist, projy, ycover, "single")
-zmapper = create_1D_mapper_object(P.data, P.dist, projz, zcover, "single")
-eccentricmapper = create_1D_mapper_object(P.data, P.dist, eccentricity, eccentriccover, "single")
+# mappeR also has a built-in 1D mapper function that will do the above for you; a single linkage clustering scheme is selected by default
+ymapper = create_1D_mapper_object(P.data, P.dist, projy, ycover)
+zmapper = create_1D_mapper_object(P.data, P.dist, projz, zcover)
+eccentricmapper = create_1D_mapper_object(P.data, P.dist, eccentricity, eccentriccover)
 
 # mappeR also has functions which will convert the mapper outputs into igraph format
 ixmapper = mapper_object_to_igraph(xmapper)
@@ -250,7 +250,7 @@ ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 
 **1D mapper**
 
-`create_1D_mapper_object(data, dists, filtered_data, cover, clustering_method)`
+`create_1D_mapper_object(data, dists, filtered_data, cover, clusterer)`
 
 - Lens: $P \to \mathbb{R}$
 - Cover: intervals
@@ -266,7 +266,7 @@ ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 
 **Clusterball mapper**
 
-`create_clusterball_mapper_object(data, ball_dists, clustering_dists, eps, clustering_method)`
+`create_clusterball_mapper_object(data, ball_dists, clustering_dists, eps, clusterer)`
 
 - Lens: $P \to P$ by identity
 - Cover: $\varepsilon$-balls in ambient $P$-space
@@ -274,9 +274,10 @@ ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 
 # Clustering
 
-`mappeR` supports:
-
-**Hierarchical Clustering**
+`mappeR` has a built in heuristic to perform any mode of hierarchical
+clustering from the `hclust` package; the above example used single
+linkage clustering this way, and `mappeR` will default to this, but you
+can replace the keyword `"single"` with any of the following:
 
 - `"single"`: single linkage
 - `"complete"`: complete linkage
@@ -286,3 +287,12 @@ ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 - `"median"`: median linkage
 - `"ward.D"`: Ward linkage (assumes squared distances)
 - `"ward.D2"`: Ward linkage (assumes nonsquared distances)
+
+You may also build your own function to use for clustering; this
+function must be able to accept a list of distance matrices and return a
+list of cluster information vectors for each matrix. A “cluster
+information vector” means a named vector (a vector whose elements have
+names) with datapoint IDs for names and cluster IDs for values. The
+cluster IDs should be positive integers but do not need to be unique
+across all of the information vectors; `mappeR` will handle this for
+you.
