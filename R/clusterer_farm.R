@@ -137,10 +137,6 @@ cut_dendrogram <- function(dend, threshold) {
   indexofdispersion = sd(heights) ^ 2 / mean(heights)
   dispersioncondition = indexofdispersion < .015
 
-  # uncomment this to plot the dendrograms that come through here with their stats
-  plot(dend, main=paste("Patch", count, "Cluster Dendrogram"), sub="", labels=FALSE, ylab = "Merge Height", xlab=paste("index of dispersion of merge heights: ", round(indexofdispersion, 3), "\n tallest branch in this cluster: ", round(tallest_branch_height, 3), "\n tallest branch globally: ", round(10*threshold, 3)))
-
-  count <<- count + 1
   if (thresholdcondition | dispersioncondition) {
     # abline(h = max(heights), lty = 2, col = "red")
     return(cutree(dend, k = 1))
