@@ -79,8 +79,8 @@ cut_dendrogram <- function(dend, threshold) {
 
   tallest_branch_height = max(branch_lengths)
   tallest_branch_id = which(branch_lengths == tallest_branch_height)
+  cutval = (heights[tallest_branch_id] + heights[tallest_branch_id + 1]) / 2 # midpoint of tallest branch
 
-  cutval = (tallest_branch_height + heights[tallest_branch_id - 1]) / 2 # midpoint of tallest branch
   if (length(cutval) > 1) {
     cutval = sample(cutval, 1)
   }
@@ -92,12 +92,11 @@ cut_dendrogram <- function(dend, threshold) {
   indexofdispersion = sd(heights) ^ 2 / mean(heights)
   dispersioncondition = indexofdispersion < .015
 
-  # uncomment this to plot the dendrograms that come through here with their stats
-  # plot(dend, xlab=paste("index of dispersion: ", round(indexofdispersion, 3), " too low? ", dispersioncondition, ", tallest branch: ", round(tallest_branch_height, 3), ", too short? ", thresholdcondition))
-
   if (thresholdcondition | dispersioncondition) {
+    # abline(h = max(heights), lty = 2, col = "red")
     return(cutree(dend, k = 1))
   } else {
+    # abline(h = cutval, lty = 2, col = "red")
     return(cutree(dend, h = cutval))
   }
 }

@@ -1,3 +1,7 @@
+# mappeR 2.0.2
+
+* Really, for real this time, make the default clusterer cut correctly.
+
 # mappeR 2.0.1
 
 * Default hierarchical clusterer now correctly cuts dendrograms at the midpoint of their tallest branches.
