@@ -1,3 +1,5 @@
+# mappeR 2.0.1
+
 # mappeR 2.0.0
 
 * Clustering is now handled by a `clusterer`, which is a function that can handle a list of distance matrices (one for each bin/level set) and output clustering results for each one. The hierarchical clustering included previously is now available as a clusterer called `hierarchical_clusterer` because I am very creative.
