@@ -80,7 +80,7 @@ cut_dendrogram <- function(dend, threshold) {
   tallest_branch_height = max(branch_lengths)
   tallest_branch_id = which(branch_lengths == tallest_branch_height)
 
-  cutval = (tallest_branch_height + heights[tallest_branch_id + 1]) / 2 # midpoint of tallest branch
+  cutval = (tallest_branch_height + heights[tallest_branch_id - 1]) / 2 # midpoint of tallest branch
   if (length(cutval) > 1) {
     cutval = sample(cutval, 1)
   }
