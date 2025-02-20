@@ -1,6 +1,6 @@
-## mappeR 2.0.1
+## mappeR 2.0.2
 
-Note is due to multiple releases in past 6 months/7 days; this is a quick hotfix for a nonessential (but default) function in the package.
+Hotfix for important off-by-one error. Should be last fix for a while.
 
 ## R CMD check results
 
