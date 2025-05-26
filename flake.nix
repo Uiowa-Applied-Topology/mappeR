@@ -17,7 +17,7 @@
       {
         templates.default = {
 	  path = ./nix/templates/minimal;
-	  description = "Basic flake with R and mappeR"
+	  description = "Basic flake with R and mappeR";
 	};
 
         devShells.default = pkgs.mkShell {
