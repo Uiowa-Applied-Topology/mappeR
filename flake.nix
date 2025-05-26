@@ -15,11 +15,6 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-          templates.default = {
-	  path = ./.;
-	  description = "Basic flake with R and mappeR";
-	};
-
         devShells.default = pkgs.mkShell {
 	packages = [ pkgs.bashInteractive ];
 	buildInputs = with pkgs; [ R rPackages.mappeR ];
