@@ -1,5 +1,3 @@
-# mappeR (development version)
-
 # mappeR 2.0.2
 
 * Really, for real this time, make the default clusterer cut correctly.
