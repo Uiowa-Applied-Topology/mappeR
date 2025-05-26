@@ -15,8 +15,8 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        templates.default = {
-	  path = ./nix/templates/minimal;
+          templates.default = {
+	  path = ./.;
 	  description = "Basic flake with R and mappeR";
 	};
 
