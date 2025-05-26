@@ -17,7 +17,7 @@
       {
         devShells.default = pkgs.mkShell {
 	packages = [ pkgs.bashInteractive ];
-	buildInputs = with pkgs; [ R rPackages.devtools rPackages.fastcluster rPackages.igraph rPackages.testthat ];
+	buildInputs = with pkgs; [ R rPackages.mappeR ];
 	};
       }
     );
