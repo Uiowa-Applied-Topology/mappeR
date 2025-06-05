@@ -3,6 +3,23 @@
 # cluster assembly and mapper graph statistics
 ###########################################################################
 
+
+#' Subset a distance matrix
+#'
+#' @param patch A list of names of data points.
+#' @param dists A distance matrix for data points in the patch, possibly including extra points.
+subset_dists <- function(patch, dists) {
+  patch_size = length(patch)
+  if (patch_size == 0) {
+    return(NA)
+  } else if (patch_size == 1) {
+    return(patch)
+  } else {
+    res = as.dist(as.matrix(dists)[patch, patch]) # this is how it's done in the usedist package
+    return(res)
+  }
+}
+
 # goblin clustering mines -------------------------------------------------
 
 #' Ship data off to the clustering goblins
