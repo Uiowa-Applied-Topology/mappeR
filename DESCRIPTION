@@ -15,10 +15,8 @@ Version: 2.0.2
 Encoding: UTF-8
 Imports:
     fastcluster,
-    grDevices,
-    igraph,
     stats,
-    utils,
+    utils
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
