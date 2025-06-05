@@ -4,6 +4,27 @@
 # included clustering methods that can be used with mapper
 ###########################################################################
 
+# dbscan ------------------------------------------------------------------
+
+perform_dbscan <- function(dist_mat, eps, minPts, weights = NULL, borderPoints = TRUE, ...) {
+  if (!(inherits(dist_mat, "dist"))) {
+    res = list(1)
+    names(res) = dist
+    return(res)
+  }
+  result = dbscan::dbscan(dist_mat, eps, minPts, weights = NULL, borderPoints = TRUE, ...)
+  return(result$cluster)
+}
+
+perform_much_dbscan <- function(dist_mats, eps, minPts) {
+  result = sapply(dist_mats, perform_dbscan, eps = eps, minPts = minPts)
+  return(result)
+}
+
+dbscan_clusterer <- function(eps, minPts) {
+ return(function(dist_mats) perform_much_dbscan(dist_mats, eps, minPts))
+}
+
 # hierarchical clustering -------------------------------------------------
 
 #' Perform agglomerative clustering on a single distance matrix.
