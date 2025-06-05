@@ -17,8 +17,8 @@ Imports:
     fastcluster,
     grDevices,
     igraph,
+    stats,
     utils,
-    dbscan
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
