@@ -24,16 +24,7 @@ get_agglomerative_dendrogram <- function(dist, method) {
   }
 }
 
-#' Cut a single dendrogram
-#'
-#' @param dend A dendrogram to be cut.
-#' @param cut_height A height at which to cut the dendrogram.
-#' @return A cluster assignment resulting from `cutree`. It is a named vector whose names are data point names and whose values are cluster labels.
-cut_dendrogram <- function(dend, cut_height) {
-  return(cutree(dend, h = cut_height))
-}
-
-#' Cut many dendrograms
+#' Cut many dendrograms at specified cut heights.
 #'
 #' @param dends A list of dendrograms to be cut.
 #' @param cut_heights A list of cut heights which corresponds to each dendrogram in `dends`.
@@ -41,24 +32,23 @@ cut_dendrogram <- function(dend, cut_height) {
 process_dendrograms <- function(dends, cut_heights) {
   # in case we get a single dendrogram and not a list of them
   if (inherits(dends, "hclust")) {
-    return(cut_dendrogram(dends, cut_heights))
+    return(cutree(dends, h = cut_heights))
   }
 
-  snipped_dends = mapply(cut_dendrogram,
+  snipped_dends = mapply(cutree,
                          dends,
-                         cut_heights,
+                         h = cut_heights,
                          SIMPLIFY = FALSE)
-  print("cut all the dendrograms...")
   return(snipped_dends)
 }
 
-#' Find the tallest branch of a dendrogram
+#' Find the (midpoint of) the longest-lived hierarchy of a dendrogram.
 #'
-#' @param dend A single dendrogram.
-#' @param max_height The maximum height of the dendrogram; if this is not provided the last merge height of the input dendrogram will be used, which will make one cluster impossible!
+#' @param dend A dendrogram.
+#' @param max_height The maximum height of the dendrogram; if this is not provided the last merge height of the input dendrogram will be used, which will make cutting to one cluster impossible!
 #'
-#' @return The height of the tallest branch (longest time between merge heights) of the input dendrogram.
-get_tallest_branch_height <- function(dend, max_height = max(cophenetic(dend))) {
+#' @return The midpoint between the merge points with the longest time between them.
+get_longevity_cut_height <- function(dend, max_height = max(cophenetic(dend))) {
   # TODO remove all the duplicate code lol
   heights = append(sort(unique(cophenetic(dend))), max_height) # merge heights of dendrogram
 
@@ -75,31 +65,36 @@ get_tallest_branch_height <- function(dend, max_height = max(cophenetic(dend))) 
   return(cutval)
 }
 
-#' Perform single-linkage hierarchical clustering and process dendrograms.
+#' Perform hierarchical clustering and process dendrograms.
 #'
 #' @param dist_mats A list of distance matrices to be used for clustering.
 #' @param method A string to pass to [hclust] to tell it what kind of clustering to do.
-#' @param cut_height A global cut height, if you would like to specify one.
+#' @param cut_height A global cut height. If not specified or negative, dendrograms will be cut individually.
 #'
 #' @return A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels.
 get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
-  # do agglomerative clustering on distance matrices
+  # do agglomerative clustering on each patch
   dends = lapply(dist_mats, get_agglomerative_dendrogram, method)
 
+  # find heights for each dendrogram
   max_dists = sapply(dist_mats, max)
+
+  # remove trivial heights
   nonzero_max_dists = max_dists[max_dists != 0]
 
-  # we would like to cut non-trivial dendrograms to determine number of clusters
+  # we would like to only cut non-trivial dendrograms
   real_dends = dends[lapply(dends, length) > 1]
   imposter_dends = dends[lapply(dends, length) == 1]
 
-  if (cut_height == -1) {
-    cut_heights = mapply(get_tallest_branch_height, real_dends, max_dists)
+  # if a global cut height was not supplied, calculate cut heights for each dendrogram
+  if (cut_height < 0) {
+    cut_heights = mapply(get_longevity_cut_height, real_dends, max_dists)
+  # otherwise, use with uniform cut heights
   } else {
     cut_heights = rep(cut_height, length(max_dists))
   }
 
-  # cut nontrival dendrograms and get clusters
+  # cut nontrival dendrograms and get cluster assignments
   processed_dends = process_dendrograms(real_dends, cut_heights)
 
   # combine nontrival and trivial clusterings and return results
@@ -114,10 +109,10 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
 #' Create a dude to perform hierarchical clustering in a global context using the [hclust] package.
 #'
 #' @param method A string to pass to [hclust] to tell it what kind of clustering to do.
-#' @param dists The global distance matrix to run clustering on to determine a global cutting height.
+#' @param dists The global distance matrix on which to run clustering to determine a global cutting height.
 #'
-#' @returns A function that inputs a list of distance matrices and returns a list containing one vector per bin, whose element names are data point names and whose values are cluster labels (within each bin).
-#' @details This clusterer determines cutting heights for bin dendrograms generated by [hclust] by cutting them all according to the best global cutting height when the data is clustered together.
+#' @returns A function that inputs a list of distance matrices and returns a list containing one vector per matrix, whose element names are data point names and whose values are cluster labels (relative to each matrix).
+#' @details This clusterer determines cutting heights for dendrograms by cutting them all according to the best cutting height when the data is clustered together. "Best" here means the the midpoint of the merge points with the longest gap between them with no other merge points.
 #' @export
 #'
 #' @examples
@@ -133,9 +128,16 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
 #'
 #' create_1D_mapper_object(data, dists, projx, cover, global_hierarchical_clusterer("mcquitty", dists))
 global_hierarchical_clusterer <- function(method, dists) {
+  # do hierarchical clustering on entire dataset
   global_linkage = get_agglomerative_dendrogram(as.dist(dists), method)
+
+  # each dendrogram will be normalized to this height
   max_dist = max(dists)
-  cut_height = get_tallest_branch_height(global_linkage, max_dist)
+
+  # this is the cutting height to be used for each dendrogram
+  cut_height = get_longevity_cut_height(global_linkage, max_dist)
+
+  # return clusterer which can accept patches from mapper
   return(function(dist_mats) get_hierarchical_clusters(dist_mats, method, cut_height = cut_height))
 }
 
@@ -143,8 +145,8 @@ global_hierarchical_clusterer <- function(method, dists) {
 #'
 #' @param method A string to pass to [hclust] to tell it what kind of clustering to do.
 #'
-#' @returns A function that inputs a list of distance matrices and returns a list containing one vector per bin, whose element names are data point names and whose values are cluster labels (within each bin).
-#' @details This clusterer determines cutting heights for patch dendrograms generated by [hclust] by cutting them at their respectively longest branches, ignoring global context.
+#' @returns A function that inputs a list of distance matrices and returns a list containing one vector per matrix, whose element names are data point names and whose values are cluster labels (within each patch).
+#' @details This clusterer determines cutting heights for dendrograms by cutting them individually, at the midpoints of the merge points with the longest gap between them without other merge points.
 #' @export
 #'
 #' @examples
@@ -160,5 +162,6 @@ global_hierarchical_clusterer <- function(method, dists) {
 #'
 #' create_1D_mapper_object(data, dists, projx, cover, local_hierarchical_clusterer("mcquitty"))
 local_hierarchical_clusterer <- function(method) {
+  # clusterer which can accept patches from mapper
   return(function(dist_mats) get_hierarchical_clusters(dist_mats, method))
 }
