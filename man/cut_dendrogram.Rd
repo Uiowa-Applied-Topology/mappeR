@@ -2,21 +2,18 @@
 % Please edit documentation in R/clusterer_farm.R
 \name{cut_dendrogram}
 \alias{cut_dendrogram}
-\title{Cut a dendrogram in context}
+\title{Cut a single dendrogram}
 \usage{
-cut_dendrogram(dend, threshold)
+cut_dendrogram(dend, cut_height)
 }
 \arguments{
-\item{dend}{A single dendrogram.}
+\item{dend}{A dendrogram to be cut.}
 
-\item{threshold}{A mininum tallest branch value.}
+\item{cut_height}{A height at which to cut the dendrogram.}
 }
 \value{
-A named vector whose names are data point names and whose values are cluster labels.
+A cluster assignment resulting from \code{cutree}. It is a named vector whose names are data point names and whose values are cluster labels.
 }
 \description{
-Cut a dendrogram in context
-}
-\details{
-The number of clusters is determined to be 1 if the tallest branch of the dendrogram is less than the threshold, or if the index of dispersion (standard deviation squared divided by mean) of the branch heights is below 0.015. Otherwise, we cut at the longest branch of the dendrogram to determine the number of clusters.
+Cut a single dendrogram
 }

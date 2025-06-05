@@ -10,3 +10,5 @@
 ^CRAN-SUBMISSION$
 ^nix\.flake$
 ^nix\.lock$
+^flake\.nix$
+^flake\.lock$

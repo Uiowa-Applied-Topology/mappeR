@@ -9,7 +9,7 @@ create_clusterball_mapper_object(
   dist1,
   dist2,
   eps,
-  clusterer = hierarchical_clusterer("single")
+  clusterer = local_hierarchical_clusterer("single")
 )
 }
 \arguments{

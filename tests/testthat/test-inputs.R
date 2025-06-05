@@ -6,11 +6,11 @@ test_that("we can clusterball with equal sized bins", {
   data = data.frame(x = 1:100, drop = FALSE)
   cover = create_width_balanced_cover(1, 100, 10, 0)
   bins = create_bins(data, data$x, apply(cover, 1, check_in_interval))
-  expect_no_warning(create_mapper_object(data, dist(data), data$x, lapply(bins, is_in_ball), clusterer = hierarchical_clusterer("complete")))
+  expect_no_warning(create_mapper_object(data, dist(data), data$x, lapply(bins, is_in_ball)))
 })
 
 test_that("we can clusterball with clusterball", {
-  expect_no_warning(create_clusterball_mapper_object(data, dist(data), dist(data), .3, clusterer = hierarchical_clusterer("mcquitty")))
+  expect_no_warning(create_clusterball_mapper_object(data, dist(data), dist(data), .3))
 })
 
 test_that("mapper happens ok with distance matrix as a matrix", {
@@ -56,7 +56,7 @@ test_that("bad bins quits", {
 })
 
 test_that("we can hierarchically cluster differently", {
-  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, cover, clusterer = hierarchical_clusterer("mcquitty")))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), data$x, cover, clusterer = local_hierarchical_clusterer("mcquitty")))
 })
 
 
