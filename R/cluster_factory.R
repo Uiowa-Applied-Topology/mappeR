@@ -63,7 +63,7 @@ get_clusters <- function(bins, dists, clusterer) {
   }
 #
   # cluster the data
-  clusters = get_raw_clusters(subset_dists(bins, dists), clusterer) # this fixed everything????
+  clusters = get_raw_clusters(list(dists), clusterer) # this fixed everything????
 
   return(clusters)
 }
