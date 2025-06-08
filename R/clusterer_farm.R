@@ -97,7 +97,7 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
   # cut nontrival dendrograms and get cluster assignments
   processed_dends = process_dendrograms(real_dends, cut_heights)
 
-  if (typeof(processed_dends != "list")) {
+  if (typeof(processed_dends) != "list") {
     names = rownames(processed_dends)
     processed_dends = list(unlist(as.list(processed_dends)))
     names(processed_dends[[1]]) = names
