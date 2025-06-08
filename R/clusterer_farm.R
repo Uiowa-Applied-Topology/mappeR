@@ -42,12 +42,12 @@ process_dendrograms <- function(dends, cut_heights) {
   return(snipped_dends)
 }
 
-#' Find the (midpoint of) the longest-lived hierarchy of a dendrogram.
+#' Find the the longest-lived hierarchy of a dendrogram.
 #'
 #' @param dend A dendrogram.
 #' @param max_height The maximum height of the dendrogram; if this is not provided the last merge height of the input dendrogram will be used, which will make cutting to one cluster impossible!
 #'
-#' @return The midpoint between the merge points with the longest time between them.
+#' @return The point just above the merge height with the longest time to the next merge point.
 get_longevity_cut_height <- function(dend, max_height = max(cophenetic(dend))) {
   # TODO remove all the duplicate code lol
   heights = append(sort(unique(cophenetic(dend))), max_height) # merge heights of dendrogram
@@ -56,7 +56,7 @@ get_longevity_cut_height <- function(dend, max_height = max(cophenetic(dend))) {
 
   tallest_branch_height = max(branch_lengths)
   tallest_branch_id = which(branch_lengths == tallest_branch_height)
-  cutval = (heights[tallest_branch_id] + heights[tallest_branch_id + 1]) / 2 # midpoint of tallest branch
+  cutval = heights[tallest_branch_id] + .05*tallest_branch_height
 
   if (length(cutval) > 1) {
     cutval = sample(cutval, 1)
