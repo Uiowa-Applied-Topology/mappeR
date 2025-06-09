@@ -24,7 +24,23 @@ create_mapper_object(
 \item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix. Defaults to \code{NULL}, meaning no all data in each bin will be lumped into a single cluster.}
 }
 \value{
-A list of two dataframes, one with node data and one with edge data.
+A list of two dataframes, one with node data and one with edge data. The node data includes:
+\itemize{
+\item \code{id}: vertex ID
+\item \code{cluster_size}: number of datapoints in cluster
+\item \code{mean_dist_to_medoid}: mean distance to medoid of cluster
+\item \code{data}: names of datapoints in cluster
+\item \code{patch}: level set ID
+}
+
+The edge data includes:
+\itemize{
+\item \code{source}: vertex ID of edge source
+\item \code{target}: vertex ID of edge target
+\item \code{weight}: Jaccard index of edge; intersection divided by union
+\item \code{overlap_data}: names of datapoints in overlap
+\item \code{overlap_size}: number of datapoints overlap
+}
 }
 \description{
 Run the mapper algorithm on a data frame.
