@@ -1,3 +1,10 @@
+# mappeR 2.1.0
+
+* Add better hierarchical clusterers; there is one which cuts each dendrogram uniformly, and one which cuts per patch. The cut height is at the beginning of the longest unbroken branch in the dendrogram (note this is not always the "correct" number of clusters!).
+* Remove `igraph` dependency; see `shinymappeR` for an example of how to use `igraph` with `mappeR`.
+* Change output vertex dataframe column names from `tightness` to `mean_dist_to_medoid` and `bin` to `patch`.
+* Change edge `weight` to use Jaccard index.
+
 # mappeR 2.0.2
 
 * Really, for real this time, make the default clusterer cut correctly.

@@ -14,11 +14,11 @@ get_edge_weights(overlap_lengths, cluster_sizes, edges)
 \item{edges}{A 2D array of source and target nodes, representing an edge list. Should be ordered consistently with the \code{overlap_lengths} parameter.}
 }
 \value{
-A vector of real numbers representing cluster overlap strength.
+A vector of real numbers representing the Jaccard index of each overlap.
 }
 \description{
 Calculate edge weights
 }
 \details{
-This value is calculated per edge by dividing the number of data points in the overlap by the number of points in the cluster on either end, and taking the maximum value. Formally, \deqn{w(\{c_i, c_j\}) = \displaystyle\max\left\{\dfrac{|c_i \cap c_j|}{|c_i|}, \dfrac{|c_i\cap c_j|}{|c_j|}\right\}}
+This value is calculated per edge by dividing the number of data points in the union of the two clusters by the number of data points in the intersection. Formally, \deqn{w(\{c_i, c_j\}) = \dfrac{|c_i \cap c_j|}{|c_i \cup c_j|} = \dfrac{|c_i \cap c_j|}{|c_i| + |c_j| - |c_i \cap c_j|}}
 }

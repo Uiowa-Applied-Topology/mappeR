@@ -3,6 +3,23 @@
 # cluster assembly and mapper graph statistics
 ###########################################################################
 
+
+#' Subset a distance matrix
+#'
+#' @param patch A list of names of data points.
+#' @param dists A distance matrix for data points in the patch, possibly including extra points.
+subset_dists <- function(patch, dists) {
+  patch_size = length(patch)
+  if (patch_size == 0) {
+    return(NA)
+  } else if (patch_size == 1) {
+    return(patch)
+  } else {
+    res = as.dist(as.matrix(dists)[patch, patch]) # this is how it's done in the usedist package
+    return(res)
+  }
+}
+
 # goblin clustering mines -------------------------------------------------
 
 #' Ship data off to the clustering goblins
@@ -98,8 +115,8 @@ get_bin_vector <- function(binclust_data) {
 #' @param dists A distance matrix for points in the cluster.
 #' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels
 #'
-#' @return A real number in \eqn{[0,1]} representing a measure of dispersion of a cluster.
-#' @details This method computes a measure of cluster dispersion. It finds the medoid of the input data set and returns the average distance to the medoid. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{\left(|C|-1\right)}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
+#' @return A real number in \eqn{[0,1]} representing the mean distance to the medoid of the cluster.
+#' @details This method finds the medoid of the input data set and returns the average distance to the medoid, i.e., \deqn{\tau(C) = \dfrac{1}{\left(|C|-1\right)}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 compute_tightness <- function(dists, cluster) {
 
   # empty or singleton clusters have trivial tightness
@@ -128,7 +145,7 @@ compute_tightness <- function(dists, cluster) {
 #' @param dists A distance matrix for the data points inside all the input clusters
 #' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster ids
 #'
-#' @return A vector of real numbers in \eqn{(0,\infty)} representing a measure of dispersion of a cluster, calculated according to [compute_tightness].
+#' @return A vector of real numbers in \eqn{(0,\infty)} containing mean distances to the medoids of each cluster in `dists`.
 get_cluster_tightness_vector <- function(dists, binclust_data) {
 
   # no need to list by level set
@@ -175,8 +192,8 @@ get_clustered_data <- function(binclust_data) {
 #' @param cluster_sizes A vector of cluster sizes.
 #' @param edges A 2D array of source and target nodes, representing an edge list. Should be ordered consistently with the `overlap_lengths` parameter.
 #'
-#' @return A vector of real numbers representing cluster overlap strength.
-#' @details This value is calculated per edge by dividing the number of data points in the overlap by the number of points in the cluster on either end, and taking the maximum value. Formally, \deqn{w(\{c_i, c_j\}) = \displaystyle\max\left\{\dfrac{|c_i \cap c_j|}{|c_i|}, \dfrac{|c_i\cap c_j|}{|c_j|}\right\}}
+#' @return A vector of real numbers representing the Jaccard index of each overlap.
+#' @details This value is calculated per edge by dividing the number of data points in the union of the two clusters by the number of data points in the intersection. Formally, \deqn{w(\{c_i, c_j\}) = \dfrac{|c_i \cap c_j|}{|c_i \cup c_j|} = \dfrac{|c_i \cap c_j|}{|c_i| + |c_j| - |c_i \cap c_j|}}
 get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
 
   # no edges? no weights
@@ -189,13 +206,9 @@ get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
   tails = edges[, 2]
   head_sizes = cluster_sizes[heads]
   tail_sizes = cluster_sizes[tails]
-  total_size = head_sizes + tail_sizes
 
-  # compute edge weight as maximum relative overlap
-  head_overlaps = overlap_lengths / total_size
-  tail_overlaps = overlap_lengths / total_size
-  edge_weights = mapply(max, head_overlaps, tail_overlaps)
+  jaccards = overlap_lengths / (head_sizes + tail_sizes - overlap_lengths)
 
-  return(edge_weights)
+  return(jaccards)
 }
 

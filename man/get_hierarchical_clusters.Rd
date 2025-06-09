@@ -2,18 +2,20 @@
 % Please edit documentation in R/clusterer_farm.R
 \name{get_hierarchical_clusters}
 \alias{get_hierarchical_clusters}
-\title{Perform single-linkage hierarchical clustering and process dendrograms in a semi-global context.}
+\title{Perform hierarchical clustering and process dendrograms.}
 \usage{
-get_hierarchical_clusters(dist_mats, method)
+get_hierarchical_clusters(dist_mats, method, cut_height = -1)
 }
 \arguments{
 \item{dist_mats}{A list of distance matrices to be used for clustering.}
 
 \item{method}{A string to pass to \link{hclust} to tell it what kind of clustering to do.}
+
+\item{cut_height}{A global cut height. If not specified or negative, dendrograms will be cut individually.}
 }
 \value{
 A list containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels.
 }
 \description{
-Perform single-linkage hierarchical clustering and process dendrograms in a semi-global context.
+Perform hierarchical clustering and process dendrograms.
 }

@@ -2,21 +2,18 @@
 % Please edit documentation in R/clusterer_farm.R
 \name{process_dendrograms}
 \alias{process_dendrograms}
-\title{Cut many dendrograms in context}
+\title{Cut many dendrograms at specified cut heights.}
 \usage{
-process_dendrograms(dends, semi_local_clustering = TRUE)
+process_dendrograms(dends, cut_heights)
 }
 \arguments{
 \item{dends}{A list of dendrograms to be cut.}
 
-\item{semi_local_clustering}{Whether you want clustering to happen in a semi-local (entire dataset visible) or strictly local (only current level set visible) context. Defaults to semi-local.}
+\item{cut_heights}{A list of cut heights which corresponds to each dendrogram in \code{dends}.}
 }
 \value{
 A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels.
 }
 \description{
-Cut many dendrograms in context
-}
-\details{
-This function uses a value of 10 percent of the tallest branch across dendrograms as a threshold for \link{cut_dendrogram}.
+Cut many dendrograms at specified cut heights.
 }

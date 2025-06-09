@@ -123,8 +123,6 @@ Here is a point cloud $P$ formed by adding a bit of uniform noise to
 \gamma(t) = \begin{cases}x = 10\ \sin(t)\\ y=10\ \sin(t)\ \cos^2(t)\\ z=10\ \sin^2(t)\ \cos(t) \end{cases}
 ```
 
-<img src="README_files/figure-gfm/fig8-1.png"/>
-
 This seems to form a kind of figure-8 curve just based on this
 projection. But as we can see from the 2D projections, the “shape” of
 the data set we’re seeing really does depend on how we’re looking at it:
@@ -137,20 +135,15 @@ described, with real-valued lens functions.
 Parameters:
 
 - Data: figure-8
-- Lens: Projection to each factor, or eccentricity (a measure of
-  centrality per data point)
+- Lens: Projection to the $x$-coordinate
 - Cover: A cover of $\mathbb{R}$ (just up to the extremes of the
   function values) using 10 equally spaced intervals with 25% overlap
   between each consecutive interval
 - Clustering method: Single-linkage hierarchical clustering
 
 ``` r
-# lens functions
+# lens function
 projx = P.data$x
-projy = P.data$y
-projz = P.data$z
-# eccentricity = apply(as.matrix(P.dist), 1, sum) / num_points
-eccentricity = eccentricity_filter(P.dist)
 
 # cover parameters to generate a width-balanced cover
 num_bins = 10
@@ -158,12 +151,6 @@ percent_overlap = 25
 
 # generate the cover
 xcover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
-ycover = create_width_balanced_cover(min(projy), max(projy), num_bins, percent_overlap)
-zcover = create_width_balanced_cover(min(projz), max(projz), num_bins, percent_overlap)
-eccentriccover = create_width_balanced_cover(min(eccentricity),
-                                             max(eccentricity),
-                                             num_bins,
-                                             percent_overlap)
 
 # bin tester machine machine
 check_in_interval <- function(endpoints) {
@@ -179,26 +166,28 @@ xmapper = create_mapper_object(
   dists = P.dist,
   filtered_data = projx,
   cover_element_tests = xcovercheck,
-  clusterer = hierarchical_clusterer("single") # built-in mappeR method
+  clusterer = local_hierarchical_clusterer("single") # built-in mappeR method
 )
-
-# mappeR also has a built-in 1D mapper function that will do the above for you; a single linkage clustering scheme is selected by default
-ymapper = create_1D_mapper_object(P.data, P.dist, projy, ycover)
-zmapper = create_1D_mapper_object(P.data, P.dist, projz, zcover)
-eccentricmapper = create_1D_mapper_object(P.data, P.dist, eccentricity, eccentriccover)
-
-# mappeR also has functions which will convert the mapper outputs into igraph format
-ixmapper = mapper_object_to_igraph(xmapper)
-iymapper = mapper_object_to_igraph(ymapper)
-izmapper = mapper_object_to_igraph(zmapper)
-ieccentricmapper = mapper_object_to_igraph(eccentricmapper)
 ```
 
-The vertices in each output graph below are colored according to the
-level set the cluster belongs to, and scaled by (the square root of) the
-number of data points in the cluster.
+The object returned by `create_mapper_object` is a list of two
+dataframes containing vertex and edge information.
 
-<img src="README_files/figure-gfm/mapping_the_mapper-1.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-2.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-3.png" width="50%" /><img src="README_files/figure-gfm/mapping_the_mapper-4.png" width="50%" />
+Vertex information:
+
+- `id`: vertex ID
+- `cluster_size`: number of datapoints in cluster
+- `mean_dist_to_medoid`: mean distance to medoid of cluster
+- `data`: names of datapoints in cluster
+- `patch`: level set ID
+
+Edge information:
+
+- `source`: vertex ID of edge source
+- `target`: vertex ID of edge target
+- `weight`: Jaccard index of edge; intersection divided by union
+- `overlap_data`: names of datapoints in overlap
+- `overlap_size`: number of datapoints overlap
 
 ## Example 2: ball mapper
 
@@ -217,14 +206,9 @@ Parameters:
 - Clustering method: none (or, “any data set is one big cluster”-type
   clustering)
 
-There’s a secret parameter here, which is $\varepsilon$. Below are
-output graphs for varying values of $\varepsilon$; the sizing is as with
-the 1D mapper, but no coloring is done as each vertex would have to
-receive its own color in this flavor, which is redundant.
-
 ``` r
 # creates a cover using a greedy algorithm
-balls1 = create_balls(data = P.data, dists = P.dist, eps = .25)
+balls = create_balls(data = P.data, dists = P.dist, eps = .25)
 
 # ball tester machine machine
 is_in_ball <- function(ball) {
@@ -232,15 +216,8 @@ is_in_ball <- function(ball) {
 }
 
 # filtering is just giving back the data (row names because my balls are lists of data point names, so the filter should match)
-ballmapper1 = create_mapper_object(P.data, P.dist, rownames(P.data), lapply(balls1, is_in_ball))
-
-# mappeR has a built-in ball mapper function to do this for you
-ballmapper2 = create_ball_mapper_object(P.data, P.dist, .5)
-ballmapper3 = create_ball_mapper_object(P.data, P.dist, 1)
-ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
+ballmapper = create_mapper_object(P.data, P.dist, rownames(P.data), lapply(balls, is_in_ball))
 ```
-
-<img src="README_files/figure-gfm/ballmapper_time-1.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-2.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-3.png" width="50%" /><img src="README_files/figure-gfm/ballmapper_time-4.png" width="50%" />
 
 ## Built-ins
 
@@ -274,10 +251,15 @@ ballmapper4 = create_ball_mapper_object(P.data, P.dist, 2)
 
 # Clustering
 
-`mappeR` has a built in heuristic to perform any mode of hierarchical
-clustering from the `hclust` package; the above example used single
-linkage clustering this way, and `mappeR` will default to this, but you
-can replace the keyword `"single"` with any of the following:
+`mappeR` has two built-in clusterers, each of which implement
+agglomerative hierarchical clustering using `fastcluster`. The first is
+`local_hierarchical_clusterer(method)`, which will cut each dendrogram
+according to its longest unbroken branches — it cuts in a “local”
+context. The second is `global_hierarchical_clusterer(method, dists)`,
+which will run hierarchical clustering on `dists` to obtain a uniform
+cutting height for each dendrogram — it cuts in a “global” context.
+
+Any of the linkage methods below will work:
 
 - `"single"`: single linkage
 - `"complete"`: complete linkage

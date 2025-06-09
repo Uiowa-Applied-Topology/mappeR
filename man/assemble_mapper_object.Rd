@@ -15,7 +15,7 @@ assemble_mapper_object(binclust_data, dists, binning = TRUE)
 }
 \value{
 A list of two dataframes, one with node data containing bin membership,
-datapoints per cluster, and cluster dispersion, and one with edge data
+datapoints per cluster, and mean distance to the medoid, and one with edge data
 containing sources, targets, and weights representing overlap strength.
 }
 \description{
