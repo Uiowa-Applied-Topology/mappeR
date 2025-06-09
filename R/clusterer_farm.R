@@ -118,7 +118,7 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
 #' @param dists The global distance matrix on which to run clustering to determine a global cutting height.
 #'
 #' @returns A function that inputs a list of distance matrices and returns a list containing one vector per matrix, whose element names are data point names and whose values are cluster labels (relative to each matrix).
-#' @details This clusterer determines cutting heights for dendrograms by cutting them all according to the best cutting height when the data is clustered together. "Best" here means the the midpoint of the merge points with the longest gap between them with no other merge points.
+#' @details This clusterer determines cutting heights for dendrograms by cutting them all according to the best cutting height when the data is clustered together. "Best" here means cutting the dendrogram just above the merge point with the longest unbroken gap until the next merge points.
 #' @export
 #'
 #' @examples
@@ -152,7 +152,7 @@ global_hierarchical_clusterer <- function(method, dists) {
 #' @param method A string to pass to [hclust] to tell it what kind of clustering to do.
 #'
 #' @returns A function that inputs a list of distance matrices and returns a list containing one vector per matrix, whose element names are data point names and whose values are cluster labels (within each patch).
-#' @details This clusterer determines cutting heights for dendrograms by cutting them individually, at the midpoints of the merge points with the longest gap between them without other merge points.
+#' @details This clusterer determines cutting heights for dendrograms by cutting them individually, just above the merge point with the longest unbroken gap until the next merge point.
 #' @export
 #'
 #' @examples

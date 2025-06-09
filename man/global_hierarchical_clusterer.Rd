@@ -18,7 +18,7 @@ A function that inputs a list of distance matrices and returns a list containing
 Create a dude to perform hierarchical clustering in a global context using the \link{hclust} package.
 }
 \details{
-This clusterer determines cutting heights for dendrograms by cutting them all according to the best cutting height when the data is clustered together. "Best" here means the the midpoint of the merge points with the longest gap between them with no other merge points.
+This clusterer determines cutting heights for dendrograms by cutting them all according to the best cutting height when the data is clustered together. "Best" here means cutting the dendrogram just above the merge point with the longest unbroken gap until the next merge points.
 }
 \examples{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
