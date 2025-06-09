@@ -15,7 +15,22 @@
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix. Defaults to `NULL`, meaning no all data in each bin will be lumped into a single cluster.
 #'
-#' @return A list of two dataframes, one with node data and one with edge data.
+#' @return A list of two dataframes, one with node data and one with edge data. The node data includes:
+#'
+#' - `id`: vertex ID
+#' - `cluster_size`: number of datapoints in cluster
+#' - `mean_dist_to_medoid`: mean distance to medoid of cluster
+#' - `data`: names of datapoints in cluster
+#' - `patch`: level set ID
+#'
+#' The edge data includes:
+#'
+#' - `source`: vertex ID of edge source
+#' - `target`: vertex ID of edge target
+#' - `weight`: Jaccard index of edge; intersection divided by union
+#' - `overlap_data`: names of datapoints in overlap
+#' - `overlap_size`: number of datapoints overlap
+#'
 #' @export
 #' @examples
 #' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
