@@ -168,7 +168,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
       cluster_size = cluster_size,
       mean_dist_to_medoid = cluster_tightness,
       data = data_in_cluster,
-      bin = get_bin_vector(binclust_data)
+      patch = get_bin_vector(binclust_data)
     )
 
     return(list(nodes, edges))
