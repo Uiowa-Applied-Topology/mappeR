@@ -192,8 +192,8 @@ get_clustered_data <- function(binclust_data) {
 #' @param cluster_sizes A vector of cluster sizes.
 #' @param edges A 2D array of source and target nodes, representing an edge list. Should be ordered consistently with the `overlap_lengths` parameter.
 #'
-#' @return A vector of real numbers representing cluster overlap strength.
-#' @details This value is calculated per edge by dividing the number of data points in the overlap by the number of points in the cluster on either end, and taking the maximum value. Formally, \deqn{w(\{c_i, c_j\}) = \displaystyle\max\left\{\dfrac{|c_i \cap c_j|}{|c_i|}, \dfrac{|c_i\cap c_j|}{|c_j|}\right\}}
+#' @return A vector of real numbers representing the Jaccard index of each overlap.
+#' @details This value is calculated per edge by dividing the number of data points in the union of the two clusters by the number of data points in the intersection. Formally, \deqn{w(\{c_i, c_j\}) = \dfrac{|c_i \cap c_j|}{|c_i \cup c_j|} = \dfrac{|c_i \cap c_j|}{|c_i| + |c_j| - |c_i \cap c_j|}}
 get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
 
   # no edges? no weights
@@ -206,13 +206,9 @@ get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
   tails = edges[, 2]
   head_sizes = cluster_sizes[heads]
   tail_sizes = cluster_sizes[tails]
-  total_size = head_sizes + tail_sizes
 
-  # compute edge weight as maximum relative overlap
-  head_overlaps = overlap_lengths / total_size
-  tail_overlaps = overlap_lengths / total_size
-  edge_weights = mapply(max, head_overlaps, tail_overlaps)
+  jaccards = overlap_lengths / (head_sizes + tail_sizes - overlap_lengths)
 
-  return(edge_weights)
+  return(jaccards)
 }
 
