@@ -115,8 +115,8 @@ get_bin_vector <- function(binclust_data) {
 #' @param dists A distance matrix for points in the cluster.
 #' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels
 #'
-#' @return A real number in \eqn{[0,1]} representing a measure of dispersion of a cluster.
-#' @details This method computes a measure of cluster dispersion. It finds the medoid of the input data set and returns the average distance to the medoid. Formally, we say the tightness \eqn{\tau} of a cluster \eqn{C} is given by \deqn{\tau(C) = \dfrac{1}{\left(|C|-1\right)}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
+#' @return A real number in \eqn{[0,1]} representing the mean distance to the medoid of the cluster.
+#' @details This method finds the medoid of the input data set and returns the average distance to the medoid, i.e., \deqn{\tau(C) = \dfrac{1}{\left(|C|-1\right)}\displaystyle\sum_{i}\text{dist}(x_i, x_j)} where \deqn{x_j = \text{arg}\,\min\limits_{x_j\in C}\, \sum_{x_i \in C, i\neq j}\text{dist}(x_i, x_j)} A smaller value indicates a tighter cluster based on this metric.
 compute_tightness <- function(dists, cluster) {
 
   # empty or singleton clusters have trivial tightness
@@ -145,7 +145,7 @@ compute_tightness <- function(dists, cluster) {
 #' @param dists A distance matrix for the data points inside all the input clusters
 #' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster ids
 #'
-#' @return A vector of real numbers in \eqn{(0,\infty)} representing a measure of dispersion of a cluster, calculated according to [compute_tightness].
+#' @return A vector of real numbers in \eqn{(0,\infty)} containing mean distances to the medoids of each cluster in `dists`.
 get_cluster_tightness_vector <- function(dists, binclust_data) {
 
   # no need to list by level set

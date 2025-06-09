@@ -126,7 +126,7 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #' @param binning Whether the output dataframe should sort vertices into "bins" or not. Should be true if using clustering, leave false otherwise
 #'
 #' @return A list of two dataframes, one with node data containing bin membership,
-#'  datapoints per cluster, and cluster dispersion, and one with edge data
+#'  datapoints per cluster, and mean distance to the medoid, and one with edge data
 #'  containing sources, targets, and weights representing overlap strength.
 assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
 
@@ -166,7 +166,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
     nodes = data.frame(
       id = node_ids,
       cluster_size = cluster_size,
-      tightness = cluster_tightness,
+      mean_dist_to_medoid = cluster_tightness,
       data = data_in_cluster,
       bin = get_bin_vector(binclust_data)
     )
@@ -177,7 +177,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
     nodes = data.frame(
       id = node_ids,
       cluster_size = cluster_size,
-      tightness = cluster_tightness,
+      mean_dist_to_medoid = cluster_tightness,
       data = data_in_cluster
     )
 
