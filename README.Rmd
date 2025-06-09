@@ -161,6 +161,12 @@ xmapper = create_mapper_object(
   cover_element_tests = xcovercheck,
   clusterer = local_hierarchical_clusterer("single") # built-in mappeR method
 )
+
+# vertices
+xmapper[[1]]
+
+# edges
+xmapper[[2]]
 ```
 
 ## Example 2: ball mapper
