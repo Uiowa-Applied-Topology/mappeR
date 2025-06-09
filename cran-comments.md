@@ -1,4 +1,4 @@
-## mappeR 2.0.3
+## mappeR 2.1.0
 
 ## R CMD check results
 
