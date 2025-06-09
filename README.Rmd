@@ -117,8 +117,6 @@ Here is a point cloud $P$ formed by adding a bit of uniform noise to 5000 points
 \gamma(t) = \begin{cases}x = 10\ \sin(t)\\ y=10\ \sin(t)\ \cos^2(t)\\ z=10\ \sin^2(t)\ \cos(t) \end{cases}
 ```
 
-<img src="README_files/figure-gfm/fig8-1.png"/>
-
 This seems to form a kind of figure-8 curve just based on this projection. But as we can see from the 2D projections, the "shape" of the data set we're seeing really does depend on how we're looking at it:
 
 ```{r plotting_the_curve, fig.align='center'}
@@ -161,13 +159,25 @@ xmapper = create_mapper_object(
   cover_element_tests = xcovercheck,
   clusterer = local_hierarchical_clusterer("single") # built-in mappeR method
 )
-
-# vertices
-xmapper[[1]]
-
-# edges
-xmapper[[2]]
 ```
+
+The object returned by `create_mapper_object` is a list of two dataframes containing vertex and edge information.
+
+Vertex information:
+
+- `id`: vertex ID
+- `cluster_size`: number of datapoints in cluster
+- `mean_dist_to_medoid`: mean distance to medoid of cluster
+- `data`: names of datapoints in cluster
+- `patch`: level set ID
+
+Edge information:
+
+- `source`: vertex ID of edge source
+- `target`: vertex ID of edge target
+- `weight`: Jaccard index of edge; intersection divided by union
+- `overlap_data`: names of datapoints in overlap
+- `overlap_size`: number of datapoints overlap
 
 ## Example 2: ball mapper
 
