@@ -11,7 +11,7 @@
 subset_dists <- function(patch, dists) {
   patch_size = length(patch)
   print(dists)
-  print(patch_size)
+  print(paste("patch size,", patch_size))
   if (patch_size == 0) {
     return(NA)
   } else if (patch_size == 1) {
