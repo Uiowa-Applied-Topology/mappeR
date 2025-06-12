@@ -10,7 +10,7 @@
 #' @param dists A distance matrix for data points in the patch, possibly including extra points.
 subset_dists <- function(patch, dists) {
   patch_size = length(patch)
-  print(dists)
+  # print(dists)
   print(paste("patch size,", patch_size))
   if (patch_size == 0) {
     return(NA)
@@ -51,7 +51,7 @@ get_clusters <- function(bins, dists, clusterer) {
   # more than one bin, need more than one distance matrix
   if (is.list(bins)) {
     # subset the global distance matrix per bin
-    dist_mats = mapply(subset_dists, bins, MoreArgs = list(dists = dists), SIMPLIFY = FALSE)
+    dist_mats = lapply(subset_dists, bins, dists = dists, SIMPLIFY = FALSE)
 
     # cluster the data
     clusters = get_raw_clusters(dist_mats, clusterer)
