@@ -51,7 +51,7 @@ get_clusters <- function(bins, dists, clusterer) {
   # more than one bin, need more than one distance matrix
   if (is.list(bins)) {
     # subset the global distance matrix per bin
-    dist_mats = lapply(subset_dists, bins, dists = dists, SIMPLIFY = FALSE)
+    dist_mats = lapply(bins, subset_dists, dists = dists, SIMPLIFY = FALSE)
 
     # cluster the data
     clusters = get_raw_clusters(dist_mats, clusterer)
