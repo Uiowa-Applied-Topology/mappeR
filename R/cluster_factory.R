@@ -9,8 +9,9 @@
 #' @param patch A list of names of data points.
 #' @param dists A distance matrix for data points in the patch, possibly including extra points.
 subset_dists <- function(patch, dists) {
-  print(patch)
   patch_size = length(patch)
+  print(dists)
+  print(patch_size)
   if (patch_size == 0) {
     return(NA)
   } else if (patch_size == 1) {
