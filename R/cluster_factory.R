@@ -17,6 +17,7 @@ subset_dists <- function(patch, dists) {
   } else if (patch_size == 1) {
     return(patch)
   } else {
+    print(max(dists))
     res = as.dist(as.matrix(dists)[patch, patch]) # this is how it's done in the usedist package
     return(res)
   }
