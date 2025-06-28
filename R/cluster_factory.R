@@ -10,14 +10,11 @@
 #' @param dists A distance matrix for data points in the patch, possibly including extra points.
 subset_dists <- function(patch, dists) {
   patch_size = length(patch)
-  print(dim(as.matrix(dists)))
-  print(paste("patch size,", patch_size))
   if (patch_size == 0) {
     return(NA)
   } else if (patch_size == 1) {
     return(patch)
   } else {
-    print(max(dists))
     res = as.dist(as.matrix(dists)[patch, patch]) # this is how it's done in the usedist package
     return(res)
   }
