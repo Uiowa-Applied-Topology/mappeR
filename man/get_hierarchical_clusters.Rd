@@ -7,7 +7,7 @@
 get_hierarchical_clusters(dist_mats, method, cut_height = -1)
 }
 \arguments{
-\item{dist_mats}{A list of distance matrices to be used for clustering. Must be a \code{list} of dist` objects.}
+\item{dist_mats}{A list of distance matrices to be used for clustering. Must be a \code{list} of \code{dist} objects.}
 
 \item{method}{A string to pass to \link{hclust} to tell it what kind of clustering to do. Can be \code{single}, \code{complete}, etc.}
 
@@ -17,5 +17,5 @@ get_hierarchical_clusters(dist_mats, method, cut_height = -1)
 A \code{list} containing named vectors (one per dendrogram), whose names are data point names and whose values are cluster labels (integers).
 }
 \description{
-Perform hierarchical clustering on distance matrices.
+Perform hierarchical clustering on multiple distance matrices.
 }
