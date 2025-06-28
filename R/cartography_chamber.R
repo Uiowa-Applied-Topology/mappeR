@@ -60,29 +60,49 @@ create_mapper_object <- function(data,
                                  cover_element_tests,
                                  clusterer = NULL) {
   if (!is.data.frame(data)) {
-    stop("input data needs to be a data frame.")
+    stop("Input data needs to be a data frame.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
-    stop("cover element tests need to be boolean functions.")
+    stop("Cover element tests need to be boolean functions.")
   } else if (any(is.na(filtered_data))) {
-    stop("filtered data cannot have NA values.")
+    stop("Filtered data cannot have NA values.")
+  } else if (any(is.na(cover_element_tests))) {
+    stop("Cover element functions cannot be NA!")
   }
 
   if (any(is.na(dists))) {
-    stop("no distance value can be NA")
+    stop("No distance value can be NA.")
   }
+
+  if (length(data) == 0) {
+    stop("Your data is missing!")
+  } else if (length(dists) == 0) {
+     stop("Your distance matrix is missing!")
+  } else if (length(filtered_data) == 0) {
+    stop("Your lens/filter is missing!")
+  } else if (length(cover_element_tests) == 0) {
+    stop("Your cover is missing!")
+  }
+
 
   if ((is.matrix(filtered_data))) {
     if (dim(filtered_data)[1] != nrow(data)) {
-      stop("there should be as many filtered data points as there are data points.")
+      stop("There should be as many filtered data points as there are data points.")
+    }
+    if (is.null(row.names(filtered_data)) | any(row.names(filtered_data) != row.names(data))) {
+      stop("The names of the filtered data points should match the names of the original data points.")
     }
   } else if (is.data.frame(filtered_data)) {
     if (nrow(filtered_data) != nrow(data)) {
-      stop((
-        "there should be as many filtered data points as there are data points."
-      ))
+      stop("There should be as many filtered data points as there are data points.")
+    } else if (is.null(row.names(filtered_data)) | any(row.names(filtered_data) != row.names(data))) {
+      stop("The names of the filtered data points should match the names of the original data points.")
     }
-  } else if (length(filtered_data) != nrow(data)) {
-    stop("there should be as many filtered data points as there are data points.")
+  } else {
+    if (length(filtered_data) != nrow(data)) {
+      stop("There should be as many filtered data points as there are data points.")
+    } else if (is.null(names(filtered_data)) | any(names(filtered_data) != row.names(data))) {
+      stop("The names of the filtered data points should match the names of the original data points.")
+    }
   }
 
   bins = create_bins(data, filtered_data, cover_element_tests)
