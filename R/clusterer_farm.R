@@ -74,9 +74,9 @@ get_longevity_cut_height <- function(dend, max_height = max(cophenetic(dend))) {
 
 #' Do Much Clustering
 #'
-#' Perform hierarchical clustering on distance matrices.
+#' Perform hierarchical clustering on multiple distance matrices.
 #'
-#' @param dist_mats A list of distance matrices to be used for clustering. Must be a `list` of dist` objects.
+#' @param dist_mats A list of distance matrices to be used for clustering. Must be a `list` of `dist` objects.
 #' @param method A string to pass to [hclust] to tell it what kind of clustering to do. Can be `single`, `complete`, etc.
 #' @param cut_height A global cut height. If not specified or negative, dendrograms will be cut individually.
 #'
@@ -127,9 +127,10 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
 #'
 #' @param method A string to pass to [hclust] to tell it what kind of clustering to do.
 #' @param dists The global distance matrix on which to run clustering to determine a global cutting height.
+#' @param cut_height The cutting height at which you want all dendrograms to be cut. If this is not specified then the clusterer will use a cut height 5% above the merge point preceding the tallest branch in the global dendrogram.
 #'
 #' @returns A function that inputs a list of distance matrices and returns a list containing one vector per matrix, whose element names are data point names and whose values are cluster labels (relative to each matrix).
-#' @details This clusterer determines cutting heights for dendrograms by cutting them all according to the best cutting height when the data is clustered together. "Best" here means cutting the dendrogram 5% above the merge point with the longest unbroken gap until the next merge points.
+#' @details This clusterer cuts all dendrograms it is given at a uniform cutting height, defaulting to a heuristic if necessary.
 #' @export
 #'
 #' @examples
@@ -145,15 +146,18 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
 #' cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 #'
 #' create_1D_mapper_object(data, dists, projx, cover, global_hierarchical_clusterer("mcquitty", dists))
-global_hierarchical_clusterer <- function(method, dists) {
+global_hierarchical_clusterer <- function(method, dists, cut_height = -1) {
   # do hierarchical clustering on entire dataset
   global_linkage = get_agglomerative_dendrogram(as.dist(dists), method)
 
   # each dendrogram will be normalized to this height
   max_dist = max(dists)
 
-  # this is the cutting height to be used for each dendrogram
-  cut_height = get_longevity_cut_height(global_linkage, max_dist)
+  # use tallest branch if a cut height is not specified
+  if (cut_height < 0) {
+    cut_height = get_longevity_cut_height(global_linkage, max_dist)
+  }
+
 
   # return clusterer which can accept patches from mapper
   return(function(dist_mats) get_hierarchical_clusters(dist_mats, method, cut_height = cut_height))
