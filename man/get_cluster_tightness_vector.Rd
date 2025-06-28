@@ -2,8 +2,7 @@
 % Please edit documentation in R/stats_factory.R
 \name{get_cluster_tightness_vector}
 \alias{get_cluster_tightness_vector}
-\title{Tightnesses Calculator
-Compute a measure of dispersion for a list of clusters.}
+\title{Tightnesses Calculator}
 \usage{
 get_cluster_tightness_vector(dists, binclust_data)
 }
@@ -17,5 +16,4 @@ A vector of real numbers in \eqn{(0,\infty)} containing mean distances to the me
 }
 \description{
 Tightnesses Calculator
-Compute a measure of dispersion for a list of clusters.
 }

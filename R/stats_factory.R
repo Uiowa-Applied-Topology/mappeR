@@ -147,7 +147,6 @@ compute_tightness <- function(dists, cluster) {
 }
 
 #' Tightnesses Calculator
-#' Compute a measure of dispersion for a list of clusters.
 #'
 #' @param dists A distance matrix for the data points inside all the input clusters.
 #' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster IDs (integers).
