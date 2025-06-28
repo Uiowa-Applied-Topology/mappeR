@@ -9,6 +9,7 @@
 #'
 #' @param patch A list of names of data points.
 #' @param dists A `dist` object for data points in the patch, possibly including extra points.
+#' @noRd
 subset_dists <- function(patch, dists) {
   patch_size = length(patch)
   if (patch_size == 0) {
@@ -32,6 +33,7 @@ subset_dists <- function(patch, dists) {
 #' that is, it should return a list of named vectors, whose names are the names of data points and whose values are cluster assignments (integers).
 #'
 #' @return The output of `clusterer(dist_mats)`, which needs to be a list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels (within each bin)
+#' @noRd
 get_raw_clusters <- function(dist_mats, clusterer) {
   return(clusterer(dist_mats))
 }
@@ -46,6 +48,7 @@ get_raw_clusters <- function(dist_mats, clusterer) {
 #'
 #' @return The output of `clusterer` applied to a list of distance matrices, which should be a list containing named vectors (one per bin), whose names are data point names and whose values are cluster labels.
 #' These labels are unique to the bin which has them.
+#' @noRd
 get_clusters <- function(bins, dists, clusterer) {
   # more than one bin, need more than one distance matrix
   if (is.list(bins)) {
@@ -78,6 +81,7 @@ get_clusters <- function(bins, dists, clusterer) {
 #' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster IDs (integers).
 #'
 #' @return A vector of integers representing the lengths of the clusters in the input data.
+#' @noRd
 get_cluster_sizes <- function(binclust_data) {
 
   # no need to list by level set
@@ -99,6 +103,7 @@ get_cluster_sizes <- function(binclust_data) {
 #' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids.
 #'
 #' @return A vector of integers equal in length to the number of clusters, whose members identify which bin that cluster belongs to.
+#' @noRd
 get_bin_vector <- function(binclust_data) {
 
   # find unique clusters in each bin, then count how many
@@ -123,6 +128,7 @@ get_bin_vector <- function(binclust_data) {
 #'
 #' @return A real number in \eqn{[0,1]} representing the mean distance to the medoid of the cluster, which is the data point with the smallest combined distance to every other point.
 #' A smaller value indicates a tighter cluster based on this measure.
+#' @noRd
 compute_tightness <- function(dists, cluster) {
 
   # empty or singleton clusters have trivial tightness
@@ -152,6 +158,7 @@ compute_tightness <- function(dists, cluster) {
 #' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster IDs (integers).
 #'
 #' @return A vector of real numbers in \eqn{(0,\infty)} containing mean distances to the medoids of each cluster in `dists`.
+#' @noRd
 get_cluster_tightness_vector <- function(dists, binclust_data) {
 
   # no need to list by level set
@@ -176,6 +183,7 @@ get_cluster_tightness_vector <- function(dists, binclust_data) {
 #' @param binclust_data A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids
 #'
 #' @return A `list` of strings, each a comma separated list of the `toString` values of the data point names.
+#' @noRd
 get_clustered_data <- function(binclust_data) {
 
   # no need to list by level set
@@ -204,6 +212,7 @@ get_clustered_data <- function(binclust_data) {
 #'
 #' @return A vector of real numbers representing the Jaccard index of each overlap.
 #' @details This value is calculated per edge by dividing the number of data points in the union of the two clusters by the number of data points in the intersection. Formally, \deqn{w(\{c_i, c_j\}) = \dfrac{|c_i \cap c_j|}{|c_i \cup c_j|} = \dfrac{|c_i \cap c_j|}{|c_i| + |c_j| - |c_i \cap c_j|}}
+#' @noRd
 get_edge_weights <- function(overlap_lengths, cluster_sizes, edges) {
 
   # no edges? no weights

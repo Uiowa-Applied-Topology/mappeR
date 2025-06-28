@@ -80,6 +80,7 @@ create_1D_mapper_object <- function(data,
 #' @param bins A `list` of bins, each containing a named vector of data points.
 #'
 #' @return A named vector whose names are data point names and whose values are cluster labels (`integer`s).
+#' @noRd
 convert_to_clusters <- function(bins) {
   ball_sizes = lapply(bins, length)
 

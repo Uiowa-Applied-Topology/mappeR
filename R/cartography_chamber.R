@@ -133,6 +133,7 @@ create_mapper_object <- function(data,
 #' @param cover_element_test A membership test function for a cover element. It should return `TRUE` or `FALSE` when given a filtered data point.
 #'
 #' @return A vector of names of points from the data frame, representing a level set.
+#' @noRd
 create_single_bin <- function(data, filtered_data, cover_element_test) {
 
   # find which data points are part of the cover element
@@ -155,6 +156,7 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #'
 #' @return A `list` of vectors, where each one contains names of data points for which a specific cover element test was `TRUE`.
+#' @noRd
 create_bins <- function(data, filtered_data, cover_element_tests) {
   res = mapply(
     create_single_bin,
@@ -189,6 +191,7 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #' - `weight`: Jaccard index of edge; intersection divided by union
 #' - `overlap_data`: names of data points in overlap
 #' - `overlap_size`: number of data points overlap
+#' @noRd
 assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
 
   # basic node info
@@ -255,6 +258,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
 #' @param x A positive integer.
 #'
 #' @return The index of the next greatest or equal triangular number to \eqn{x}.
+#' @noRd
 next_triangular <- function(x) {
   # do a little algebra
   next_triangle_indx = floor((1 + sqrt(1 + 8 * x)) / 2)
@@ -275,6 +279,7 @@ next_triangular <- function(x) {
 #' @param binclust_data A `list` of bins, each containing named vectors whose names are those of data points and whose values are cluster IDs (integers).
 #'
 #' @return A named `list` of edges, whose elements contain the names of clusters in the overlap represented by that edge.
+#' @noRd
 get_overlaps <- function(binclust_data) {
 
   # no need to list by level set
@@ -314,6 +319,7 @@ get_overlaps <- function(binclust_data) {
 #' @param num_vertices The number of vertices in the graph.
 #'
 #' @return A 2D array representing the edge list of a graph.
+#' @noRd
 get_edgelist_from_overlaps <- function(overlaps, num_vertices) {
 
   # label all edges in order

@@ -69,6 +69,7 @@ create_width_balanced_cover <- function(min_val,
 #' @param endpoints A vector of interval endpoints (real numbers), namely a left and a right. Must be in order.
 #'
 #' @return A function that eats a data point and outputs `TRUE` if the data point is in the interval and FALSE if not.
+#' @noRd
 check_in_interval <- function(endpoints) {
   return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
 }
@@ -143,6 +144,7 @@ create_balls <- function(data, dists, eps) {
 #' @param ball A list of data point names.
 #'
 #' @return A function that eats a data point and returns `TRUE` or `FALSE` depending if the point is in the ball or not.
+#' @noRd
 is_in_ball <- function(ball) {
   return(function(x) x %in% ball)
 }
