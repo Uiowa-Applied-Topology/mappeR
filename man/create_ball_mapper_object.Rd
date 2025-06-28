@@ -2,19 +2,19 @@
 % Please edit documentation in R/baskin_robbins.R
 \name{create_ball_mapper_object}
 \alias{create_ball_mapper_object}
-\title{Run Mapper using a trivial filter, a cover of balls, and no clustering algorithm.}
+\title{Ball Mapper}
 \usage{
 create_ball_mapper_object(data, dists, eps)
 }
 \arguments{
 \item{data}{A data frame.}
 
-\item{dists}{A distance matrix for the data frame.}
+\item{dists}{A distance matrix for the data frame. Can be a \code{dist} object or a \code{matrix}.}
 
-\item{eps}{A positive real number for your desired ball radius.}
+\item{eps}{A positive real number for the desired ball radius.}
 }
 \value{
-A list of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
+A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
 
 The node data frame consists of:
 \itemize{
@@ -34,11 +34,15 @@ The \code{edge} data frame contains consists of:
 }
 }
 \description{
-Run Mapper using an \eqn{\varepsilon}-net cover (greedily generated) and the 2D inclusion function as a filter.
+Run Mapper using the identity function as a lens and an \eqn{\varepsilon}-net cover, greedily generated using a distance matrix.
 }
 \examples{
+# Create noisy cirle data set
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+
+# Set ball radius
 eps = .5
 
+# Create Mapper object
 create_ball_mapper_object(data, dist(data), eps)
 }

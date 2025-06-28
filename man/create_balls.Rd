@@ -2,7 +2,7 @@
 % Please edit documentation in R/quilting_hut.R
 \name{create_balls}
 \alias{create_balls}
-\title{Make a cover of balls}
+\title{Greedy Baller}
 \usage{
 create_balls(data, dists, eps)
 }
@@ -14,14 +14,14 @@ create_balls(data, dists, eps)
 \item{eps}{A positive real number.}
 }
 \value{
-A list of vectors of data point names, one list element per ball. The output is such that every data point is contained in a ball of radius \eqn{\varepsilon}, and no ball center is contained in more than one ball. The centers are datapoints themselves.
+A list of vectors of data point names, one list element per ball. The output is such that every data point is contained in a ball of radius \eqn{\varepsilon}, and no ball center is contained in more than one ball. The centers themselves are data points.
 }
 \description{
-Make a cover of balls
+Make a greedy epsilon net of a data set.
 }
 \examples{
+# Create a data set from 5000 points sampled from a parametric curve, plus some noise
 num_points = 5000
-
 P.data = data.frame(
   x = sapply(1:num_points, function(x)
     sin(x) * 10) + rnorm(num_points, 0, 0.1),
@@ -30,7 +30,8 @@ P.data = data.frame(
   z = sapply(1:num_points, function(x)
     10 * sin(x) ^ 2 * cos(x)) + rnorm(num_points, 0, 0.1)
 )
-
 P.dist = dist(P.data)
+
+# Ball it up
 balls = create_balls(data = P.data, dists = P.dist, eps = .25)
 }

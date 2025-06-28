@@ -2,7 +2,7 @@
 % Please edit documentation in R/cartography_chamber.R
 \name{next_triangular}
 \alias{next_triangular}
-\title{Find which triangular number you're on}
+\title{Triangular Number Triangulator}
 \usage{
 next_triangular(x)
 }
@@ -13,5 +13,5 @@ next_triangular(x)
 The index of the next greatest or equal triangular number to \eqn{x}.
 }
 \description{
-Find which triangular number you're on
+Given a number, find the cardinal order of the next closest triangular number.
 }

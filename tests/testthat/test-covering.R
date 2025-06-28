@@ -1,8 +1,7 @@
-
 # 1D covering -------------------------------------------------------------
 
-# get two random numbers between -1 and 1 for the left and right endpoints
-vars = sort(runif(2, -1, 1))
+# get two random numbers between -1000000 and 1000000 for the left and right endpoints
+vars = sort(runif(2, -1000000, 1000000))
 left_end  = vars[1]
 right_end = vars[2]
 
@@ -10,8 +9,8 @@ right_end = vars[2]
 ethan_left = 0
 ethan_right = 1
 
-# get a random number of bins between 1 and 200
-num_bins = sample(1:200, 1)
+# get a random number of patches between 1 and 250
+num_bins = sample(1:250, 1)
 ethan_bins = 5
 
 # get a random percent overlap between 0 and 100

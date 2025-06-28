@@ -2,12 +2,13 @@
 % Please edit documentation in R/cartography_chamber.R
 \name{get_edgelist_from_overlaps}
 \alias{get_edgelist_from_overlaps}
-\title{Obtain edge list from cluster intersections}
+\title{Edge List Maker}
 \usage{
 get_edgelist_from_overlaps(overlaps, num_vertices)
 }
 \arguments{
-\item{overlaps}{A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge; output of \code{\link[=get_overlaps]{get_overlaps()}}.}
+\item{overlaps}{A named \code{list} of edges, whose elements contain the names of clusters in the overlap represented by that edge; i.e., the output of \code{\link[=get_overlaps]{get_overlaps()}}.
+The names should be integers corresponding to their ordering among all possible pairs of vertices.}
 
 \item{num_vertices}{The number of vertices in the graph.}
 }
@@ -15,5 +16,5 @@ get_edgelist_from_overlaps(overlaps, num_vertices)
 A 2D array representing the edge list of a graph.
 }
 \description{
-Obtain edge list from cluster intersections
+Turn the edge labels given by \code{\link[=get_overlaps]{get_overlaps()}} into a usable edge list.
 }

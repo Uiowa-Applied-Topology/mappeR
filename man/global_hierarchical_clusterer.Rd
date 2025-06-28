@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusterer_farm.R
 \name{global_hierarchical_clusterer}
 \alias{global_hierarchical_clusterer}
-\title{Create a dude to perform hierarchical clustering in a global context using the \link{hclust} package.}
+\title{Global Longevity Clusterer}
 \usage{
 global_hierarchical_clusterer(method, dists)
 }
@@ -18,11 +18,12 @@ A function that inputs a list of distance matrices and returns a list containing
 Create a dude to perform hierarchical clustering in a global context using the \link{hclust} package.
 }
 \details{
-This clusterer determines cutting heights for dendrograms by cutting them all according to the best cutting height when the data is clustered together. "Best" here means cutting the dendrogram just above the merge point with the longest unbroken gap until the next merge points.
+This clusterer determines cutting heights for dendrograms by cutting them all according to the best cutting height when the data is clustered together. "Best" here means cutting the dendrogram 5\% above the merge point with the longest unbroken gap until the next merge points.
 }
 \examples{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 projx = data$x
+names(projx) = row.names(data)
 
 dists = dist(data)
 

@@ -2,20 +2,21 @@
 % Please edit documentation in R/cartography_chamber.R
 \name{create_bins}
 \alias{create_bins}
-\title{Create bins of data}
+\title{Level Sets Maker}
 \usage{
 create_bins(data, filtered_data, cover_element_tests)
 }
 \arguments{
 \item{data}{A data frame.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.}
+\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
+These values need to be named, and the names of these values must match the names of the original data set.}
 
 \item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 }
 \value{
-A list of level sets, each containing a vector of the names of the data inside it.
+A \code{list} of vectors, where each one contains names of data points for which a specific cover element test was \code{TRUE}.
 }
 \description{
-Create bins of data
+Level Sets Maker
 }

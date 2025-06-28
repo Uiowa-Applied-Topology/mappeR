@@ -2,16 +2,16 @@
 % Please edit documentation in R/quilting_hut.R
 \name{is_in_ball}
 \alias{is_in_ball}
-\title{Get a tester function for a ball.}
+\title{Urologist Bouncer}
 \usage{
 is_in_ball(ball)
 }
 \arguments{
-\item{ball}{A list of data points.}
+\item{ball}{A list of data point names.}
 }
 \value{
-A function that eats a data point and returns TRUE or FALSE depending if the point is in the ball or not.
+A function that eats a data point and returns \code{TRUE} or \code{FALSE} depending if the point is in the ball or not.
 }
 \description{
-Get a tester function for a ball.
+Get a tester function for ball membership
 }

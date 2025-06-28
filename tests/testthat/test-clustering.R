@@ -12,3 +12,11 @@ test_that("global clustering", {
 test_that("local clustering", {
   expect_no_warning(create_1D_mapper_object(data, dists, lens, cover, local_hierarchical_clusterer("complete")))
 })
+
+test_that("no clustering", {
+  expect_no_warning(create_1D_mapper_object(data, dists, lens, cover, NULL))
+})
+
+test_that("we can hierarchically cluster differently", {
+  expect_no_warning(create_1D_mapper_object(data, dists, lens, cover, clusterer = local_hierarchical_clusterer("mcquitty")))
+})

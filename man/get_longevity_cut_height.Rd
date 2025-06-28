@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusterer_farm.R
 \name{get_longevity_cut_height}
 \alias{get_longevity_cut_height}
-\title{Find the the longest-lived hierarchy of a dendrogram.}
+\title{Lengthy Cut Height Finder}
 \usage{
 get_longevity_cut_height(dend, max_height = max(cophenetic(dend)))
 }
@@ -12,7 +12,8 @@ get_longevity_cut_height(dend, max_height = max(cophenetic(dend)))
 \item{max_height}{The maximum height of the dendrogram; if this is not provided the last merge height of the input dendrogram will be used, which will make cutting to one cluster impossible!}
 }
 \value{
-The point just above the merge height with the longest time to the next merge point.
+The point 5\% above the merge height with the longest time to the next merge point.
+This value may not be the "ideal" cut height! This is just a heuristic.
 }
 \description{
 Find the the longest-lived hierarchy of a dendrogram.

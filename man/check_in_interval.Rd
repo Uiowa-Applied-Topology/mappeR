@@ -2,15 +2,15 @@
 % Please edit documentation in R/quilting_hut.R
 \name{check_in_interval}
 \alias{check_in_interval}
-\title{Get a tester function for an interval.}
+\title{Interval Bouncer}
 \usage{
 check_in_interval(endpoints)
 }
 \arguments{
-\item{endpoints}{A vector of interval endpoints, namely a left and a right. Must be in order.}
+\item{endpoints}{A vector of interval endpoints (real numbers), namely a left and a right. Must be in order.}
 }
 \value{
-A function that eats a data point and outputs TRUE if the datapoint is in the interval and FALSE if not.
+A function that eats a data point and outputs \code{TRUE} if the data point is in the interval and FALSE if not.
 }
 \description{
 Get a tester function for an interval.

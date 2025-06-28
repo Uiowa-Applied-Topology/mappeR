@@ -5,10 +5,9 @@
 
 # 1D filtering --------------------------------------------------------------
 
-#' Generate an overlapping cover of an interval
+#' Width-Balanced Cover Maker
 #'
-#' This is a function that generates a cover of an interval \eqn{[a,b]} with
-#' some number of (possibly) overlapping, evenly spaced, identical width subintervals.
+#' Generate a cover of an interval \eqn{[a, b]} with uniformly sized and spaced subintervals.
 #'
 #' @param min_val The left endpoint \eqn{a}. A real number.
 #' @param max_val The right endpoint \eqn{b}. A real number.
@@ -26,7 +25,10 @@
 #' @export
 #'
 #' @examples
+#' # Cover `[0, 100]` in 10 patches with 15% overlap
 #' create_width_balanced_cover(min_val=0, max_val=100, num_bins=10, percent_overlap=15)
+#'
+#' # Cover `[-11.5, 10.33]` in 100 patches with 2% overlap
 #' create_width_balanced_cover(-11.5, 10.33, 100, 2)
 create_width_balanced_cover <- function(min_val,
                                         max_val,
@@ -60,11 +62,13 @@ create_width_balanced_cover <- function(min_val,
   return(bin_ends)
 }
 
+#' Interval Bouncer
+#'
 #' Get a tester function for an interval.
 #'
-#' @param endpoints A vector of interval endpoints, namely a left and a right. Must be in order.
+#' @param endpoints A vector of interval endpoints (real numbers), namely a left and a right. Must be in order.
 #'
-#' @return A function that eats a data point and outputs TRUE if the datapoint is in the interval and FALSE if not.
+#' @return A function that eats a data point and outputs `TRUE` if the data point is in the interval and FALSE if not.
 check_in_interval <- function(endpoints) {
   return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
 }
@@ -73,18 +77,21 @@ check_in_interval <- function(endpoints) {
 
 # greedy epsilon net algorithm from Dłotko
 # output is a list of bins, each containing names of datapoints.
-#' Make a cover of balls
+
+#' Greedy Baller
+#'
+#' Make a greedy epsilon net of a data set.
 #'
 #' @param data A data frame.
 #' @param dists A distance matrix for the data frame.
 #' @param eps A positive real number.
 #'
-#' @return A list of vectors of data point names, one list element per ball. The output is such that every data point is contained in a ball of radius \eqn{\varepsilon}, and no ball center is contained in more than one ball. The centers are datapoints themselves.
+#' @return A list of vectors of data point names, one list element per ball. The output is such that every data point is contained in a ball of radius \eqn{\varepsilon}, and no ball center is contained in more than one ball. The centers themselves are data points.
 #' @export
 #'
 #' @examples
+#' # Create a data set from 5000 points sampled from a parametric curve, plus some noise
 #' num_points = 5000
-#'
 #' P.data = data.frame(
 #'   x = sapply(1:num_points, function(x)
 #'     sin(x) * 10) + rnorm(num_points, 0, 0.1),
@@ -93,8 +100,9 @@ check_in_interval <- function(endpoints) {
 #'   z = sapply(1:num_points, function(x)
 #'     10 * sin(x) ^ 2 * cos(x)) + rnorm(num_points, 0, 0.1)
 #' )
-#'
 #' P.dist = dist(P.data)
+#'
+#' # Ball it up
 #' balls = create_balls(data = P.data, dists = P.dist, eps = .25)
 create_balls <- function(data, dists, eps) {
 
@@ -104,11 +112,10 @@ create_balls <- function(data, dists, eps) {
   }
 
   dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
-  balls = list()
+  balls = list() # start with no balls
   marked = rep(FALSE, nrow(data)) # keep track of which points we've covered
   datanames = rownames(data) # actually keep track of the data
-
-  names(marked) = datanames
+  names(marked) = datanames # really actually keep track of the data
 
   while (FALSE %in% marked) {
     # keep going until we have covered all the data
@@ -129,11 +136,13 @@ create_balls <- function(data, dists, eps) {
   return(balls)
 }
 
-#' Get a tester function for a ball.
+#' Urologist Bouncer
 #'
-#' @param ball A list of data points.
+#' Get a tester function for ball membership
 #'
-#' @return A function that eats a data point and returns TRUE or FALSE depending if the point is in the ball or not.
+#' @param ball A list of data point names.
+#'
+#' @return A function that eats a data point and returns `TRUE` or `FALSE` depending if the point is in the ball or not.
 is_in_ball <- function(ball) {
   return(function(x) x %in% ball)
 }

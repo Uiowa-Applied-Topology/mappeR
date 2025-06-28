@@ -2,7 +2,7 @@
 % Please edit documentation in R/quilting_hut.R
 \name{create_width_balanced_cover}
 \alias{create_width_balanced_cover}
-\title{Generate an overlapping cover of an interval}
+\title{Width-Balanced Cover Maker}
 \usage{
 create_width_balanced_cover(min_val, max_val, num_bins, percent_overlap)
 }
@@ -26,10 +26,12 @@ A 2D numeric array.
 }
 }
 \description{
-This is a function that generates a cover of an interval \eqn{[a,b]} with
-some number of (possibly) overlapping, evenly spaced, identical width subintervals.
+Generate a cover of an interval \eqn{[a, b]} with uniformly sized and spaced subintervals.
 }
 \examples{
+# Cover `[0, 100]` in 10 patches with 15\% overlap
 create_width_balanced_cover(min_val=0, max_val=100, num_bins=10, percent_overlap=15)
+
+# Cover `[-11.5, 10.33]` in 100 patches with 2\% overlap
 create_width_balanced_cover(-11.5, 10.33, 100, 2)
 }

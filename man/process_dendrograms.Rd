@@ -2,14 +2,14 @@
 % Please edit documentation in R/clusterer_farm.R
 \name{process_dendrograms}
 \alias{process_dendrograms}
-\title{Cut many dendrograms at specified cut heights.}
+\title{Grow Dendrograms}
 \usage{
 process_dendrograms(dends, cut_heights)
 }
 \arguments{
-\item{dends}{A list of dendrograms to be cut.}
+\item{dends}{A \code{list} of dendrograms to be cut.}
 
-\item{cut_heights}{A list of cut heights which corresponds to each dendrogram in \code{dends}.}
+\item{cut_heights}{A list of cut heights which correspond to each dendrogram in \code{dends}.}
 }
 \value{
 A list of named vectors (one per dendrogram) whose names are data point names and whose values are cluster labels.

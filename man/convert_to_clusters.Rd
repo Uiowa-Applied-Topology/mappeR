@@ -2,16 +2,16 @@
 % Please edit documentation in R/baskin_robbins.R
 \name{convert_to_clusters}
 \alias{convert_to_clusters}
-\title{"Clustering" for ballmapper just means treating each bin as its own cluster.}
+\title{Convert Balls to Clusters}
 \usage{
 convert_to_clusters(bins)
 }
 \arguments{
-\item{bins}{A list of bins, each containing names of data from some data frame.}
+\item{bins}{A \code{list} of bins, each containing a named vector of data points.}
 }
 \value{
-A named vector whose names are data point names and whose values are cluster labels
+A named vector whose names are data point names and whose values are cluster labels (\code{integer}s).
 }
 \description{
-"Clustering" for ballmapper just means treating each bin as its own cluster.
+Perform trivial clustering on a set of balled data.
 }

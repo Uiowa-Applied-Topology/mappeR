@@ -2,12 +2,12 @@
 % Please edit documentation in R/clusterer_farm.R
 \name{get_agglomerative_dendrogram}
 \alias{get_agglomerative_dendrogram}
-\title{Perform agglomerative clustering on a single distance matrix.}
+\title{Grow A Dendrogram}
 \usage{
 get_agglomerative_dendrogram(dist, method)
 }
 \arguments{
-\item{dist}{A distance matrix.}
+\item{dist}{A distance matrix. Needs to be a \code{dist} object.}
 
 \item{method}{A string to pass to \link{hclust} to determine clustering method.}
 }

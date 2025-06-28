@@ -2,14 +2,15 @@
 % Please edit documentation in R/cartography_chamber.R
 \name{create_single_bin}
 \alias{create_single_bin}
-\title{Create a bin of data}
+\title{Level Set Maker}
 \usage{
 create_single_bin(data, filtered_data, cover_element_test)
 }
 \arguments{
 \item{data}{A data frame.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.}
+\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
+These values need to be named, and the names of these values must match the names of the original data set.}
 
 \item{cover_element_test}{A membership test function for a cover element. It should return \code{TRUE} or \code{FALSE} when given a filtered data point.}
 }
@@ -17,5 +18,5 @@ create_single_bin(data, filtered_data, cover_element_test)
 A vector of names of points from the data frame, representing a level set.
 }
 \description{
-Create a bin of data
+Level Set Maker
 }

@@ -2,16 +2,16 @@
 % Please edit documentation in R/cartography_chamber.R
 \name{get_overlaps}
 \alias{get_overlaps}
-\title{Get cluster overlaps}
+\title{Overlap Finder}
 \usage{
 get_overlaps(binclust_data)
 }
 \arguments{
-\item{binclust_data}{A list of bins, each containing named vectors whose names are those of data points and whose values are cluster ids.}
+\item{binclust_data}{A \code{list} of bins, each containing named vectors whose names are those of data points and whose values are cluster IDs (integers).}
 }
 \value{
-A named list of edges, whose elements contain the names of clusters in the overlap represented by that edge.
+A named \code{list} of edges, whose elements contain the names of clusters in the overlap represented by that edge.
 }
 \description{
-Get cluster overlaps
+Find single intersections between sets of data points.
 }
