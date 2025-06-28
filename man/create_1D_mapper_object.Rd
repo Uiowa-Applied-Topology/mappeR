@@ -2,7 +2,7 @@
 % Please edit documentation in R/baskin_robbins.R
 \name{create_1D_mapper_object}
 \alias{create_1D_mapper_object}
-\title{Run 1D mapper}
+\title{1D Mapper}
 \usage{
 create_1D_mapper_object(
   data,
@@ -19,17 +19,33 @@ create_1D_mapper_object(
 
 \item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.}
 
-\item{cover}{A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
+\item{cover}{An \eqn{n \times 2} matrix of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
 
 \item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
 }
 \value{
-A list of two data frames, one with node data containing bin membership,
-data points per cluster, and cluster dispersion, and one with edge data
-containing sources, targets, and weights representing overlap strength.
+A list of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
+
+The node data frame consists of:
+\itemize{
+\item \code{id}: vertex ID
+\item \code{cluster_size}: number of data points in vertex
+\item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
+\item \code{data}: names of data points in cluster
+\item \code{patch}: level set ID
+}
+
+The \code{edge} data frame contains consists of:
+\itemize{
+\item \code{source}: vertex ID of edge source
+\item \code{target}: vertex ID of edge target
+\item \code{weight}: Jaccard index of edge; this is the size of the intersection between the vertices divided by the union
+\item \code{overlap_data}: names of data points in overlap
+\item \code{overlap_size}: number of data points overlap
+}
 }
 \description{
-Run mapper using a one-dimensional filter, a cover of intervals, and a clustering algorithm.
+Run Mapper using a one-dimensional filter, a cover of intervals, and a clusterer.
 }
 \examples{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))

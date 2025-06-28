@@ -2,7 +2,7 @@
 % Please edit documentation in R/baskin_robbins.R
 \name{create_clusterball_mapper_object}
 \alias{create_clusterball_mapper_object}
-\title{Run clusterball mapper}
+\title{Run clusterball Mapper}
 \usage{
 create_clusterball_mapper_object(
   data,
@@ -24,12 +24,28 @@ create_clusterball_mapper_object(
 \item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
 }
 \value{
-A list of two dataframes, one with node data containing bin membership,
-datapoints per cluster, and cluster dispersion, and one with edge data
-containing sources, targets, and weights representing overlap strength.
+A list of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
+
+The node data frame consists of:
+\itemize{
+\item \code{id}: vertex ID
+\item \code{cluster_size}: number of data points in vertex
+\item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
+\item \code{data}: names of data points in cluster
+\item \code{patch}: level set ID
+}
+
+The \code{edge} data frame contains consists of:
+\itemize{
+\item \code{source}: vertex ID of edge source
+\item \code{target}: vertex ID of edge target
+\item \code{weight}: Jaccard index of edge; this is the size of the intersection between the vertices divided by the union
+\item \code{overlap_data}: names of data points in overlap
+\item \code{overlap_size}: number of data points overlap
+}
 }
 \description{
-Run ball mapper, but additionally cluster within the balls. Can use two different distance matrices to accomplish this.
+Run ball Mapper, but additionally cluster within the balls. Can use two different distance matrices to accomplish this.
 }
 \examples{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
