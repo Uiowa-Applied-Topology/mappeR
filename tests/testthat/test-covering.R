@@ -1,7 +1,7 @@
 # 1D covering -------------------------------------------------------------
 
-# get two random numbers between -1000000 and 1000000 for the left and right endpoints
-vars = sort(runif(2, -1000000, 1000000))
+# get two random numbers between -10000 and 10000 for the left and right endpoints
+vars = sort(runif(2, -10000, 10000))
 left_end  = vars[1]
 right_end = vars[2]
 

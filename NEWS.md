@@ -1,3 +1,10 @@
+# mappeR 2.2.0
+
+* Force user to have the names of the filtered data match the names of the original data set. You may need to call `names(filtered_data) = row.names(data)`, for example, before making a call to generate a mapper object. 
+The Ball Mapper flavored versions should still work fine.
+* Add the option to specify a global cut height when using the global hierarchical clusterer.
+* Update existing documentation and remove .Rd pages written about unexported functions (documentation still exists in source).
+
 # mappeR 2.1.0
 
 * Add better hierarchical clusterers; there is one which cuts each dendrogram uniformly, and one which cuts per patch. The cut height is at the beginning of the longest unbroken branch in the dendrogram (note this is not always the "correct" number of clusters!).
