@@ -2,7 +2,7 @@
 % Please edit documentation in R/baskin_robbins.R
 \name{create_1D_mapper_object}
 \alias{create_1D_mapper_object}
-\title{Run 1D mapper}
+\title{One-Dimensional Mapper}
 \usage{
 create_1D_mapper_object(
   data,
@@ -15,30 +15,54 @@ create_1D_mapper_object(
 \arguments{
 \item{data}{A data frame.}
 
-\item{dists}{A distance matrix for the data frame.}
+\item{dists}{A distance matrix associated to the data frame. Can be a \code{dist} object or \code{matrix}.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.}
+\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
+These values need to be named, and the names of these values must match the names of the original data set.}
 
-\item{cover}{A 2D array of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
+\item{cover}{An \eqn{n \times 2} \code{matrix} of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
 
-\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
+\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
+that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
+If this value is omitted, then trivial clustering will be done.}
 }
 \value{
-A list of two data frames, one with node data containing bin membership,
-data points per cluster, and cluster dispersion, and one with edge data
-containing sources, targets, and weights representing overlap strength.
+A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
+
+The node data frame consists of:
+\itemize{
+\item \code{id}: vertex ID
+\item \code{cluster_size}: number of data points in vertex
+\item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
+\item \code{data}: names of data points in cluster
+\item \code{patch}: level set ID
+}
+
+The \code{edge} data frame contains consists of:
+\itemize{
+\item \code{source}: vertex ID of edge source
+\item \code{target}: vertex ID of edge target
+\item \code{weight}: Jaccard index of edge; this is the size of the intersection between the vertices divided by the union
+\item \code{overlap_data}: names of data points in overlap
+\item \code{overlap_size}: number of data points overlap
+}
 }
 \description{
-Run mapper using a one-dimensional filter, a cover of intervals, and a clustering algorithm.
+Run Mapper using a one-dimensional filter, a cover of the codomain of intervals, and a clusterer.
 }
 \examples{
+# Create noisy circle data
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
-projx = data$x
 
+# Project to horizontal axis as lens
+projx = data$x
+names(projx) = row.names(data)
+
+# Create a one-dimensional cover
 num_bins = 10
 percent_overlap = 25
-
 cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 
+# Build Mapper object
 create_1D_mapper_object(data, dist(data), projx, cover)
 }

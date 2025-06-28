@@ -2,7 +2,7 @@
 % Please edit documentation in R/baskin_robbins.R
 \name{create_clusterball_mapper_object}
 \alias{create_clusterball_mapper_object}
-\title{Run clusterball mapper}
+\title{ClusterBall Mapper}
 \usage{
 create_clusterball_mapper_object(
   data,
@@ -15,26 +15,48 @@ create_clusterball_mapper_object(
 \arguments{
 \item{data}{A data frame.}
 
-\item{dist1}{A distance matrix for the data frame; this will be used to ball the data.}
+\item{dist1}{A distance matrix for the data frame; this will be used to ball the data. It can be a \code{dist} object or a \code{matrix}.}
 
-\item{dist2}{Another distance matrix for the data frame; this will be used to cluster the data after balling.}
+\item{dist2}{Another distance matrix for the data frame; this will be used to cluster the data after balling. It can be a \code{dist} object or a \code{matrix}.}
 
-\item{eps}{A positive real number for your desired ball radius.}
+\item{eps}{A positive real number for the desired ball radius.}
 
-\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix.}
+\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
+that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
+If this value is omitted, then single-linkage clustering will be done (and a cutting height will be decided for you).}
 }
 \value{
-A list of two dataframes, one with node data containing bin membership,
-datapoints per cluster, and cluster dispersion, and one with edge data
-containing sources, targets, and weights representing overlap strength.
+A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
+
+The node data frame consists of:
+\itemize{
+\item \code{id}: vertex ID
+\item \code{cluster_size}: number of data points in vertex
+\item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
+\item \code{data}: names of data points in cluster
+\item \code{patch}: level set ID
+}
+
+The \code{edge} data frame contains consists of:
+\itemize{
+\item \code{source}: vertex ID of edge source
+\item \code{target}: vertex ID of edge target
+\item \code{weight}: Jaccard index of edge; this is the size of the intersection between the vertices divided by the union
+\item \code{overlap_data}: names of data points in overlap
+\item \code{overlap_size}: number of data points overlap
+}
 }
 \description{
-Run ball mapper, but additionally cluster within the balls. Can use two different distance matrices to accomplish this.
+Run Ball Mapper, but non-trivially cluster within the balls. You can use two different distance matrices to for the balling and clustering.
 }
 \examples{
+# Create noisy circle data set
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 data.dists = dist(data)
+
+# Set ball radius
 eps = 1
 
+# Do single-linkage clustering in the balls to produce Mapper graph
 create_clusterball_mapper_object(data, data.dists, data.dists, eps)
 }

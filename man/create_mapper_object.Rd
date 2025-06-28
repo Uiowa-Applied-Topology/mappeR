@@ -2,7 +2,7 @@
 % Please edit documentation in R/cartography_chamber.R
 \name{create_mapper_object}
 \alias{create_mapper_object}
-\title{Create a mapper object}
+\title{Mapper}
 \usage{
 create_mapper_object(
   data,
@@ -15,21 +15,24 @@ create_mapper_object(
 \arguments{
 \item{data}{A data frame.}
 
-\item{dists}{A distance matrix for the data frame.}
+\item{dists}{A distance matrix for the data frame. Can be a \code{dist} object or \code{matrix}.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.}
+\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
+These values need to be named, and the names of these values must match the names of the original data set.}
 
 \item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 
-\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix. Defaults to \code{NULL}, meaning no all data in each bin will be lumped into a single cluster.}
+\item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
+that is, it should return a list of named vectors, whose names are the names of data points and whose values are cluster assignments (integers).
+If this value is omitted, then trivial clustering will be done.}
 }
 \value{
-A list of two dataframes, one with node data and one with edge data. The node data includes:
+A \code{list} of two data frames, one with node data and one with edge data. The node data includes:
 \itemize{
 \item \code{id}: vertex ID
-\item \code{cluster_size}: number of datapoints in cluster
+\item \code{cluster_size}: number of data points in cluster
 \item \code{mean_dist_to_medoid}: mean distance to medoid of cluster
-\item \code{data}: names of datapoints in cluster
+\item \code{data}: names of data points in cluster
 \item \code{patch}: level set ID
 }
 
@@ -38,29 +41,35 @@ The edge data includes:
 \item \code{source}: vertex ID of edge source
 \item \code{target}: vertex ID of edge target
 \item \code{weight}: Jaccard index of edge; intersection divided by union
-\item \code{overlap_data}: names of datapoints in overlap
-\item \code{overlap_size}: number of datapoints overlap
+\item \code{overlap_data}: names of data points in overlap
+\item \code{overlap_size}: number of data points overlap
 }
 }
 \description{
-Run the mapper algorithm on a data frame.
+Run the Mapper algorithm on a data frame.
 }
 \examples{
+# Create noisy data around a circle
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
-projx = data$x
 
+# Apply lens function to data
+projx = data$x
+names(projx) = row.names(data)
+
+# Build a width-balanced cover with 10 intervals and 25 percent overlap
 num_bins = 10
 percent_overlap = 25
 xcover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 
+# Write a function which can check if a data point lives in an interval of our lens function
 check_in_interval <- function(endpoints) {
  return(function(x) (endpoints[1] - x <= 0) & (endpoints[2] - x >= 0))
 }
 
-# each of the "cover" elements will really be a function that checks if a data point lives in it
+# Each of the "cover" elements will really be a function that checks if a data point lives in it
 xcovercheck = apply(xcover, 1, check_in_interval)
 
-# build the mapper object
+# Build the mapper object
 xmapper = create_mapper_object(
   data = data,
   dists = dist(data),

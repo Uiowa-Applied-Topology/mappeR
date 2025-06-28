@@ -2,29 +2,30 @@
 % Please edit documentation in R/viewmaster-library.R
 \name{eccentricity_filter}
 \alias{eccentricity_filter}
-\title{Compute eccentricity of data points}
+\title{Eccentric Lens}
 \usage{
 eccentricity_filter(dists)
 }
 \arguments{
-\item{dists}{A distance matrix associated to a data frame.}
+\item{dists}{A distance matrix associated to a data frame. Can be a \code{dist} object or \code{matrix}.}
 }
 \value{
 A vector of centrality measures, calculated per data point as the sum of its distances to every other data point, divided by the number of points.
 }
 \description{
-Compute eccentricity of data points
+Compute eccentricity of data points.
 }
 \examples{
+# Generate some noisy data along a 2D curve
 num_points = 100
-
 P.data = data.frame(
   x = sapply(1:num_points, function(x)
     sin(x) * 10) + rnorm(num_points, 0, 0.1),
   y = sapply(1:num_points, function(x)
     cos(x) ^ 2 * sin(x) * 10) + rnorm(num_points, 0, 0.1)
 )
-
 P.dist = dist(P.data)
+
+# Apply eccentricity filter
 eccentricity = eccentricity_filter(P.dist)
 }

@@ -99,12 +99,12 @@ So in general, the ingredients to construct a mapper graph are
 - A cover of the codomain of the lens function
 - A clustering algorithm
 
-## Example 1: 1D Mapper
+## Example 1: One-Dimensional Mapper
 
 ``` r
 num_points = 5000
 
-P.data = data.frame(
+data = data.frame(
   x = sapply(1:num_points, function(x)
     sin(x) * 10) + rnorm(num_points, 0, 0.1),
   y = sapply(1:num_points, function(x)
@@ -113,7 +113,7 @@ P.data = data.frame(
     10 * sin(x) ^ 2 * cos(x)) + rnorm(num_points, 0, 0.1)
 )
 
-P.dist = dist(P.data)
+distances = dist(data)
 ```
 
 Here is a point cloud $P$ formed by adding a bit of uniform noise to
@@ -142,15 +142,16 @@ Parameters:
 - Clustering method: Single-linkage hierarchical clustering
 
 ``` r
-# lens function
-projx = P.data$x
+# lens function will be projection
+projection = data$x
+names(projection) = row.names(data)
 
 # cover parameters to generate a width-balanced cover
 num_bins = 10
 percent_overlap = 25
 
 # generate the cover
-xcover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
+cover = create_width_balanced_cover(min(projection), max(projection), num_bins, percent_overlap)
 
 # bin tester machine machine
 check_in_interval <- function(endpoints) {
@@ -158,20 +159,20 @@ check_in_interval <- function(endpoints) {
 }
 
 # each of the "cover" elements will really be a function that checks if a data point lives in it
-xcovercheck = apply(xcover, 1, check_in_interval)
+coverchecks = apply(cover, 1, check_in_interval)
 
 # build the mapper objects
-xmapper = create_mapper_object(
-  data = P.data,
-  dists = P.dist,
-  filtered_data = projx,
-  cover_element_tests = xcovercheck,
-  clusterer = local_hierarchical_clusterer("single") # built-in mappeR method
+mapper = create_mapper_object(
+  data = data,
+  dists = distances,
+  filtered_data = projection,
+  cover_element_tests = coverchecks,
+  clusterer = global_hierarchical_clusterer("single", distances) # built-in mappeR method
 )
 ```
 
-The object returned by `create_mapper_object` is a list of two
-dataframes containing vertex and edge information.
+The object returned by `create_mapper_object` is a list of two data
+frames containing vertex and edge information.
 
 Vertex information:
 
@@ -189,7 +190,7 @@ Edge information:
 - `overlap_data`: names of datapoints in overlap
 - `overlap_size`: number of datapoints overlap
 
-## Example 2: ball mapper
+## Example 2: Ball Mapper
 
 By toying with the general mapper parameters, we can obtain different
 flavors of the algorithm. In the *ball mapper* flavor, we simply use the
@@ -202,13 +203,17 @@ Parameters:
 
 - Data: figure-8
 - Cover: set of $\varepsilon$-balls in $\mathbb{R^3}$
-- Lens function: inclusion from $P\hookrightarrow\mathbb{R}^3$
+- Lens function: identity
 - Clustering method: none (or, “any data set is one big cluster”-type
   clustering)
 
 ``` r
 # creates a cover using a greedy algorithm
-balls = create_balls(data = P.data, dists = P.dist, eps = .25)
+balls = create_balls(data = data, dists = distances, eps = .25)
+
+# lens function is trivial
+identity_lens = row.names(data)
+names(identity_lens) = row.names(data)
 
 # ball tester machine machine
 is_in_ball <- function(ball) {
@@ -216,7 +221,7 @@ is_in_ball <- function(ball) {
 }
 
 # filtering is just giving back the data (row names because my balls are lists of data point names, so the filter should match)
-ballmapper = create_mapper_object(P.data, P.dist, rownames(P.data), lapply(balls, is_in_ball))
+ballmapper = create_mapper_object(data, distances, identity_lens, lapply(balls, is_in_ball))
 ```
 
 ## Built-ins

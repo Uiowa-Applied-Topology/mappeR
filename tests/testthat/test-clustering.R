@@ -1,12 +1,22 @@
 data = data.frame(x = runif(1000, -2, 2), drop= FALSE)
-cover = create_width_balanced_cover(min(data$x), max(data$x), 10, 25)
+lens = data$x
+names(lens) = row.names(data)
+cover = create_width_balanced_cover(min(lens), max(lens), 10, 25)
 dists = dist(data)
 
 
 test_that("global clustering", {
-  expect_no_warning(create_1D_mapper_object(data, dists, data$x, cover, global_hierarchical_clusterer("single", dists)))
+  expect_no_warning(create_1D_mapper_object(data, dists, lens, cover, global_hierarchical_clusterer("single", dists)))
 })
 
 test_that("local clustering", {
-  expect_no_warning(create_1D_mapper_object(data, dists, data$x, cover, local_hierarchical_clusterer("complete")))
+  expect_no_warning(create_1D_mapper_object(data, dists, lens, cover, local_hierarchical_clusterer("complete")))
+})
+
+test_that("no clustering", {
+  expect_no_warning(create_1D_mapper_object(data, dists, lens, cover, NULL))
+})
+
+test_that("we can hierarchically cluster differently", {
+  expect_no_warning(create_1D_mapper_object(data, dists, lens, cover, clusterer = local_hierarchical_clusterer("mcquitty")))
 })

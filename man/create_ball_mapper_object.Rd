@@ -2,28 +2,47 @@
 % Please edit documentation in R/baskin_robbins.R
 \name{create_ball_mapper_object}
 \alias{create_ball_mapper_object}
-\title{Run mapper using a trivial filter, a cover of balls, and no clustering algorithm.}
+\title{Ball Mapper}
 \usage{
 create_ball_mapper_object(data, dists, eps)
 }
 \arguments{
 \item{data}{A data frame.}
 
-\item{dists}{A distance matrix for the data frame.}
+\item{dists}{A distance matrix for the data frame. Can be a \code{dist} object or a \code{matrix}.}
 
-\item{eps}{A positive real number for your desired ball radius.}
+\item{eps}{A positive real number for the desired ball radius.}
 }
 \value{
-A list of two data frames, one with node data containing ball size,
-data points per ball, ball tightness, and one with edge data
-containing sources, targets, and weights representing overlap strength.
+A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
+
+The node data frame consists of:
+\itemize{
+\item \code{id}: vertex ID
+\item \code{cluster_size}: number of data points in vertex
+\item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
+\item \code{data}: names of data points in cluster
+}
+
+The \code{edge} data frame contains consists of:
+\itemize{
+\item \code{source}: vertex ID of edge source
+\item \code{target}: vertex ID of edge target
+\item \code{weight}: Jaccard index of edge; this is the size of the intersection between the vertices divided by the union
+\item \code{overlap_data}: names of data points in overlap
+\item \code{overlap_size}: number of data points overlap
+}
 }
 \description{
-Run mapper using an \eqn{\varepsilon}-net cover (greedily generated) and the 2D inclusion function as a filter.
+Run Mapper using the identity function as a lens and an \eqn{\varepsilon}-net cover, greedily generated using a distance matrix.
 }
 \examples{
+# Create noisy cirle data set
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+
+# Set ball radius
 eps = .5
 
+# Create Mapper object
 create_ball_mapper_object(data, dist(data), eps)
 }

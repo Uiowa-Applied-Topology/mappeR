@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusterer_farm.R
 \name{local_hierarchical_clusterer}
 \alias{local_hierarchical_clusterer}
-\title{Create a dude to perform hierarchical clustering in a local context using the \link{hclust} package.}
+\title{Local Longevity Clusterer}
 \usage{
 local_hierarchical_clusterer(method)
 }
@@ -16,11 +16,12 @@ A function that inputs a list of distance matrices and returns a list containing
 Create a dude to perform hierarchical clustering in a local context using the \link{hclust} package.
 }
 \details{
-This clusterer determines cutting heights for dendrograms by cutting them individually, just above the merge point with the longest unbroken gap until the next merge point.
+This clusterer determines cutting heights for dendrograms by cutting them individually, 5\% above the merge point with the longest unbroken gap until the next merge point.
 }
 \examples{
 data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
 projx = data$x
+names(projx) = row.names(data)
 
 dists = dist(data)
 
