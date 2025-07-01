@@ -1,3 +1,7 @@
+# mappeR 2.2.1
+
+* Relax some tests as to avert floating point shenanigans
+
 # mappeR 2.2.0
 
 * Force user to have the names of the filtered data match the names of the original data set. You may need to call `names(filtered_data) = row.names(data)` or similar before making a call to generate a mapper object. 
