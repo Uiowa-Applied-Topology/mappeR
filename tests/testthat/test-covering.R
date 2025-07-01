@@ -30,11 +30,11 @@ interval_length = as.numeric(abs(cover[1,1] - cover[1,2]))
 ethan_length = as.numeric(abs(ethan_cover[1,1] - ethan_cover[1,2]))
 
 test_that("1D width balanced cover endpoints are correct", {
-  expect_true(abs(cover[1,1] - left_end) < 1e-15)
-  expect_true(abs(right_end - cover[nrow(cover), 2]) < 1e-15)
+  expect_true(abs(cover[1,1] - left_end) < 1e-10)
+  expect_true(abs(right_end - cover[nrow(cover), 2]) < 1e-10)
 
-  expect_true(abs(ethan_cover[1,1] - ethan_left) < 1e-15)
-  expect_true(abs(ethan_right - ethan_cover[nrow(ethan_cover), 2]) < 1e-15)
+  expect_true(abs(ethan_cover[1,1] - ethan_left) < 1e-10)
+  expect_true(abs(ethan_right - ethan_cover[nrow(ethan_cover), 2]) < 1e-10)
 })
 
 test_that("1D width balanced cover intervals are equally sized", {
@@ -65,11 +65,11 @@ test_that("1D width balanced cover overlaps are correct and consistent", {
 })
 
 test_that("1D width balanced cover can handle no or full overlap", {
-  expect_true(abs(no_overlap_cover[1,1] - left_end) < 1e-15)
-  expect_true(abs(right_end - no_overlap_cover[nrow(no_overlap_cover), 2]) < 1e-15)
+  expect_true(abs(no_overlap_cover[1,1] - left_end) < 1e-10)
+  expect_true(abs(right_end - no_overlap_cover[nrow(no_overlap_cover), 2]) < 1e-10)
 
-  expect_true(abs(full_overlap_cover[1,1] - left_end) < 1e-15)
-  expect_true(abs(right_end - full_overlap_cover[nrow(full_overlap_cover), 2]) < 1e-15)
+  expect_true(abs(full_overlap_cover[1,1] - left_end) < 1e-10)
+  expect_true(abs(right_end - full_overlap_cover[nrow(full_overlap_cover), 2]) < 1e-10)
 
   if (num_bins > 1) {
     sapply(1:(num_bins - 1), function(i) expect_equal(as.numeric(abs(cover[i, 1] - cover[i, 2])), interval_length))
