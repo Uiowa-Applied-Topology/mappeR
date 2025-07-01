@@ -1,3 +1,5 @@
+# mappeR (development version)
+
 # mappeR 2.2.1
 
 * Relax some tests as to avert floating point shenanigans
