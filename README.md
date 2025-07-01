@@ -1,6 +1,6 @@
 mappeR
 ================
-2025-02-16
+2025-06-30
 
 <!-- badges: start -->
 
@@ -144,7 +144,7 @@ Parameters:
 ``` r
 # lens function will be projection
 projection = data$x
-names(projection) = row.names(data)
+names(projection) = row.names(data) # this is required for to use mappeR
 
 # cover parameters to generate a width-balanced cover
 num_bins = 10
