@@ -5,6 +5,7 @@ mappeR
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
+[![](https://cranlogs.r-pkg.org/badges/mappeR)](https://cran.r-project.org/package=mappeR)
 
 <!-- badges: end -->
 
