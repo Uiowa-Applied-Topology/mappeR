@@ -170,10 +170,6 @@ create_ball_mapper_object <- function(data, dists, eps) {
     projection,
     lapply(balls, is_in_ball)
   ))
-
-  # ball_mapper_object = assemble_mapper_object(convert_to_clusters(balled_data), dists, binning = FALSE)
-
-  return(ball_mapper_object)
 }
 
 
