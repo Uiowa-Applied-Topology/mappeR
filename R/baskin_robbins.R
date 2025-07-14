@@ -159,9 +159,19 @@ create_ball_mapper_object <- function(data, dists, eps) {
     stop("Names of points in distance matrix need to match names in data frame!")
   }
 
-  balled_data = create_balls(data, dists, eps)
+  balls = create_balls(data, dists, eps)
 
-  ball_mapper_object = assemble_mapper_object(convert_to_clusters(balled_data), dists, binning = FALSE)
+  projection = row.names(data)
+  names(projection) = row.names(data) # label everything just trust me ok
+
+  return(create_mapper_object(
+    data,
+    dists,
+    projection,
+    lapply(balls, is_in_ball)
+  ))
+
+  # ball_mapper_object = assemble_mapper_object(convert_to_clusters(balled_data), dists, binning = FALSE)
 
   return(ball_mapper_object)
 }
