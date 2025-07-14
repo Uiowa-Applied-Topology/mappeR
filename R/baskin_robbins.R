@@ -224,12 +224,12 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clusterer 
     stop("Epsilon parameter needs to be positive.")
   }
 
-  if (nrow(data) != dim(as.matrix(dists))[1]) {
+  if (nrow(data) != dim(as.matrix(dist1))[1] | nrow(data) != dim(as.matrix(dist2))[1]) {
     stop("Your distance matrix dimensions are not correct for your data.")
-  } else if (dim(as.matrix(dists))[1] != dim(as.matrix(dists))[2]) {
-    stop("Your distance matrix is not square!")
-  } else if (any(!is.numeric(dists))) {
-    stop("Your distance matrix has non-numeric entries!")
+  } else if (dim(as.matrix(dist1))[1] != dim(as.matrix(dist1))[2] | dim(as.matrix(dist2))[1] != dim(as.matrix(dist2))[2]) {
+    stop("Your distance matrices are not square!")
+  } else if (any(!is.numeric(dist1)) | any(!is.numeric(dist2))) {
+    stop("Your distance matrices have non-numeric entries!")
   }
 
   if (length(data) == 0) {
