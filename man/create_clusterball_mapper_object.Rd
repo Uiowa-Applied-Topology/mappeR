@@ -23,7 +23,7 @@ create_clusterball_mapper_object(
 
 \item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
-If this value is omitted, then single-linkage clustering will be done (and a cutting height will be decided for you).}
+If this value is omitted, then single-linkage clustering will be done (and cutting heights will be decided for you).}
 }
 \value{
 A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
