@@ -141,6 +141,14 @@ create_ball_mapper_object <- function(data, dists, eps) {
     stop("Epsilon parameter needs to be positive.")
   }
 
+  if (nrow(data) != dim(as.matrix(dists))[1]) {
+    stop("Your distance matrix dimensions are not correct for your data.")
+  } else if (dim(as.matrix(dists))[1] != dim(as.matrix(dists))[2]) {
+    stop("Your distance matrix is not square!")
+  } else if (any(!is.numeric(dists))) {
+    stop("Your distance matrix has non-numeric entries!")
+  }
+
   if (length(data) == 0) {
     stop("Your data is missing!")
   } else if (length(dists) == 0) {
@@ -214,6 +222,14 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clusterer 
     stop("Epsilon parameter needs to be numeric.")
   } else if (eps <= 0) {
     stop("Epsilon parameter needs to be positive.")
+  }
+
+  if (nrow(data) != dim(as.matrix(dists))[1]) {
+    stop("Your distance matrix dimensions are not correct for your data.")
+  } else if (dim(as.matrix(dists))[1] != dim(as.matrix(dists))[2]) {
+    stop("Your distance matrix is not square!")
+  } else if (any(!is.numeric(dists))) {
+    stop("Your distance matrix has non-numeric entries!")
   }
 
   if (length(data) == 0) {

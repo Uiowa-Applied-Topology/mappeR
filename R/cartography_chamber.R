@@ -119,6 +119,14 @@ create_mapper_object <- function(data,
     }
   }
 
+  if (nrow(data) != dim(as.matrix(dists))[1]) {
+    stop("Your distance matrix dimensions are not correct for your data.")
+  } else if (dim(as.matrix(dists))[1] != dim(as.matrix(dists))[2]) {
+    stop("Your distance matrix is not square!")
+  } else if (any(!is.numeric(dists))) {
+    stop("Your distance matrix has non-numeric entries!")
+  }
+
   bins = create_bins(data, filtered_data, cover_element_tests)
 
   if (is.null(clusterer) | length(clusterer) == 0 | !is.function(clusterer)) {
