@@ -1,6 +1,6 @@
 mappeR
 ================
-2025-02-16
+2025-07-14
 
 <!-- badges: start -->
 
@@ -9,7 +9,7 @@ mappeR
 
 <!-- badges: end -->
 
-This is an implementation of the mapper algorithm by Singh, Mémoli, and
+This is an implementation of the Mapper algorithm by Singh, Mémoli, and
 Carlsson (2007).
 
 ## Setup
