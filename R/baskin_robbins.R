@@ -61,7 +61,7 @@ create_1D_mapper_object <- function(data,
                                     cover,
                                     clusterer = global_hierarchical_clusterer("single", dists)) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
-    stop("left endpoints must be less than or equal to right endpoints")
+    stop("Left endpoints in the cover must be less than or equal to right endpoints.")
   }
 
   cover = apply(cover, 1, check_in_interval)
@@ -130,15 +130,25 @@ convert_to_clusters <- function(bins) {
 #' create_ball_mapper_object(data, dist(data), eps)
 create_ball_mapper_object <- function(data, dists, eps) {
   if (!is.data.frame(data)) {
-    stop("input data needs to be a data frame.")
+    stop("Input data needs to be a data frame.")
+  } else if (any(is.na(data))) {
+    stop("Data cannot have NA values.")
+  } else if (any(is.na(dists))) {
+    stop("No distance value can be NA.")
   } else if (!is.numeric(eps)) {
-    stop("epsilon needs to be a number")
+    stop("Epsilon parameter needs to be numeric.")
   } else if (eps <= 0) {
-    stop("epsilon needs to be positive")
+    stop("Epsilon parameter needs to be positive.")
   }
 
-  if (any(is.na(dists))) {
-    stop("no distance value can be NA")
+  if (length(data) == 0) {
+    stop("Your data is missing!")
+  } else if (length(dists) == 0) {
+    stop("Your distance matrix is missing!")
+  }
+
+  if (any(row.names(as.matrix(dists)) != row.names(data))) {
+    stop("Names of points in distance matrix need to match names in data frame!")
   }
 
   balled_data = create_balls(data, dists, eps)
@@ -163,7 +173,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param eps A positive real number for the desired ball radius.
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 #' that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
-#' If this value is omitted, then single-linkage clustering will be done (and a cutting height will be decided for you).
+#' If this value is omitted, then single-linkage clustering will be done (and cutting heights will be decided for you).
 #' @return A `list` of two data frames, `nodes` and `edges`, which contain information about the Mapper graph constructed from the given parameters.
 #'
 #' The node data frame consists of:
@@ -195,15 +205,25 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps)
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clusterer = local_hierarchical_clusterer("single")) {
   if (!is.data.frame(data)) {
-    stop("input data needs to be a data frame.")
+    stop("Input data needs to be a data frame.")
+  } else if (any(is.na(data))) {
+    stop("Data cannot have NA values.")
+  } else if (any(is.na(dist1)) | any(is.na(dist2))) {
+    stop("No distance value can be NA.")
   } else if (!is.numeric(eps)) {
-    stop("epsilon needs to be a number")
+    stop("Epsilon parameter needs to be numeric.")
   } else if (eps <= 0) {
-    stop("epsilon needs to be positive")
+    stop("Epsilon parameter needs to be positive.")
   }
 
-  if ((any(is.na(dist1))) | (any(is.na(dist2)))) {
-    stop("no distance value can be NA")
+  if (length(data) == 0) {
+    stop("Your data is missing!")
+  } else if (length(dist1) == 0 | length(dist2) == 0) {
+    stop("Your distance matrix is missing!")
+  }
+
+  if (any(row.names(as.matrix(dist1)) != row.names(data)) | any(row.names(as.matrix(dist2)) != row.names(data))) {
+    stop("Names of points in distance matrices need to match names in data frame!")
   }
 
   balls = create_balls(data, dist1, eps)

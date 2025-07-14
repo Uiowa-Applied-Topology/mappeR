@@ -73,14 +73,14 @@ create_mapper_object <- function(data,
     stop("Cover element tests need to be in a list.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
     stop("Cover element tests need to be boolean functions.")
+  } else if (any(is.na(data))) {
+    stop("Data cannot have NA values.")
+  } else if (any(is.na(dists))) {
+    stop("No distance value can be NA.")
   } else if (any(is.na(filtered_data))) {
     stop("Filtered data cannot have NA values.")
   } else if (any(is.na(cover_element_tests))) {
     stop("Cover element functions cannot be NA!")
-  }
-
-  if (any(is.na(dists))) {
-    stop("No distance value can be NA.")
   }
 
   if (length(data) == 0) {
@@ -91,6 +91,10 @@ create_mapper_object <- function(data,
     stop("Your lens/filter is missing!")
   } else if (length(cover_element_tests) == 0) {
     stop("Your cover is missing!")
+  }
+
+  if (any(row.names(as.matrix(dists)) != row.names(data))) {
+    stop("Names of points in distance matrix need to match names in data frame!")
   }
 
 
@@ -117,7 +121,7 @@ create_mapper_object <- function(data,
 
   bins = create_bins(data, filtered_data, cover_element_tests)
 
-  if (is.null(clusterer)) {
+  if (is.null(clusterer) | length(clusterer) == 0 | !is.function(clusterer)) {
     return(assemble_mapper_object(convert_to_clusters(bins), dists, binning = FALSE))
   } else {
     clusters = get_clusters(bins, dists, clusterer)
