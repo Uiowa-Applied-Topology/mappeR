@@ -200,7 +200,7 @@ compute_tightness <- function(dists, cluster) {
     these_dists = dists[cluster_names, cluster_names]
     medoid = get_cluster_medoid(dists, cluster)
     min_dists = these_dists[medoid, ]
-    closeness_factor = min_sum / (length(cluster) - 1)
+    closeness_factor = sum(min_dists) / (length(cluster) - 1)
 
     return(closeness_factor)
   }
