@@ -1,3 +1,5 @@
+# mappeR (development version)
+
 # mappeR 2.3.0
 
 * Add more input sanitization for distance matrices

@@ -11,7 +11,7 @@ Authors@R: person("George", "Clare Kennedy", email = "george-clarekennedy@uiowa.
 License: MIT + file LICENSE
 URL: https://github.com/Uiowa-Applied-Topology/mappeR
 BugReports: https://github.com/Uiowa-Applied-Topology/mappeR/issues
-Version: 2.3.0
+Version: 2.3.0.9000
 Encoding: UTF-8
 Imports:
     fastcluster,
