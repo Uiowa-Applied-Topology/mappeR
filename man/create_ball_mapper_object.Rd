@@ -22,6 +22,8 @@ The node data frame consists of:
 \item \code{cluster_size}: number of data points in vertex
 \item \code{medoid}: the name of the medoid of the vertex
 \item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
+\item \code{max_dist_to_medoid}: max distance to medoid of cluster
+\item \code{wcss}: sum of squares of distances to cluster medoid
 \item \code{data}: names of data points in cluster
 }
 

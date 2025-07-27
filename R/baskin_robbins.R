@@ -29,6 +29,8 @@
 #' - `cluster_size`: number of data points in vertex
 #' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
 #'
@@ -110,6 +112,8 @@ convert_to_clusters <- function(bins) {
 #' - `cluster_size`: number of data points in vertex
 #' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #'
 #' The `edge` data frame contains consists of:
@@ -198,6 +202,8 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' - `cluster_size`: number of data points in vertex
 #' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
 #'
