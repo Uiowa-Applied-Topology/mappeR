@@ -4,9 +4,10 @@ mappeR
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/mappeR)](https://CRAN.R-project.org/package=mappeR)
 [![](https://cranlogs.r-pkg.org/badges/mappeR)](https://cran.r-project.org/package=mappeR)
-
+[![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This is an implementation of the Mapper algorithm by Singh, Mémoli, and
