@@ -24,6 +24,7 @@
 #' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of cluster
 #' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
 #' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
@@ -39,7 +40,7 @@
 #' @export
 #' @examples
 #' # Create noisy data around a circle
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #'
 #' # Apply lens function to data
 #' projx = data$x
@@ -198,6 +199,7 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of cluster
 #' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
 #' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID (if `binning` was `TRUE`)
@@ -224,6 +226,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
 
   # calculate extra statistics
   cluster_medoids = get_cluster_medoids(as.matrix(dists), binclust_data)
+  cluster_widths = get_widths(as.matrix(dists), binclust_data)
   cluster_wcss = get_all_wcss(as.matrix(dists), binclust_data)
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data)
   cluster_maxes = get_max_eccentricities(as.matrix(dists), binclust_data)
@@ -254,6 +257,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
       medoid = cluster_medoids,
       mean_dist_to_medoid = cluster_tightness,
       max_dist_to_medoid = cluster_maxes,
+      cluster_width = cluster_widths,
       wcss = cluster_wcss,
       data = data_in_cluster,
       patch = get_bin_vector(binclust_data)
@@ -268,6 +272,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
       medoid = cluster_medoids,
       mean_dist_to_medoid = cluster_tightness,
       max_dist_to_medoid = cluster_maxes,
+      cluster_width = cluster_widths,
       wcss = cluster_wcss,
       data = data_in_cluster
     )

@@ -19,7 +19,7 @@ Create a dude to perform hierarchical clustering in a local context using the \l
 This clusterer determines cutting heights for dendrograms by cutting them individually, 5\% above the merge point with the longest unbroken gap until the next merge point.
 }
 \examples{
-data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 projx = data$x
 names(projx) = row.names(data)
 

@@ -139,7 +139,7 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
 #' @export
 #'
 #' @examples
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #' projx = data$x
 #' names(projx) = row.names(data)
 #'
@@ -179,7 +179,7 @@ global_hierarchical_clusterer <- function(method, dists, cut_height = -1) {
 #' @export
 #'
 #' @examples
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #' projx = data$x
 #' names(projx) = row.names(data)
 #'

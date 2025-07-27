@@ -55,14 +55,14 @@ Run Mapper using a one-dimensional filter, a cover of the codomain of intervals,
 }
 \examples{
 # Create noisy circle data
-data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 
 # Project to horizontal axis as lens
 projx = data$x
 names(projx) = row.names(data)
 
 # Create a one-dimensional cover
-num_bins = 10
+num_bins = 5
 percent_overlap = 25
 cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 

@@ -23,7 +23,7 @@ Create a dude to perform hierarchical clustering in a global context using the \
 This clusterer cuts all dendrograms it is given at a uniform cutting height, defaulting to a heuristic if necessary.
 }
 \examples{
-data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 projx = data$x
 names(projx) = row.names(data)
 

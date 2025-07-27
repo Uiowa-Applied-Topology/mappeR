@@ -54,7 +54,7 @@ Run Ball Mapper, but non-trivially cluster within the balls. You can use two dif
 }
 \examples{
 # Create noisy circle data set
-data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 data.dists = dist(data)
 
 # Set ball radius

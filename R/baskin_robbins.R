@@ -26,10 +26,11 @@
 #' The node data frame consists of:
 #'
 #' - `id`: vertex ID
-#' - `cluster_size`: number of data points in vertex
+#' - `cluster_size`: number of data points in cluster
 #' - `medoid`: the name of the medoid of the vertex
-#' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `mean_dist_to_medoid`: mean distance to medoid of cluster
 #' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
 #' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
@@ -45,14 +46,14 @@
 #' @export
 #' @examples
 #' # Create noisy circle data
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #'
 #' # Project to horizontal axis as lens
 #' projx = data$x
 #' names(projx) = row.names(data)
 #'
 #' # Create a one-dimensional cover
-#' num_bins = 10
+#' num_bins = 5
 #' percent_overlap = 25
 #' cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 #'
@@ -109,10 +110,11 @@ convert_to_clusters <- function(bins) {
 #' The node data frame consists of:
 #'
 #' - `id`: vertex ID
-#' - `cluster_size`: number of data points in vertex
+#' - `cluster_size`: number of data points in cluster
 #' - `medoid`: the name of the medoid of the vertex
-#' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `mean_dist_to_medoid`: mean distance to medoid of cluster
 #' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
 #' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #'
@@ -127,10 +129,10 @@ convert_to_clusters <- function(bins) {
 #' @export
 #' @examples
 #' # Create noisy cirle data set
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #'
 #' # Set ball radius
-#' eps = .5
+#' eps = .25
 #'
 #' # Create Mapper object
 #' create_ball_mapper_object(data, dist(data), eps)
@@ -199,10 +201,11 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' The node data frame consists of:
 #'
 #' - `id`: vertex ID
-#' - `cluster_size`: number of data points in vertex
+#' - `cluster_size`: number of data points in cluster
 #' - `medoid`: the name of the medoid of the vertex
-#' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `mean_dist_to_medoid`: mean distance to medoid of cluster
 #' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
 #' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
@@ -218,7 +221,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @export
 #' @examples
 #' # Create noisy circle data set
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #' data.dists = dist(data)
 #'
 #' # Set ball radius
