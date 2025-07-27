@@ -1,6 +1,6 @@
 # mappeR (development version)
 
-* Add more input sanitization
+* Add more input sanitization for distance matrices
 * Add more cluster metrics to output, namely medoid name, maximum distance to medoid, and sum of squared distances to medoid
 * Examples now use actual noisy circle data; better examples coming soon
 
