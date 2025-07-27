@@ -1,4 +1,4 @@
-# mappeR (development version)
+# mappeR 2.3.0
 
 * Add more input sanitization for distance matrices
 * Add more cluster metrics to output, namely medoid name, maximum distance to medoid, and sum of squared distances to medoid
