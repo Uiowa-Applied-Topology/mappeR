@@ -21,7 +21,11 @@
 #'
 #' - `id`: vertex ID
 #' - `cluster_size`: number of data points in cluster
+#' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of cluster
+#' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
+#' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
 #'
@@ -36,7 +40,8 @@
 #' @export
 #' @examples
 #' # Create noisy data around a circle
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+#'  y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #'
 #' # Apply lens function to data
 #' projx = data$x
@@ -73,14 +78,14 @@ create_mapper_object <- function(data,
     stop("Cover element tests need to be in a list.")
   } else if (!all(sapply(cover_element_tests, typeof) == "closure")) {
     stop("Cover element tests need to be boolean functions.")
+  } else if (any(is.na(data))) {
+    stop("Data cannot have NA values.")
+  } else if (any(is.na(dists))) {
+    stop("No distance value can be NA.")
   } else if (any(is.na(filtered_data))) {
     stop("Filtered data cannot have NA values.")
   } else if (any(is.na(cover_element_tests))) {
     stop("Cover element functions cannot be NA!")
-  }
-
-  if (any(is.na(dists))) {
-    stop("No distance value can be NA.")
   }
 
   if (length(data) == 0) {
@@ -91,6 +96,10 @@ create_mapper_object <- function(data,
     stop("Your lens/filter is missing!")
   } else if (length(cover_element_tests) == 0) {
     stop("Your cover is missing!")
+  }
+
+  if (any(row.names(as.matrix(dists)) != row.names(data))) {
+    stop("Names of points in distance matrix need to match names in data frame!")
   }
 
 
@@ -115,9 +124,17 @@ create_mapper_object <- function(data,
     }
   }
 
+  if (nrow(data) != dim(as.matrix(dists))[1]) {
+    stop("Your distance matrix dimensions are not correct for your data.")
+  } else if (dim(as.matrix(dists))[1] != dim(as.matrix(dists))[2]) {
+    stop("Your distance matrix is not square!")
+  } else if (any(!is.numeric(dists))) {
+    stop("Your distance matrix has non-numeric entries!")
+  }
+
   bins = create_bins(data, filtered_data, cover_element_tests)
 
-  if (is.null(clusterer)) {
+  if (is.null(clusterer) | length(clusterer) == 0 | !is.function(clusterer)) {
     return(assemble_mapper_object(convert_to_clusters(bins), dists, binning = FALSE))
   } else {
     clusters = get_clusters(bins, dists, clusterer)
@@ -180,7 +197,11 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #'
 #' - `id`: vertex ID
 #' - `cluster_size`: number of data points in cluster
+#' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of cluster
+#' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
+#' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID (if `binning` was `TRUE`)
 #'
@@ -205,7 +226,11 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
   targets = as.character(edgelist[, 2])
 
   # calculate extra statistics
+  cluster_medoids = get_cluster_medoids(as.matrix(dists), binclust_data)
+  cluster_widths = get_widths(as.matrix(dists), binclust_data)
+  cluster_wcss = get_all_wcss(as.matrix(dists), binclust_data)
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data)
+  cluster_maxes = get_max_eccentricities(as.matrix(dists), binclust_data)
   cluster_size = get_cluster_sizes(binclust_data)
   data_in_cluster = unlist(get_clustered_data(binclust_data))
   edge_weights = get_edge_weights(sapply(overlaps, length), cluster_size, edgelist)
@@ -230,7 +255,11 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
     nodes = data.frame(
       id = node_ids,
       cluster_size = cluster_size,
+      medoid = cluster_medoids,
       mean_dist_to_medoid = cluster_tightness,
+      max_dist_to_medoid = cluster_maxes,
+      cluster_width = cluster_widths,
+      wcss = cluster_wcss,
       data = data_in_cluster,
       patch = get_bin_vector(binclust_data)
     )
@@ -241,7 +270,11 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
     nodes = data.frame(
       id = node_ids,
       cluster_size = cluster_size,
+      medoid = cluster_medoids,
       mean_dist_to_medoid = cluster_tightness,
+      max_dist_to_medoid = cluster_maxes,
+      cluster_width = cluster_widths,
+      wcss = cluster_wcss,
       data = data_in_cluster
     )
 

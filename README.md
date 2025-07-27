@@ -1,14 +1,19 @@
 mappeR
 ================
+<<<<<<< HEAD
 2025-06-30
+=======
+2025-07-27
+>>>>>>> dev
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
+[![](https://cranlogs.r-pkg.org/badges/mappeR)](https://cran.r-project.org/package=mappeR)
 
 <!-- badges: end -->
 
-This is an implementation of the mapper algorithm by Singh, Mémoli, and
+This is an implementation of the Mapper algorithm by Singh, Mémoli, and
 Carlsson (2007).
 
 ## Setup
@@ -177,9 +182,13 @@ frames containing vertex and edge information.
 Vertex information:
 
 - `id`: vertex ID
-- `cluster_size`: number of datapoints in cluster
+- `cluster_size`: number of data points in cluster
+- `medoid`: the name of the medoid of the cluster
 - `mean_dist_to_medoid`: mean distance to medoid of cluster
-- `data`: names of datapoints in cluster
+- `max_dist_to_medoid`: max distance to medoid of cluster
+- `cluster_width`: maximum pairwise distance within cluster
+- `wcss`: sum of squares of distances to cluster medoid
+- `data`: names of data points in cluster
 - `patch`: level set ID
 
 Edge information:

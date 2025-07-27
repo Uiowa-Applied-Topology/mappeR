@@ -119,14 +119,74 @@ get_bin_vector <- function(binclust_data) {
   return(bin_by_clusters)
 }
 
+#' Medoid Getter
+#'
+#' Get the medoid of a single cluster.
+#'
+#' @param dists A distance matrix for points in the cluster.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
+#'
+#' @return The medoid of the `cluster`, which is the data point in that cluster with the minimum sum of distances to all other data points.
+#' @noRd
+get_cluster_medoid <- function(dists, cluster) {
+  # singleton clusters are their own medoids
+  if (length(cluster) == 0) {
+    return(0)
+  } else if (length(cluster) == 1) {
+    # print(cluster)
+    return(names(cluster))
+  } else {
+    # get the distances associated to points in this cluster
+    cluster_names = names(cluster)
+    these_dists = dists[cluster_names, cluster_names]
+
+    # find minimum sum of distances
+    sums = apply(as.matrix(these_dists), 1, sum)
+    # names(sums) = cluster_names
+    min_sum = min(sums)
+    medoid = sums[sums == min_sum]
+    if (length(medoid) > 1) {
+      rand = sample(1:length(medoid), 1)
+      medoid = medoid[rand]
+    }
+    return(names(medoid))
+  }
+}
+
+#' Medoids Getter
+#'
+#' Get the medoids of a list of clusters.
+#'
+#' @param dists A distance matrix for the data points inside all the input clusters.
+#' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster IDs (integers).
+#'
+#' @return A vector of names of the data points in each cluster with the minimum sum of distances to all other within-cluster data points (the medoid).
+#' @noRd
+get_cluster_medoids <- function(dists, binclust_data) {
+
+  # no need to list by level set
+  flattened_data = unlist(binclust_data)
+  num_vertices = max(flattened_data)
+
+  # grab the data per cluster
+  clusters = lapply(1:num_vertices, function(x)
+    flattened_data[flattened_data == x])
+
+  # compute tightness of all clusters
+  medoids = sapply(clusters, function(x)
+    get_cluster_medoid(dists, x))
+
+  return(medoids)
+}
+
 #' Tightness Calculator
 #'
 #' Compute a measure of dispersion for a single cluster.
 #'
 #' @param dists A distance matrix for points in the cluster.
-#' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
 #'
-#' @return A real number in \eqn{[0,1]} representing the mean distance to the medoid of the cluster, which is the data point with the smallest combined distance to every other point.
+#' @return A real number representing the mean distance to the medoid of the cluster, which is the data point with the smallest combined distance to every other point.
 #' A smaller value indicates a tighter cluster based on this measure.
 #' @noRd
 compute_tightness <- function(dists, cluster) {
@@ -138,15 +198,9 @@ compute_tightness <- function(dists, cluster) {
     # get the distances associated to points in this cluster
     cluster_names = names(cluster)
     these_dists = dists[cluster_names, cluster_names]
-
-    # find minimum sum of distances
-    sums = apply(these_dists, 1, sum)
-    min_sum = min(sums)
-
-    # use the maximum distance to the medoid to calculate tightness
-    medoid_dists = sample(which(sums == min_sum), 1) # pick a medoid
-    min_dists = these_dists[medoid_dists, ]
-    closeness_factor = min_sum / (length(cluster) - 1)
+    medoid = get_cluster_medoid(dists, cluster)
+    min_dists = these_dists[medoid, ]
+    closeness_factor = sum(min_dists) / (length(cluster) - 1)
 
     return(closeness_factor)
   }
@@ -157,7 +211,7 @@ compute_tightness <- function(dists, cluster) {
 #' @param dists A distance matrix for the data points inside all the input clusters.
 #' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster IDs (integers).
 #'
-#' @return A vector of real numbers in \eqn{(0,\infty)} containing mean distances to the medoids of each cluster in `dists`.
+#' @return A vector of real numbers containing mean distances to the medoids of each cluster in `dists`.
 #' @noRd
 get_cluster_tightness_vector <- function(dists, binclust_data) {
 
@@ -176,6 +230,152 @@ get_cluster_tightness_vector <- function(dists, binclust_data) {
   return(tightness_vector)
 }
 
+#' Max Distance Calculator
+#'
+#' Compute the maximum distance from the medoid of a single cluster.
+#'
+#' @param dists A distance matrix for points in the cluster.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
+#'
+#' @return A real number representing the maximum distance to the medoid within the input cluster.
+#' @noRd
+get_max_eccentricity <- function(dists, cluster) {
+  # empty or singleton clusters have trivial tightness
+  if (length(cluster) <= 1) {
+    return(0)
+  } else {
+    # get the distances associated to points in this cluster
+    cluster_names = names(cluster)
+    these_dists = dists[cluster_names, cluster_names]
+    medoid = get_cluster_medoid(dists, cluster)
+    min_dists = these_dists[medoid, ]
+    max_dist = max(min_dists)
+
+    return(max_dist)
+  }
+}
+
+#' Max Distances Calculator
+#'
+#' @param dists A distance matrix for the data points inside all the input clusters.
+#' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster IDs (integers).
+#'
+#' @return A vector of real numbers in containing maximum distances to the medoids of each cluster in `dists`.
+#' @noRd
+get_max_eccentricities <- function(dists, binclust_data) {
+
+  # no need to list by level set
+  flattened_data = unlist(binclust_data)
+  num_vertices = max(flattened_data)
+
+  # grab the data per cluster
+  clusters = lapply(1:num_vertices, function(x)
+    flattened_data[flattened_data == x])
+
+  # compute tightness of all clusters
+  max_vector = sapply(clusters, function(x)
+    get_max_eccentricity(dists, x))
+
+  return(max_vector)
+}
+
+#' WCSS Calculator
+#'
+#' Compute the WCSS for a single cluster.
+#'
+#' @param dists A distance matrix for points in the cluster.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
+#'
+#' @return A real number representing the sum of squares of distances to the medoid of a single cluster.
+#' @noRd
+get_wcss <- function(dists, cluster) {
+
+  # empty or singleton clusters have trivial tightness
+  if (length(cluster) <= 1) {
+    return(0)
+  } else {
+    # get the distances associated to points in this cluster
+    cluster_names = names(cluster)
+    these_dists = dists[cluster_names, cluster_names]
+    medoid = get_cluster_medoid(dists, cluster)
+    min_dists = these_dists[medoid, ]
+    sum_of_squares = sum(min_dists^2)
+
+    return(sum_of_squares)
+  }
+}
+
+#' WCSSs Calculator
+#'
+#' @param dists A distance matrix for the data points inside all the input clusters.
+#' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster IDs (integers).
+#'
+#' @return A vector of real numbers in containing sums of squares of distances to the medoids of each cluster in `dists`.
+#' @noRd
+get_all_wcss <- function(dists, binclust_data) {
+
+  # no need to list by level set
+  flattened_data = unlist(binclust_data)
+  num_vertices = max(flattened_data)
+
+  # grab the data per cluster
+  clusters = lapply(1:num_vertices, function(x)
+    flattened_data[flattened_data == x])
+
+  # compute tightness of all clusters
+  wcss_vector = sapply(clusters, function(x)
+    get_wcss(dists, x))
+
+  return(wcss_vector)
+}
+
+
+#' Cluster Width Calculator
+#'
+#' Compute the maximum pairwise distance for a single cluster.
+#'
+#' @param dists A distance matrix for points in the cluster.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
+#'
+#' @return A real number representing the maximum pairwise distance within a single cluster.
+#' @noRd
+get_width <- function(dists, cluster) {
+
+  # empty or singleton clusters have trivial tightness
+  if (length(cluster) <= 1) {
+    return(0)
+  } else {
+    # get the distances associated to points in this cluster
+    cluster_names = names(cluster)
+    these_dists = dists[cluster_names, cluster_names]
+
+    return(max(these_dists))
+  }
+}
+
+#' Cluster Widths Calculator
+#'
+#' @param dists A distance matrix for the data points inside all the input clusters.
+#' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster IDs (integers).
+#'
+#' @return A vector of real numbers in containing maximum pairwise distances within each cluster in `dists`.
+#' @noRd
+get_widths <- function(dists, binclust_data) {
+
+  # no need to list by level set
+  flattened_data = unlist(binclust_data)
+  num_vertices = max(flattened_data)
+
+  # grab the data per cluster
+  clusters = lapply(1:num_vertices, function(x)
+    flattened_data[flattened_data == x])
+
+  # compute tightness of all clusters
+  maxes = sapply(clusters, function(x)
+    get_width(dists, x))
+
+  return(maxes)
+}
 #' Cluster Manifesto Logger
 #'
 #' Get the data names for data within a cluster.

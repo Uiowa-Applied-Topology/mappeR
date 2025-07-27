@@ -26,8 +26,12 @@
 #' The node data frame consists of:
 #'
 #' - `id`: vertex ID
-#' - `cluster_size`: number of data points in vertex
-#' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `cluster_size`: number of data points in cluster
+#' - `medoid`: the name of the medoid of the vertex
+#' - `mean_dist_to_medoid`: mean distance to medoid of cluster
+#' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
+#' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
 #'
@@ -42,14 +46,15 @@
 #' @export
 #' @examples
 #' # Create noisy circle data
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+#'  y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #'
 #' # Project to horizontal axis as lens
 #' projx = data$x
 #' names(projx) = row.names(data)
 #'
 #' # Create a one-dimensional cover
-#' num_bins = 10
+#' num_bins = 5
 #' percent_overlap = 25
 #' cover = create_width_balanced_cover(min(projx), max(projx), num_bins, percent_overlap)
 #'
@@ -61,7 +66,7 @@ create_1D_mapper_object <- function(data,
                                     cover,
                                     clusterer = global_hierarchical_clusterer("single", dists)) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
-    stop("left endpoints must be less than or equal to right endpoints")
+    stop("Left endpoints in the cover must be less than or equal to right endpoints.")
   }
 
   cover = apply(cover, 1, check_in_interval)
@@ -106,8 +111,12 @@ convert_to_clusters <- function(bins) {
 #' The node data frame consists of:
 #'
 #' - `id`: vertex ID
-#' - `cluster_size`: number of data points in vertex
-#' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `cluster_size`: number of data points in cluster
+#' - `medoid`: the name of the medoid of the vertex
+#' - `mean_dist_to_medoid`: mean distance to medoid of cluster
+#' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
+#' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #'
 #' The `edge` data frame contains consists of:
@@ -121,31 +130,56 @@ convert_to_clusters <- function(bins) {
 #' @export
 #' @examples
 #' # Create noisy cirle data set
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+#' y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #'
 #' # Set ball radius
-#' eps = .5
+#' eps = .25
 #'
 #' # Create Mapper object
 #' create_ball_mapper_object(data, dist(data), eps)
 create_ball_mapper_object <- function(data, dists, eps) {
   if (!is.data.frame(data)) {
-    stop("input data needs to be a data frame.")
+    stop("Input data needs to be a data frame.")
+  } else if (any(is.na(data))) {
+    stop("Data cannot have NA values.")
+  } else if (any(is.na(dists))) {
+    stop("No distance value can be NA.")
   } else if (!is.numeric(eps)) {
-    stop("epsilon needs to be a number")
+    stop("Epsilon parameter needs to be numeric.")
   } else if (eps <= 0) {
-    stop("epsilon needs to be positive")
+    stop("Epsilon parameter needs to be positive.")
   }
 
-  if (any(is.na(dists))) {
-    stop("no distance value can be NA")
+  if (nrow(data) != dim(as.matrix(dists))[1]) {
+    stop("Your distance matrix dimensions are not correct for your data.")
+  } else if (dim(as.matrix(dists))[1] != dim(as.matrix(dists))[2]) {
+    stop("Your distance matrix is not square!")
+  } else if (any(!is.numeric(dists))) {
+    stop("Your distance matrix has non-numeric entries!")
   }
 
-  balled_data = create_balls(data, dists, eps)
+  if (length(data) == 0) {
+    stop("Your data is missing!")
+  } else if (length(dists) == 0) {
+    stop("Your distance matrix is missing!")
+  }
 
-  ball_mapper_object = assemble_mapper_object(convert_to_clusters(balled_data), dists, binning = FALSE)
+  if (any(row.names(as.matrix(dists)) != row.names(data))) {
+    stop("Names of points in distance matrix need to match names in data frame!")
+  }
 
-  return(ball_mapper_object)
+  balls = create_balls(data, dists, eps)
+
+  projection = row.names(data)
+  names(projection) = row.names(data) # label everything just trust me ok
+
+  return(create_mapper_object(
+    data,
+    dists,
+    projection,
+    lapply(balls, is_in_ball)
+  ))
 }
 
 
@@ -163,14 +197,18 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @param eps A positive real number for the desired ball radius.
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 #' that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
-#' If this value is omitted, then single-linkage clustering will be done (and a cutting height will be decided for you).
+#' If this value is omitted, then single-linkage clustering will be done (and cutting heights will be decided for you).
 #' @return A `list` of two data frames, `nodes` and `edges`, which contain information about the Mapper graph constructed from the given parameters.
 #'
 #' The node data frame consists of:
 #'
 #' - `id`: vertex ID
-#' - `cluster_size`: number of data points in vertex
-#' - `mean_dist_to_medoid`: mean distance to medoid of vertex
+#' - `cluster_size`: number of data points in cluster
+#' - `medoid`: the name of the medoid of the vertex
+#' - `mean_dist_to_medoid`: mean distance to medoid of cluster
+#' - `max_dist_to_medoid`: max distance to medoid of cluster
+#' - `cluster_width`: maximum pairwise distance within cluster
+#' - `wcss`: sum of squares of distances to cluster medoid
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
 #'
@@ -185,7 +223,8 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @export
 #' @examples
 #' # Create noisy circle data set
-#' data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+#' y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #' data.dists = dist(data)
 #'
 #' # Set ball radius
@@ -195,15 +234,33 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' create_clusterball_mapper_object(data, data.dists, data.dists, eps)
 create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clusterer = local_hierarchical_clusterer("single")) {
   if (!is.data.frame(data)) {
-    stop("input data needs to be a data frame.")
+    stop("Input data needs to be a data frame.")
+  } else if (any(is.na(data))) {
+    stop("Data cannot have NA values.")
+  } else if (any(is.na(dist1)) | any(is.na(dist2))) {
+    stop("No distance value can be NA.")
   } else if (!is.numeric(eps)) {
-    stop("epsilon needs to be a number")
+    stop("Epsilon parameter needs to be numeric.")
   } else if (eps <= 0) {
-    stop("epsilon needs to be positive")
+    stop("Epsilon parameter needs to be positive.")
   }
 
-  if ((any(is.na(dist1))) | (any(is.na(dist2)))) {
-    stop("no distance value can be NA")
+  if (nrow(data) != dim(as.matrix(dist1))[1] | nrow(data) != dim(as.matrix(dist2))[1]) {
+    stop("Your distance matrix dimensions are not correct for your data.")
+  } else if (dim(as.matrix(dist1))[1] != dim(as.matrix(dist1))[2] | dim(as.matrix(dist2))[1] != dim(as.matrix(dist2))[2]) {
+    stop("Your distance matrices are not square!")
+  } else if (any(!is.numeric(dist1)) | any(!is.numeric(dist2))) {
+    stop("Your distance matrices have non-numeric entries!")
+  }
+
+  if (length(data) == 0) {
+    stop("Your data is missing!")
+  } else if (length(dist1) == 0 | length(dist2) == 0) {
+    stop("Your distance matrix is missing!")
+  }
+
+  if (any(row.names(as.matrix(dist1)) != row.names(data)) | any(row.names(as.matrix(dist2)) != row.names(data))) {
+    stop("Names of points in distance matrices need to match names in data frame!")
   }
 
   balls = create_balls(data, dist1, eps)

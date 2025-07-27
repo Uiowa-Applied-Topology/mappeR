@@ -19,8 +19,12 @@ A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain i
 The node data frame consists of:
 \itemize{
 \item \code{id}: vertex ID
-\item \code{cluster_size}: number of data points in vertex
-\item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
+\item \code{cluster_size}: number of data points in cluster
+\item \code{medoid}: the name of the medoid of the vertex
+\item \code{mean_dist_to_medoid}: mean distance to medoid of cluster
+\item \code{max_dist_to_medoid}: max distance to medoid of cluster
+\item \code{cluster_width}: maximum pairwise distance within cluster
+\item \code{wcss}: sum of squares of distances to cluster medoid
 \item \code{data}: names of data points in cluster
 }
 
@@ -38,10 +42,11 @@ Run Mapper using the identity function as a lens and an \eqn{\varepsilon}-net co
 }
 \examples{
 # Create noisy cirle data set
-data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 
 # Set ball radius
-eps = .5
+eps = .25
 
 # Create Mapper object
 create_ball_mapper_object(data, dist(data), eps)

@@ -23,7 +23,7 @@ create_clusterball_mapper_object(
 
 \item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
-If this value is omitted, then single-linkage clustering will be done (and a cutting height will be decided for you).}
+If this value is omitted, then single-linkage clustering will be done (and cutting heights will be decided for you).}
 }
 \value{
 A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
@@ -31,8 +31,12 @@ A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain i
 The node data frame consists of:
 \itemize{
 \item \code{id}: vertex ID
-\item \code{cluster_size}: number of data points in vertex
-\item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
+\item \code{cluster_size}: number of data points in cluster
+\item \code{medoid}: the name of the medoid of the vertex
+\item \code{mean_dist_to_medoid}: mean distance to medoid of cluster
+\item \code{max_dist_to_medoid}: max distance to medoid of cluster
+\item \code{cluster_width}: maximum pairwise distance within cluster
+\item \code{wcss}: sum of squares of distances to cluster medoid
 \item \code{data}: names of data points in cluster
 \item \code{patch}: level set ID
 }
@@ -51,7 +55,8 @@ Run Ball Mapper, but non-trivially cluster within the balls. You can use two dif
 }
 \examples{
 # Create noisy circle data set
-data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 data.dists = dist(data)
 
 # Set ball radius

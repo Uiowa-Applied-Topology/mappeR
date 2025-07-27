@@ -31,7 +31,11 @@ A \code{list} of two data frames, one with node data and one with edge data. The
 \itemize{
 \item \code{id}: vertex ID
 \item \code{cluster_size}: number of data points in cluster
+\item \code{medoid}: the name of the medoid of the vertex
 \item \code{mean_dist_to_medoid}: mean distance to medoid of cluster
+\item \code{max_dist_to_medoid}: max distance to medoid of cluster
+\item \code{cluster_width}: maximum pairwise distance within cluster
+\item \code{wcss}: sum of squares of distances to cluster medoid
 \item \code{data}: names of data points in cluster
 \item \code{patch}: level set ID
 }
@@ -50,7 +54,8 @@ Run the Mapper algorithm on a data frame.
 }
 \examples{
 # Create noisy data around a circle
-data = data.frame(x = sapply(1:100, function(x) cos(x)), y = sapply(1:100, function(x) sin(x)))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+ y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 
 # Apply lens function to data
 projx = data$x
