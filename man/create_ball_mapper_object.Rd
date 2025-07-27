@@ -20,6 +20,7 @@ The node data frame consists of:
 \itemize{
 \item \code{id}: vertex ID
 \item \code{cluster_size}: number of data points in vertex
+\item \code{medoid}: the name of the medoid of the vertex
 \item \code{mean_dist_to_medoid}: mean distance to medoid of vertex
 \item \code{data}: names of data points in cluster
 }

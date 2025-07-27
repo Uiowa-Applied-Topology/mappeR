@@ -119,6 +119,66 @@ get_bin_vector <- function(binclust_data) {
   return(bin_by_clusters)
 }
 
+#' Medoid Getter
+#'
+#' Get the medoid of a single cluster.
+#'
+#' @param dists A distance matrix for points in the cluster.
+#' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels.
+#'
+#' @return The medoid of the `cluster`, which is the data point in that cluster with the minimum sum of distances to all other data points.
+#' @noRd
+get_cluster_medoid <- function(dists, cluster) {
+  # singleton clusters are their own medoids
+  if (length(cluster) == 0) {
+    return(0)
+  } else if (length(cluster) == 1) {
+    # print(cluster)
+    return(names(cluster))
+  } else {
+    # get the distances associated to points in this cluster
+    cluster_names = names(cluster)
+    these_dists = dists[cluster_names, cluster_names]
+
+    # find minimum sum of distances
+    sums = apply(these_dists, 1, sum)
+    names(sums) = cluster_names
+    min_sum = min(sums)
+    medoid = sums[sums == min_sum]
+    if (length(medoid) > 1) {
+      rand = sample(1:length(medoid), 1)
+      medoid = medoid[rand]
+    }
+    return(names(medoid))
+  }
+}
+
+#' Medoids Getter
+#'
+#' Get the medoids of a list of clusters.
+#'
+#' @param dists A distance matrix for the data points inside all the input clusters.
+#' @param binclust_data A list of named vectors whose names are those of data points and whose values are cluster IDs (integers).
+#'
+#' @return A vector of names of the data points in each cluster with the minimum sum of distances to all other within-cluster data points (the medoid).
+#' @noRd
+get_cluster_medoids <- function(dists, binclust_data) {
+
+  # no need to list by level set
+  flattened_data = unlist(binclust_data)
+  num_vertices = max(flattened_data)
+
+  # grab the data per cluster
+  clusters = lapply(1:num_vertices, function(x)
+    flattened_data[flattened_data == x])
+
+  # compute tightness of all clusters
+  medoids = sapply(clusters, function(x)
+    get_cluster_medoid(dists, x))
+
+  return(medoids)
+}
+
 #' Tightness Calculator
 #'
 #' Compute a measure of dispersion for a single cluster.

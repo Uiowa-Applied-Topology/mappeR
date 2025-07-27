@@ -27,6 +27,7 @@
 #'
 #' - `id`: vertex ID
 #' - `cluster_size`: number of data points in vertex
+#' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of vertex
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
@@ -107,6 +108,7 @@ convert_to_clusters <- function(bins) {
 #'
 #' - `id`: vertex ID
 #' - `cluster_size`: number of data points in vertex
+#' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of vertex
 #' - `data`: names of data points in cluster
 #'
@@ -194,6 +196,7 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #'
 #' - `id`: vertex ID
 #' - `cluster_size`: number of data points in vertex
+#' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of vertex
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID

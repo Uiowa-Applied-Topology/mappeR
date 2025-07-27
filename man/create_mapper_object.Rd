@@ -31,6 +31,7 @@ A \code{list} of two data frames, one with node data and one with edge data. The
 \itemize{
 \item \code{id}: vertex ID
 \item \code{cluster_size}: number of data points in cluster
+\item \code{medoid}: the name of the medoid of the vertex
 \item \code{mean_dist_to_medoid}: mean distance to medoid of cluster
 \item \code{data}: names of data points in cluster
 \item \code{patch}: level set ID

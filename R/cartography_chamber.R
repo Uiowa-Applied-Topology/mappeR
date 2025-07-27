@@ -21,6 +21,7 @@
 #'
 #' - `id`: vertex ID
 #' - `cluster_size`: number of data points in cluster
+#' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of cluster
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID
@@ -192,6 +193,7 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #'
 #' - `id`: vertex ID
 #' - `cluster_size`: number of data points in cluster
+#' - `medoid`: the name of the medoid of the vertex
 #' - `mean_dist_to_medoid`: mean distance to medoid of cluster
 #' - `data`: names of data points in cluster
 #' - `patch`: level set ID (if `binning` was `TRUE`)
@@ -217,6 +219,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
   targets = as.character(edgelist[, 2])
 
   # calculate extra statistics
+  cluster_medoids = get_cluster_medoids(as.matrix(dists), binclust_data)
   cluster_tightness = get_cluster_tightness_vector(as.matrix(dists), binclust_data)
   cluster_size = get_cluster_sizes(binclust_data)
   data_in_cluster = unlist(get_clustered_data(binclust_data))
@@ -242,6 +245,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
     nodes = data.frame(
       id = node_ids,
       cluster_size = cluster_size,
+      medoid = cluster_medoids,
       mean_dist_to_medoid = cluster_tightness,
       data = data_in_cluster,
       patch = get_bin_vector(binclust_data)
@@ -253,6 +257,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
     nodes = data.frame(
       id = node_ids,
       cluster_size = cluster_size,
+      medoid = cluster_medoids,
       mean_dist_to_medoid = cluster_tightness,
       data = data_in_cluster
     )
