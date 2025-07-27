@@ -124,7 +124,7 @@ get_bin_vector <- function(binclust_data) {
 #' Get the medoid of a single cluster.
 #'
 #' @param dists A distance matrix for points in the cluster.
-#' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
 #'
 #' @return The medoid of the `cluster`, which is the data point in that cluster with the minimum sum of distances to all other data points.
 #' @noRd
@@ -184,7 +184,7 @@ get_cluster_medoids <- function(dists, binclust_data) {
 #' Compute a measure of dispersion for a single cluster.
 #'
 #' @param dists A distance matrix for points in the cluster.
-#' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
 #'
 #' @return A real number representing the mean distance to the medoid of the cluster, which is the data point with the smallest combined distance to every other point.
 #' A smaller value indicates a tighter cluster based on this measure.
@@ -198,18 +198,8 @@ compute_tightness <- function(dists, cluster) {
     # get the distances associated to points in this cluster
     cluster_names = names(cluster)
     these_dists = dists[cluster_names, cluster_names]
-
-    # find minimum sum of distances
-    sums = apply(these_dists, 1, sum)
-    names(sums) = cluster_names
-    min_sum = min(sums)
-    medoid = sums[sums == min_sum]
-    if (length(medoid) > 1) {
-      rand = sample(1:length(medoid), 1)
-      medoid = medoid[rand]
-    }
-    medoid_dists = which(sums == medoid) # pick a medoid
-    min_dists = these_dists[medoid_dists, ]
+    medoid = get_cluster_medoid(dists, cluster)
+    min_dists = these_dists[medoid, ]
     closeness_factor = min_sum / (length(cluster) - 1)
 
     return(closeness_factor)
@@ -245,12 +235,11 @@ get_cluster_tightness_vector <- function(dists, binclust_data) {
 #' Compute the maximum distance from the medoid of a single cluster.
 #'
 #' @param dists A distance matrix for points in the cluster.
-#' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
 #'
 #' @return A real number representing the maximum distance to the medoid within the input cluster.
 #' @noRd
 get_max_eccentricity <- function(dists, cluster) {
-
   # empty or singleton clusters have trivial tightness
   if (length(cluster) <= 1) {
     return(0)
@@ -258,18 +247,8 @@ get_max_eccentricity <- function(dists, cluster) {
     # get the distances associated to points in this cluster
     cluster_names = names(cluster)
     these_dists = dists[cluster_names, cluster_names]
-
-    # find minimum sum of distances
-    sums = apply(these_dists, 1, sum)
-    names(sums) = cluster_names
-    min_sum = min(sums)
-    medoid = sums[sums == min_sum]
-    if (length(medoid) > 1) {
-      rand = sample(1:length(medoid), 1)
-      medoid = medoid[rand]
-    }
-    medoid_dists = which(sums == medoid) # pick a medoid
-    min_dists = these_dists[medoid_dists, ]
+    medoid = get_cluster_medoid(dists, cluster)
+    min_dists = these_dists[medoid, ]
     max_dist = max(min_dists)
 
     return(max_dist)
@@ -305,7 +284,7 @@ get_max_eccentricities <- function(dists, binclust_data) {
 #' Compute the WCSS for a single cluster.
 #'
 #' @param dists A distance matrix for points in the cluster.
-#' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
 #'
 #' @return A real number representing the sum of squares of distances to the medoid of a single cluster.
 #' @noRd
@@ -318,18 +297,8 @@ get_wcss <- function(dists, cluster) {
     # get the distances associated to points in this cluster
     cluster_names = names(cluster)
     these_dists = dists[cluster_names, cluster_names]
-
-    # find minimum sum of distances
-    sums = apply(these_dists, 1, sum)
-    names(sums) = cluster_names
-    min_sum = min(sums)
-    medoid = sums[sums == min_sum]
-    if (length(medoid) > 1) {
-      rand = sample(1:length(medoid), 1)
-      medoid = medoid[rand]
-    }
-    medoid_dists = which(sums == medoid) # pick a medoid
-    min_dists = these_dists[medoid_dists, ]
+    medoid = get_cluster_medoid(dists, cluster)
+    min_dists = these_dists[medoid, ]
     sum_of_squares = sum(min_dists^2)
 
     return(sum_of_squares)
@@ -366,7 +335,7 @@ get_all_wcss <- function(dists, binclust_data) {
 #' Compute the maximum pairwise distance for a single cluster.
 #'
 #' @param dists A distance matrix for points in the cluster.
-#' @param cluster A list containing named vectors, whose names are data point names and whose values are cluster labels.
+#' @param cluster A named vector whose names are data point names and whose values are cluster labels.
 #'
 #' @return A real number representing the maximum pairwise distance within a single cluster.
 #' @noRd
