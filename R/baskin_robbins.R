@@ -46,7 +46,8 @@
 #' @export
 #' @examples
 #' # Create noisy circle data
-#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+#'  y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #'
 #' # Project to horizontal axis as lens
 #' projx = data$x
@@ -129,7 +130,8 @@ convert_to_clusters <- function(bins) {
 #' @export
 #' @examples
 #' # Create noisy cirle data set
-#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+#' y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #'
 #' # Set ball radius
 #' eps = .25
@@ -221,7 +223,8 @@ create_ball_mapper_object <- function(data, dists, eps) {
 #' @export
 #' @examples
 #' # Create noisy circle data set
-#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
+#' data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+#' y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 #' data.dists = dist(data)
 #'
 #' # Set ball radius

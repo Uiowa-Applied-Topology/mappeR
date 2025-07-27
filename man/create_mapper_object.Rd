@@ -54,7 +54,8 @@ Run the Mapper algorithm on a data frame.
 }
 \examples{
 # Create noisy data around a circle
-data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+ y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 
 # Apply lens function to data
 projx = data$x

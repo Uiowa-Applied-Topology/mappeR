@@ -42,7 +42,8 @@ Run Mapper using the identity function as a lens and an \eqn{\varepsilon}-net co
 }
 \examples{
 # Create noisy cirle data set
-data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 
 # Set ball radius
 eps = .25

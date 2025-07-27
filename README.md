@@ -1,6 +1,6 @@
 mappeR
 ================
-2025-07-14
+2025-07-27
 
 <!-- badges: start -->
 
@@ -178,9 +178,13 @@ frames containing vertex and edge information.
 Vertex information:
 
 - `id`: vertex ID
-- `cluster_size`: number of datapoints in cluster
+- `cluster_size`: number of data points in cluster
+- `medoid`: the name of the medoid of the cluster
 - `mean_dist_to_medoid`: mean distance to medoid of cluster
-- `data`: names of datapoints in cluster
+- `max_dist_to_medoid`: max distance to medoid of cluster
+- `cluster_width`: maximum pairwise distance within cluster
+- `wcss`: sum of squares of distances to cluster medoid
+- `data`: names of data points in cluster
 - `patch`: level set ID
 
 Edge information:

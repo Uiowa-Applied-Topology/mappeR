@@ -56,7 +56,8 @@ Run Mapper using a one-dimensional filter, a cover of the codomain of intervals,
 }
 \examples{
 # Create noisy circle data
-data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25), y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
+data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
+ y = sapply(1:1000, function(x) sin(x)) + runif(1000, 0, .25))
 
 # Project to horizontal axis as lens
 projx = data$x
