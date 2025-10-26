@@ -44,7 +44,7 @@ The edge data includes:
 \itemize{
 \item \code{source}: vertex ID of edge source
 \item \code{target}: vertex ID of edge target
-\item \code{weight}: Jaccard index of edge; intersection divided by union
+\item \code{jaccard}: Jaccard index of edge; intersection divided by union
 \item \code{overlap_data}: names of data points in overlap
 \item \code{overlap_size}: number of data points overlap
 }

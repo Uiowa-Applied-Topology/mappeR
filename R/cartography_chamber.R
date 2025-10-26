@@ -33,7 +33,7 @@
 #'
 #' - `source`: vertex ID of edge source
 #' - `target`: vertex ID of edge target
-#' - `weight`: Jaccard index of edge; intersection divided by union
+#' - `jaccard`: Jaccard index of edge; intersection divided by union
 #' - `overlap_data`: names of data points in overlap
 #' - `overlap_size`: number of data points overlap
 #'
@@ -209,7 +209,7 @@ create_bins <- function(data, filtered_data, cover_element_tests) {
 #'
 #' - `source`: vertex ID of edge source
 #' - `target`: vertex ID of edge target
-#' - `weight`: Jaccard index of edge; intersection divided by union
+#' - `jaccard`: Jaccard index of edge; intersection divided by union
 #' - `overlap_data`: names of data points in overlap
 #' - `overlap_size`: number of data points overlap
 #' @noRd
@@ -242,7 +242,7 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
     edges = data.frame(
       source = sources,
       target = targets,
-      weight = edge_weights,
+      jaccard = edge_weights,
       overlap_data = data_in_overlap,
       overlap_size = sapply(overlaps, length)
     )
