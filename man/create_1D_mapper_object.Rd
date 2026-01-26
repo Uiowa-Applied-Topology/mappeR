@@ -17,7 +17,7 @@ create_1D_mapper_object(
 
 \item{dists}{A distance matrix associated to the data frame. Can be a \code{dist} object or \code{matrix}.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.}
+\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame if not labeled with the original names.}
 
 \item{cover}{An \eqn{n \times 2} \code{matrix} of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
 
