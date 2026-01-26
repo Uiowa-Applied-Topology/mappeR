@@ -136,7 +136,7 @@ create_mapper_object <- function(data,
 #' Level Set Maker
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame if not labeled with the original names.
 #' @param cover_element_test A membership test function for a cover element. It should return `TRUE` or `FALSE` when given a filtered data point.
 #'
 #' @return A vector of names of points from the data frame, representing a level set.
@@ -149,7 +149,11 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 
   # return the level set
   if (length(bin_assignments) != 0) {
-    return(rownames(data[bin_assignments, ])) # filtered data may not have row names but we want them
+    if (length(row.names(filtered_data)) != 0) {
+      return(row.names(filtered_data)[bin_assignments]) # if the filtered data has names, use them
+    } else {
+      return(row.names(data[bin_assignments, ])) # if the filtered data doesn't have names, assume they are in the same order as in the parent data set
+    }
   } else {
     return(vector()) # bin still exists, it's just empty
   }
@@ -158,7 +162,7 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #' Level Sets Maker
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame if not labeled with the original names.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #'
 #' @return A `list` of vectors, where each one contains names of data points for which a specific cover element test was `TRUE`.
