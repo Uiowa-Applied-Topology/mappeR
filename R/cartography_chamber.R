@@ -151,6 +151,8 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
   if (length(bin_assignments) != 0) {
     if (length(row.names(filtered_data)) != 0) {
       return(row.names(filtered_data)[bin_assignments]) # if the filtered data has names, use them
+    } else if (length(names(filtered_data) != 0)) {
+      return(names(filtered_data)[bin_assignments]) # for 1D named filtered data
     } else {
       return(row.names(data[bin_assignments, ])) # if the filtered data doesn't have names, assume they are in the same order as in the parent data set
     }
