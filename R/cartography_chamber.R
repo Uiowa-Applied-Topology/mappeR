@@ -11,8 +11,7 @@
 #'
 #' @param data A data frame.
 #' @param dists A distance matrix for the data frame. Can be a `dist` object or `matrix`.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
-#' These values need to be named, and the names of these values must match the names of the original data set.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 #' that is, it should return a list of named vectors, whose names are the names of data points and whose values are cluster assignments (integers).
@@ -45,7 +44,6 @@
 #'
 #' # Apply lens function to data
 #' projx = data$x
-#' names(projx) = row.names(data)
 #'
 #' # Build a width-balanced cover with 10 intervals and 25 percent overlap
 #' num_bins = 10
@@ -107,20 +105,13 @@ create_mapper_object <- function(data,
     if (dim(filtered_data)[1] != nrow(data)) {
       stop("There should be as many filtered data points as there are data points.")
     }
-    if (is.null(row.names(filtered_data)) | any(row.names(filtered_data) != row.names(data))) {
-      stop("The names of the filtered data points should match the names of the original data points.")
-    }
   } else if (is.data.frame(filtered_data)) {
     if (nrow(filtered_data) != nrow(data)) {
       stop("There should be as many filtered data points as there are data points.")
-    } else if (is.null(row.names(filtered_data)) | any(row.names(filtered_data) != row.names(data))) {
-      stop("The names of the filtered data points should match the names of the original data points.")
     }
   } else {
     if (length(filtered_data) != nrow(data)) {
       stop("There should be as many filtered data points as there are data points.")
-    } else if (is.null(names(filtered_data)) | any(names(filtered_data) != row.names(data))) {
-      stop("The names of the filtered data points should match the names of the original data points.")
     }
   }
 
@@ -145,8 +136,7 @@ create_mapper_object <- function(data,
 #' Level Set Maker
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
-#' These values need to be named, and the names of these values must match the names of the original data set.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.
 #' @param cover_element_test A membership test function for a cover element. It should return `TRUE` or `FALSE` when given a filtered data point.
 #'
 #' @return A vector of names of points from the data frame, representing a level set.
@@ -159,7 +149,7 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 
   # return the level set
   if (length(bin_assignments) != 0) {
-    return(rownames(data[bin_assignments, ])) # TODO: bother me about why I need the original data set here, I think it's more safe but who knows!
+    return(rownames(data[bin_assignments, ])) # filtered data may not have row names but we want them
   } else {
     return(vector()) # bin still exists, it's just empty
   }
@@ -168,8 +158,7 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #' Level Sets Maker
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
-#' These values need to be named, and the names of these values must match the names of the original data set.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #'
 #' @return A `list` of vectors, where each one contains names of data points for which a specific cover element test was `TRUE`.
