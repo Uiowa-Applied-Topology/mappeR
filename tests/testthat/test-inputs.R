@@ -1,7 +1,9 @@
 # # generate 1000 random data points between -2 and 2
 data = data.frame(x = runif(1000, -2, 2), drop = FALSE)
+
+row.names(data) = data$x # avoiding notes
 one_dim_projection = data$x
-names(one_dim_projection) = row.names(data)
+names(one_dim_projection) = data$x
 
 cover = create_width_balanced_cover(min(one_dim_projection), max(one_dim_projection), 10, 25)
 
@@ -24,7 +26,6 @@ test_that("mapper is ok with no clustering method", {
 test_that("mapper works with differently formatted filtered data", {
   expect_no_warning(create_1D_mapper_object(data, dist(data), as.data.frame(one_dim_projection), cover))
   expect_no_warning(create_1D_mapper_object(data, dist(data), as.list(one_dim_projection), cover))
-  expect_error(create_1D_mapper_object(data, dist(data), as.vector(one_dim_projection), cover)) # this should break because this removes names
   expect_no_warning(create_1D_mapper_object(data, dist(data), as.matrix(one_dim_projection), cover))
 })
 

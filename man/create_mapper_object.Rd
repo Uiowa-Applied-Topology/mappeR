@@ -17,8 +17,7 @@ create_mapper_object(
 
 \item{dists}{A distance matrix for the data frame. Can be a \code{dist} object or \code{matrix}.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
-These values need to be named, and the names of these values must match the names of the original data set.}
+\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.}
 
 \item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 
@@ -59,7 +58,6 @@ data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
 
 # Apply lens function to data
 projx = data$x
-names(projx) = row.names(data)
 
 # Build a width-balanced cover with 10 intervals and 25 percent overlap
 num_bins = 10

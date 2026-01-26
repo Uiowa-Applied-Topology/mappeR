@@ -14,8 +14,7 @@
 #'
 #' @param data A data frame.
 #' @param dists A distance matrix associated to the data frame. Can be a `dist` object or `matrix`.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
-#' These values need to be named, and the names of these values must match the names of the original data set.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.
 #' @param cover An \eqn{n \times 2} `matrix` of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 #' that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
