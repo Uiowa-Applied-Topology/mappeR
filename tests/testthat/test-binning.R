@@ -46,19 +46,17 @@ test_that("every bin empty quits", {
 })
 
 test_that("we can ball with equal sized bins", {
-  data = data.frame(x = 1:100, drop = FALSE)
+  data = data.frame(x = 1:100)
   cover = create_width_balanced_cover(1, 100, 10, 0)
   projection = data$x
-  names(projection) = row.names(data)
   bins = create_bins(data, projection, apply(cover, 1, check_in_interval))
   expect_no_warning(assemble_mapper_object(convert_to_clusters(bins), dist(data), binning = FALSE))
 })
 
 test_that("we can clusterball with equal sized bins", {
-  data = data.frame(x = 1:100, drop = FALSE)
+  data = data.frame(x = 1:100)
   cover = create_width_balanced_cover(1, 100, 10, 0)
   projection = data$x
-  names(projection) = row.names(data)
   bins = create_bins(data, data$x, apply(cover, 1, check_in_interval))
   expect_no_warning(create_mapper_object(data, dist(data), projection, lapply(bins, is_in_ball)))
 })
