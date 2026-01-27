@@ -1,6 +1,6 @@
 mappeR
 ================
-2025-07-27
+2026-01-27
 
 <!-- badges: start -->
 
@@ -167,7 +167,7 @@ coverchecks = apply(cover, 1, check_in_interval)
 mapper = create_mapper_object(
   data = data,
   dists = distances,
-  filtered_data = projection,
+  lens = projection,
   cover_element_tests = coverchecks,
   clusterer = global_hierarchical_clusterer("single", distances) # built-in mappeR method
 )
