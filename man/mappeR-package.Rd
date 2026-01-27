@@ -4,7 +4,7 @@
 \name{mappeR-package}
 \alias{mappeR}
 \alias{mappeR-package}
-\title{mappeR: Construct and Visualize TDA Mapper Graphs}
+\title{mappeR: Construct Mapper Graphs for Topological and Exploratory Data Analysis}
 \description{
 Topological data analysis (TDA) is a method of data analysis that uses techniques from topology to analyze high-dimensional data. Here we implement Mapper, an algorithm from this area developed by Singh, Mémoli and Carlsson (2007) which generalizes the concept of a Reeb graph \url{https://en.wikipedia.org/wiki/Reeb_graph}.
 }
