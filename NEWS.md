@@ -1,8 +1,6 @@
 # mappeR (development version)
 
-* Remove error on filtered data point names not matching. The order is what matters anyway for that part of the algorithm; the names are important for the distance matrix. 
-Using `mappeR` with just projection (dollar sign flavored) should be way more straightforward. 
-On the list is to improve the tooling to work with names too, which would presumably override order if they are there (and match).
+* Remove error on filtered data point names not matching; if names are not given, then `mappeR` will assume the output of the filter is in the same order as the original data points.
 
 # mappeR 2.3.0
 
