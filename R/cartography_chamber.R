@@ -11,7 +11,7 @@
 #'
 #' @param data A data frame.
 #' @param dists A distance matrix for the data frame. Can be a `dist` object or `matrix`.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and, if the values are not named, then they should be in the same order as their inputs in the original data frame.
+#' @param lens The result of a function applied to the data frame. There should be one value per observation in the original data frame, and, if the values are not named, they should be in the same order as their inputs in the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 #' that is, it should return a list of named vectors, whose names are the names of data points and whose values are cluster assignments (integers).
@@ -62,14 +62,15 @@
 #' xmapper = create_mapper_object(
 #'   data = data,
 #'   dists = dist(data),
-#'   filtered_data = projx,
+#'   lens = projx,
 #'   cover_element_tests = xcovercheck
 #' )
 create_mapper_object <- function(data,
                                  dists,
-                                 filtered_data,
+                                 lens,
                                  cover_element_tests,
                                  clusterer = NULL) {
+
   if (!is.data.frame(data)) {
     stop("Input data needs to be a data frame.")
   } else if (!is.list(cover_element_tests)) {
@@ -80,37 +81,43 @@ create_mapper_object <- function(data,
     stop("Data cannot have NA values.")
   } else if (any(is.na(dists))) {
     stop("No distance value can be NA.")
-  } else if (any(is.na(filtered_data))) {
-    stop("Filtered data cannot have NA values.")
   } else if (any(is.na(cover_element_tests))) {
     stop("Cover element functions cannot be NA!")
+  }
+
+  if (is.function(lens)) {
+    lens = apply(data, 1, lens, simplify = FALSE)
+  }
+
+  if (any(is.na(lens))) {
+    stop("Filtered data cannot have NA values.")
   }
 
   if (length(data) == 0) {
     stop("Your data is missing!")
   } else if (length(dists) == 0) {
      stop("Your distance matrix is missing!")
-  } else if (length(filtered_data) == 0) {
+  } else if (length(lens) == 0) {
     stop("Your lens/filter is missing!")
   } else if (length(cover_element_tests) == 0) {
     stop("Your cover is missing!")
   }
 
-  if (any(row.names(as.matrix(dists)) != row.names(data))) {
+  if (length(setdiff(union(row.names(as.matrix(dists)), row.names(data)), intersect(row.names(as.matrix(dists)), row.names(data)))) != 0) {
     stop("Names of points in distance matrix need to match names in data frame!")
   }
 
 
-  if ((is.matrix(filtered_data))) {
-    if (dim(filtered_data)[1] != nrow(data)) {
+  if ((is.matrix(lens))) {
+    if (dim(lens)[1] != nrow(data)) {
       stop("There should be as many filtered data points as there are data points.")
     }
-  } else if (is.data.frame(filtered_data)) {
-    if (nrow(filtered_data) != nrow(data)) {
+  } else if (is.data.frame(lens)) {
+    if (nrow(lens) != nrow(data)) {
       stop("There should be as many filtered data points as there are data points.")
     }
   } else {
-    if (length(filtered_data) != nrow(data)) {
+    if (length(lens) != nrow(data)) {
       stop("There should be as many filtered data points as there are data points.")
     }
   }
@@ -123,7 +130,7 @@ create_mapper_object <- function(data,
     stop("Your distance matrix has non-numeric entries!")
   }
 
-  bins = create_bins(data, filtered_data, cover_element_tests)
+  bins = create_bins(data, lens, cover_element_tests)
 
   if (is.null(clusterer) | length(clusterer) == 0 | !is.function(clusterer)) {
     return(assemble_mapper_object(convert_to_clusters(bins), dists, binning = FALSE))
@@ -136,25 +143,25 @@ create_mapper_object <- function(data,
 #' Level Set Maker
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and, if the values are not named, then they should be in the same order as their inputs in the original data frame.
+#' @param lens The result of a function applied to the data frame. There should be one value per observation in the original data frame, and, if the values are not named, they should be in the same order as their inputs in the original data frame.
 #' @param cover_element_test A membership test function for a cover element. It should return `TRUE` or `FALSE` when given a filtered data point.
 #'
 #' @return A vector of names of points from the data frame, representing a level set.
 #' @noRd
-create_single_bin <- function(data, filtered_data, cover_element_test) {
-
+create_single_bin <- function(data, lens, cover_element_test) {
   # find which data points are part of the cover element
-  in_bin = sapply(filtered_data, cover_element_test)
+  in_bin = sapply(lens, cover_element_test)
   bin_assignments = which(in_bin)
+  bin_assignments = bin_assignments[length(bin_assignments) != 0]
 
   # return the level set
   if (length(bin_assignments) != 0) {
-    if (length(row.names(filtered_data)) != 0) {
-      return(row.names(filtered_data)[bin_assignments]) # if the filtered data has names, use them
-    } else if (length(names(filtered_data) != 0)) {
-      return(names(filtered_data)[bin_assignments]) # for 1D named filtered data
+    if (length(row.names(lens)) != 0 & length(setdiff(union(row.names(lens), row.names(data)), intersect(row.names(lens), row.names(data)))) == 0) {
+      return(row.names(lens)[bin_assignments]) # if the filtered data has names, use them
+    } else if (length(names(lens) != 0) & length(setdiff(union(names(lens), row.names(data)), intersect(names(lens), row.names(data)))) == 0) {
+      return(names(lens)[bin_assignments]) # for 1D named filtered data
     } else {
-      return(row.names(data[bin_assignments, ])) # if the filtered data doesn't have names, assume they are in the same order as in the parent data set
+      return(row.names(data[bin_assignments, , drop = FALSE])) # if the filtered data doesn't have names, assume they are in the same order as in the parent data set
     }
   } else {
     return(vector()) # bin still exists, it's just empty
@@ -164,17 +171,17 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #' Level Sets Maker
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and, if the values are not named, then they should be in the same order as their inputs in the original data frame.
+#' @param lens The result of a function applied to the data frame. There should be one value per observation in the original data frame, and, if the values are not named, they should be in the same order as their inputs in the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #'
 #' @return A `list` of vectors, where each one contains names of data points for which a specific cover element test was `TRUE`.
 #' @noRd
-create_bins <- function(data, filtered_data, cover_element_tests) {
+create_bins <- function(data, lens, cover_element_tests) {
   res = mapply(
     create_single_bin,
     cover_element_test = cover_element_tests,
     SIMPLIFY = FALSE,
-    MoreArgs = list(data = data, filtered_data = filtered_data)
+    MoreArgs = list(data = data, lens = lens)
   )
   if (length(res) == 0) {
     stop("No filtered data is covered!")
@@ -272,7 +279,6 @@ assemble_mapper_object <- function(binclust_data, dists, binning = TRUE) {
       wcss = cluster_wcss,
       data = data_in_cluster
     )
-
     return(list(nodes, edges))
   }
 }
