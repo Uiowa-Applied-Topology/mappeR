@@ -1,9 +1,14 @@
 # # generate 1000 random data points between -2 and 2
-data = data.frame(x = runif(1000, -2, 2), drop = FALSE)
-one_dim_projection = data$x
-names(one_dim_projection) = row.names(data)
+data = data.frame(x = runif(1000, -2, 2))
 
-cover = create_width_balanced_cover(min(one_dim_projection), max(one_dim_projection), 10, 25)
+names = runif(length(data$x), 0, 1)
+row.names(data) = data$x # for testing
+one_dim_projection = data$x
+names(one_dim_projection) = data$x
+
+filter_function = function(datapoint) datapoint
+
+cover = create_width_balanced_cover(min(one_dim_projection), max(one_dim_projection), sample(2:100, 1), sample(0:100, 1))
 
 test_that("we can clusterball with clusterball", {
   expect_no_warning(create_clusterball_mapper_object(data, dist(data), dist(data), .3))
@@ -23,9 +28,42 @@ test_that("mapper is ok with no clustering method", {
 
 test_that("mapper works with differently formatted filtered data", {
   expect_no_warning(create_1D_mapper_object(data, dist(data), as.data.frame(one_dim_projection), cover))
+  expect_no_warning(create_1D_mapper_object(data, dist(data), as.vector(one_dim_projection), cover)) # removes names
   expect_no_warning(create_1D_mapper_object(data, dist(data), as.list(one_dim_projection), cover))
-  expect_error(create_1D_mapper_object(data, dist(data), as.vector(one_dim_projection), cover)) # this should break because this removes names
   expect_no_warning(create_1D_mapper_object(data, dist(data), as.matrix(one_dim_projection), cover))
+})
+
+test_that("shuffling data does not affect output", {
+  unshuffled = create_1D_mapper_object(data, dist(data), one_dim_projection, cover)
+  shuffled = create_1D_mapper_object(sample(data), dist(sample(data)), sample(one_dim_projection), cover[sample(1:nrow(cover)), ])
+
+  # recall the symmetric difference of two sets is empty if and only the sets are the same
+  symdiff = function(a, b) setdiff(union(a, b), intersect(a, b))
+
+  # get the names of the data points per vertex
+  unshuffled_data = lapply(unshuffled[[1]]$data, function(x) unlist(strsplit(x, ", ")))
+  shuffled_data = lapply(shuffled[[1]]$data, function(x) unlist(strsplit(x, ", ")))
+
+  # make sure the data in each unshuffled vertex matches the data is some shuffled vertex
+  lapply(unshuffled_data, function(vertex) expect_true(any(unlist(lapply(shuffled_data, function(shuffled_vertex) length(symdiff(vertex, shuffled_vertex)) == 0)))))
+})
+
+test_that("filter function input as a function works", {
+  expect_no_warning(create_1D_mapper_object(data, dist(data), filter_function, cover))
+  check_in_cover = apply(cover, 1, function(interval) function(point) interval[1] < point[1] & interval[2] > point[1])
+  expect_no_warning(create_mapper_object(data, dist(data), function(point) return(c(point, point + 1)), check_in_cover))
+})
+
+test_that("small data sets do not cause issues", {
+  data = data.frame(x = runif(sample(1:10), -2, 2))
+
+  one_dim_projection = data$x
+
+  cover = create_width_balanced_cover(min(one_dim_projection), max(one_dim_projection), sample(50:100, 1), sample(0:100, 1))
+
+  expect_no_warning(create_1D_mapper_object(data, dist(data), filter_function, cover))
+  expect_no_warning(create_ball_mapper_object(data, dist(data), runif(1, .1, 2)))
+  expect_no_warning(create_clusterball_mapper_object(data, dist(data), dist(data), runif(1, .1, 2)))
 })
 
 

@@ -115,7 +115,7 @@ create_balls <- function(data, dists, eps) {
   dists = as.matrix(dists) # because I am stupid and usedists isn't working we use a symmetric matrix
   balls = list() # start with no balls
   marked = rep(FALSE, nrow(data)) # keep track of which points we've covered
-  datanames = rownames(data) # actually keep track of the data
+  datanames = row.names(data) # actually keep track of the data
   names(marked) = datanames # really actually keep track of the data
 
   while (FALSE %in% marked) {

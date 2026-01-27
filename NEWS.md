@@ -1,3 +1,9 @@
+# mappeR (development version)
+
+* Remove error on filtered data point names not matching; if names are not given, then `mappeR` will assume the output of the filter is in the same order as the original data points.
+* The generic `create_mapper_object` function should correctly handle non 1D lens functions.
+* Fixed a bug where sometimes empty bins could get through to the clusterers and mess them up.
+
 # mappeR 2.3.0
 
 * Add more input sanitization for distance matrices

@@ -1,6 +1,6 @@
 Package: mappeR
 Type: Package
-Title: Construct and Visualize TDA Mapper Graphs
+Title: Construct Mapper Graphs for Topological and Exploratory Data Analysis
 Description: Topological data analysis (TDA) is a method of data analysis that 
   uses techniques from topology to analyze high-dimensional data. Here we
   implement Mapper, an algorithm from this area developed by Singh, Mémoli and 

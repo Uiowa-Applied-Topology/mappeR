@@ -4,21 +4,14 @@
 \alias{create_mapper_object}
 \title{Mapper}
 \usage{
-create_mapper_object(
-  data,
-  dists,
-  filtered_data,
-  cover_element_tests,
-  clusterer = NULL
-)
+create_mapper_object(data, dists, lens, cover_element_tests, clusterer = NULL)
 }
 \arguments{
 \item{data}{A data frame.}
 
 \item{dists}{A distance matrix for the data frame. Can be a \code{dist} object or \code{matrix}.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
-These values need to be named, and the names of these values must match the names of the original data set.}
+\item{lens}{The result of a function applied to the data frame. There should be one value per observation in the original data frame, and, if the values are not named, they should be in the same order as their inputs in the original data frame.}
 
 \item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 
@@ -44,7 +37,7 @@ The edge data includes:
 \itemize{
 \item \code{source}: vertex ID of edge source
 \item \code{target}: vertex ID of edge target
-\item \code{weight}: Jaccard index of edge; intersection divided by union
+\item \code{jaccard}: Jaccard index of edge; intersection divided by union
 \item \code{overlap_data}: names of data points in overlap
 \item \code{overlap_size}: number of data points overlap
 }
@@ -59,7 +52,6 @@ data = data.frame(x = sapply(1:1000, function(x) cos(x)) + runif(1000, 0, .25),
 
 # Apply lens function to data
 projx = data$x
-names(projx) = row.names(data)
 
 # Build a width-balanced cover with 10 intervals and 25 percent overlap
 num_bins = 10
@@ -78,7 +70,7 @@ xcovercheck = apply(xcover, 1, check_in_interval)
 xmapper = create_mapper_object(
   data = data,
   dists = dist(data),
-  filtered_data = projx,
+  lens = projx,
   cover_element_tests = xcovercheck
 )
 }

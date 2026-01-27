@@ -13,9 +13,8 @@
 #' Run Mapper using a one-dimensional filter, a cover of the codomain of intervals, and a clusterer.
 #'
 #' @param data A data frame.
-#' @param dists A distance matrix associated to the data frame. Can be a `dist` object or `matrix`.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame.
-#' These values need to be named, and the names of these values must match the names of the original data set.
+#' @param dists A distance matrix associated to the data frame. Can be a `dist` object or `matrix`. The names of the rows of the data points in the distance matrix need to match the names of the data points in `data`.
+#' @param lens The result of a function applied to the rows of `data` (a `matrix`, `data.frame`, `list`, or `vector`), or a function which accepts a data point and outputs a result. If the former, there should be one value per observation in the original data frame, and, if the values are not named, they should be in the same order as their inputs in the original data frame.
 #' @param cover An \eqn{n \times 2} `matrix` of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 #' that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
@@ -51,7 +50,6 @@
 #'
 #' # Project to horizontal axis as lens
 #' projx = data$x
-#' names(projx) = row.names(data)
 #'
 #' # Create a one-dimensional cover
 #' num_bins = 5
@@ -62,7 +60,7 @@
 #' create_1D_mapper_object(data, dist(data), projx, cover)
 create_1D_mapper_object <- function(data,
                                     dists,
-                                    filtered_data,
+                                    lens,
                                     cover,
                                     clusterer = global_hierarchical_clusterer("single", dists)) {
   if (!all(cover[, 1] - cover[, 2] <= 0)) {
@@ -71,7 +69,7 @@ create_1D_mapper_object <- function(data,
 
   cover = apply(cover, 1, check_in_interval)
 
-  return(create_mapper_object(data, dists, filtered_data, cover, clusterer = clusterer))
+  return(create_mapper_object(data, dists, lens, cover, clusterer = clusterer))
 }
 
 # Ball Mapper --------------------------------------------------------------
@@ -165,14 +163,13 @@ create_ball_mapper_object <- function(data, dists, eps) {
     stop("Your distance matrix is missing!")
   }
 
-  if (any(row.names(as.matrix(dists)) != row.names(data))) {
+  if (length(setdiff(union(row.names(as.matrix(dists)), row.names(data)), intersect(row.names(as.matrix(dists)), row.names(data)))) != 0) {
     stop("Names of points in distance matrix need to match names in data frame!")
   }
 
   balls = create_balls(data, dists, eps)
 
   projection = row.names(data)
-  names(projection) = row.names(data) # label everything just trust me ok
 
   return(create_mapper_object(
     data,
@@ -259,14 +256,13 @@ create_clusterball_mapper_object <- function(data, dist1, dist2, eps, clusterer 
     stop("Your distance matrix is missing!")
   }
 
-  if (any(row.names(as.matrix(dist1)) != row.names(data)) | any(row.names(as.matrix(dist2)) != row.names(data))) {
+  if (length(setdiff(union(row.names(as.matrix(dist1)), row.names(data)), intersect(row.names(as.matrix(dist1)), row.names(data)))) != 0 | length(setdiff(union(row.names(as.matrix(dist2)), row.names(data)), intersect(row.names(as.matrix(dist2)), row.names(data)))) != 0) {
     stop("Names of points in distance matrices need to match names in data frame!")
   }
 
   balls = create_balls(data, dist1, eps)
 
   projection = row.names(data)
-  names(projection) = row.names(data) # label everything just trust me ok
 
   return(create_mapper_object(
     data,

@@ -19,7 +19,7 @@
 get_agglomerative_dendrogram <- function(dist, method) {
   if (!(inherits(dist, "dist")) & (any(is.na(dist)))) {
     return(vector())
-  } else if (!(inherits(dist, "dist"))) {
+  } else if (!(inherits(dist, "dist")) | length(dist) == 0) {
     res = list(1)
     names(res) = dist
     return(res)
@@ -91,7 +91,7 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
   dends = lapply(dist_mats, get_agglomerative_dendrogram, method)
 
   # find heights for each dendrogram
-  max_dists = sapply(dist_mats, max)
+  max_dists = sapply(dist_mats, function(dist_mat) ifelse(length(as.dist(dist_mat)) == 0, 0, max(dist_mat)))
 
   # remove trivial heights
   nonzero_max_dists = max_dists[max_dists != 0]
@@ -102,10 +102,10 @@ get_hierarchical_clusters <- function(dist_mats, method, cut_height = -1) {
 
   # if a global cut height was not supplied, calculate cut heights for each dendrogram
   if (cut_height < 0) {
-    cut_heights = mapply(get_longevity_cut_height, real_dends, max_dists)
+    cut_heights = mapply(get_longevity_cut_height, real_dends, nonzero_max_dists)
   # otherwise, use with uniform cut heights
   } else {
-    cut_heights = rep(cut_height, length(max_dists))
+    cut_heights = rep(cut_height, length(nonzero_max_dists))
   }
 
   # cut nontrival dendrograms and get cluster assignments

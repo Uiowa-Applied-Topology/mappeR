@@ -1,6 +1,6 @@
 mappeR
 ================
-2025-07-27
+2026-01-27
 
 <!-- badges: start -->
 
@@ -8,6 +8,7 @@ mappeR
 status](https://www.r-pkg.org/badges/version/mappeR)](https://CRAN.R-project.org/package=mappeR)
 [![](https://cranlogs.r-pkg.org/badges/mappeR)](https://cran.r-project.org/package=mappeR)
 [![R-CMD-check](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Uiowa-Applied-Topology/mappeR/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
 This is an implementation of the Mapper algorithm by Singh, Mémoli, and
@@ -146,7 +147,6 @@ Parameters:
 ``` r
 # lens function will be projection
 projection = data$x
-names(projection) = row.names(data) # this is required for to use mappeR
 
 # cover parameters to generate a width-balanced cover
 num_bins = 10
@@ -167,14 +167,20 @@ coverchecks = apply(cover, 1, check_in_interval)
 mapper = create_mapper_object(
   data = data,
   dists = distances,
-  filtered_data = projection,
+  lens = projection,
   cover_element_tests = coverchecks,
   clusterer = global_hierarchical_clusterer("single", distances) # built-in mappeR method
 )
 ```
 
 The object returned by `create_mapper_object` is a list of two data
-frames containing vertex and edge information.
+frames containing vertex and edge information. Its elements can be fed
+into familiar network visualization packages; for example:
+
+- `igraph`:
+  `graph_from_data_frame(mapper[[2]], directed = FALSE, vertices = mapper[[1]])`
+- `RCy3` [(Cytoscape)](https://cytoscape.org/):
+  `createNetworkFromDataFrames(mapper[[1]], mapper[[2]])`
 
 Vertex information:
 
@@ -219,7 +225,6 @@ balls = create_balls(data = data, dists = distances, eps = .25)
 
 # lens function is trivial
 identity_lens = row.names(data)
-names(identity_lens) = row.names(data)
 
 # ball tester machine machine
 is_in_ball <- function(ball) {
