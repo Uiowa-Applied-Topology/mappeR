@@ -11,7 +11,7 @@
 #'
 #' @param data A data frame.
 #' @param dists A distance matrix for the data frame. Can be a `dist` object or `matrix`.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and, if the values are not named, then they should be in the same order as their inputs in the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 #' that is, it should return a list of named vectors, whose names are the names of data points and whose values are cluster assignments (integers).
@@ -136,7 +136,7 @@ create_mapper_object <- function(data,
 #' Level Set Maker
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame if not labeled with the original names.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and, if the values are not named, then they should be in the same order as their inputs in the original data frame.
 #' @param cover_element_test A membership test function for a cover element. It should return `TRUE` or `FALSE` when given a filtered data point.
 #'
 #' @return A vector of names of points from the data frame, representing a level set.
@@ -164,7 +164,7 @@ create_single_bin <- function(data, filtered_data, cover_element_test) {
 #' Level Sets Maker
 #'
 #' @param data A data frame.
-#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and they should be in the same order as their inputs the original data frame if not labeled with the original names.
+#' @param filtered_data The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and, if the values are not named, then they should be in the same order as their inputs in the original data frame.
 #' @param cover_element_tests A list of membership test functions for a set of cover elements. In other words, each element of `cover_element_tests` is a function that returns `TRUE` or `FALSE` when given a filter value.
 #'
 #' @return A `list` of vectors, where each one contains names of data points for which a specific cover element test was `TRUE`.
