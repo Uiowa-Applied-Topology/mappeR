@@ -4,20 +4,14 @@
 \alias{create_mapper_object}
 \title{Mapper}
 \usage{
-create_mapper_object(
-  data,
-  dists,
-  filtered_data,
-  cover_element_tests,
-  clusterer = NULL
-)
+create_mapper_object(data, dists, lens, cover_element_tests, clusterer = NULL)
 }
 \arguments{
 \item{data}{A data frame.}
 
 \item{dists}{A distance matrix for the data frame. Can be a \code{dist} object or \code{matrix}.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and, if the values are not named, then they should be in the same order as their inputs in the original data frame.}
+\item{lens}{The result of a function applied to the data frame. There should be one value per observation in the original data frame, and, if the values are not named, they should be in the same order as their inputs in the original data frame.}
 
 \item{cover_element_tests}{A list of membership test functions for a set of cover elements. In other words, each element of \code{cover_element_tests} is a function that returns \code{TRUE} or \code{FALSE} when given a filter value.}
 
@@ -76,7 +70,7 @@ xcovercheck = apply(xcover, 1, check_in_interval)
 xmapper = create_mapper_object(
   data = data,
   dists = dist(data),
-  filtered_data = projx,
+  lens = projx,
   cover_element_tests = xcovercheck
 )
 }

@@ -7,7 +7,7 @@
 create_1D_mapper_object(
   data,
   dists,
-  filtered_data,
+  lens,
   cover,
   clusterer = global_hierarchical_clusterer("single", dists)
 )
@@ -15,9 +15,9 @@ create_1D_mapper_object(
 \arguments{
 \item{data}{A data frame.}
 
-\item{dists}{A distance matrix associated to the data frame. Can be a \code{dist} object or \code{matrix}.}
+\item{dists}{A distance matrix associated to the data frame. Can be a \code{dist} object or \code{matrix}. The names of the rows of the data points in the distance matrix need to match the names of the data points in \code{data}.}
 
-\item{filtered_data}{The result of a function applied to the data frame; there should be one filter value per observation in the original data frame. There should be one filter value per observation in the original data frame, and, if the values are not named, then they should be in the same order as their inputs in the original data frame.}
+\item{lens}{The result of a function applied to the rows of \code{data} (a \code{matrix}, \code{data.frame}, \code{list}, or \code{vector}), or a function which accepts a data point and outputs a result. If the former, there should be one value per observation in the original data frame, and, if the values are not named, they should be in the same order as their inputs in the original data frame.}
 
 \item{cover}{An \eqn{n \times 2} \code{matrix} of interval left and right endpoints; rows should be intervals and columns left and right endpoints (in that order).}
 
