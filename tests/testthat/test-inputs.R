@@ -1,12 +1,14 @@
 # # generate 1000 random data points between -2 and 2
-data = data.frame(x = runif(1000, -2, 2), drop = FALSE)
+data = data.frame(x = runif(1000, -2, 2))
 
 names = runif(length(data$x), 0, 1)
-row.names(data) = names # for testing
+row.names(data) = data$x # for testing
 one_dim_projection = data$x
-names(one_dim_projection) = names
+names(one_dim_projection) = data$x
 
-cover = create_width_balanced_cover(min(one_dim_projection), max(one_dim_projection), sample(1:50, 1), sample(0:100, 1))
+filter_function = function(datapoint) datapoint
+
+cover = create_width_balanced_cover(min(one_dim_projection), max(one_dim_projection), sample(2:100, 1), sample(0:100, 1))
 
 test_that("we can clusterball with clusterball", {
   expect_no_warning(create_clusterball_mapper_object(data, dist(data), dist(data), .3))
@@ -44,6 +46,24 @@ test_that("shuffling data does not affect output", {
 
   # make sure the data in each unshuffled vertex matches the data is some shuffled vertex
   lapply(unshuffled_data, function(vertex) expect_true(any(unlist(lapply(shuffled_data, function(shuffled_vertex) length(symdiff(vertex, shuffled_vertex)) == 0)))))
+})
+
+test_that("filter function input as a function works", {
+  expect_no_warning(create_1D_mapper_object(data, dist(data), filter_function, cover))
+  check_in_cover = apply(cover, 1, function(interval) function(point) interval[1] < point[1] & interval[2] > point[1])
+  expect_no_warning(create_mapper_object(data, dist(data), function(point) return(c(point, point + 1)), check_in_cover))
+})
+
+test_that("small data sets do not cause issues", {
+  data = data.frame(x = runif(sample(1:10), -2, 2))
+
+  one_dim_projection = data$x
+
+  cover = create_width_balanced_cover(min(one_dim_projection), max(one_dim_projection), sample(50:100, 1), sample(0:100, 1))
+
+  expect_no_warning(create_1D_mapper_object(data, dist(data), filter_function, cover))
+  expect_no_warning(create_ball_mapper_object(data, dist(data), runif(1, .1, 2)))
+  expect_no_warning(create_clusterball_mapper_object(data, dist(data), dist(data), runif(1, .1, 2)))
 })
 
 
