@@ -129,7 +129,7 @@ create_mapper_object <- function(data,
 
   row.names(data) = names
   dists = as.matrix(dists, dimnames = list(names))
-  dists = as.dist(dist) # for posterity
+  dists = as.dist(dists) # for posterity
 
   bins = create_bins(data, lens, cover_element_tests)
 
