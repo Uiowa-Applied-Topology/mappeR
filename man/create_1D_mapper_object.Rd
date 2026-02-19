@@ -9,7 +9,8 @@ create_1D_mapper_object(
   dists,
   lens,
   cover,
-  clusterer = global_hierarchical_clusterer("single", dists)
+  clusterer = NULL,
+  names = row.names(data)
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ create_1D_mapper_object(
 \item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
 If this value is omitted, then trivial clustering will be done.}
+
+\item{names}{The names of the data points. If omitted, the row.names of the \code{data} parameter will be used.}
 }
 \value{
 A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.

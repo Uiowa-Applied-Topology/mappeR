@@ -4,7 +4,14 @@
 \alias{create_mapper_object}
 \title{Mapper}
 \usage{
-create_mapper_object(data, dists, lens, cover_element_tests, clusterer = NULL)
+create_mapper_object(
+  data,
+  dists,
+  lens,
+  cover_element_tests,
+  clusterer = NULL,
+  names = row.names(data)
+)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -18,6 +25,8 @@ create_mapper_object(data, dists, lens, cover_element_tests, clusterer = NULL)
 \item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 that is, it should return a list of named vectors, whose names are the names of data points and whose values are cluster assignments (integers).
 If this value is omitted, then trivial clustering will be done.}
+
+\item{names}{The names of the data points. If omitted, the row.names of the \code{data} parameter will be used.}
 }
 \value{
 A \code{list} of two data frames, one with node data and one with edge data. The node data includes:

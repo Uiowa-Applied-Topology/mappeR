@@ -4,7 +4,7 @@
 \alias{create_ball_mapper_object}
 \title{Ball Mapper}
 \usage{
-create_ball_mapper_object(data, dists, eps)
+create_ball_mapper_object(data, dists, eps, names = row.names(data))
 }
 \arguments{
 \item{data}{A data frame.}
@@ -12,6 +12,8 @@ create_ball_mapper_object(data, dists, eps)
 \item{dists}{A distance matrix for the data frame. Can be a \code{dist} object or a \code{matrix}.}
 
 \item{eps}{A positive real number for the desired ball radius.}
+
+\item{names}{The names of the data points. If omitted, the row.names of the \code{data} parameter will be used.}
 }
 \value{
 A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.

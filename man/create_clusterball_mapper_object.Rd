@@ -9,7 +9,8 @@ create_clusterball_mapper_object(
   dist1,
   dist2,
   eps,
-  clusterer = local_hierarchical_clusterer("single")
+  clusterer = global_hierarchical_clusterer("single", dist2),
+  names = row.names(data)
 )
 }
 \arguments{
@@ -23,7 +24,9 @@ create_clusterball_mapper_object(
 
 \item{clusterer}{A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 that is, it should return a list of named vectors, whose name are the names of data points and whose values are cluster assignments (integers).
-If this value is omitted, then single-linkage clustering will be done (and cutting heights will be decided for you).}
+If this value is omitted, then single-linkage clustering will be done (with a uniform cutting height decided for you).}
+
+\item{names}{The names of the data points. If omitted, the row.names of the \code{data} parameter will be used.}
 }
 \value{
 A \code{list} of two data frames, \code{nodes} and \code{edges}, which contain information about the Mapper graph constructed from the given parameters.
