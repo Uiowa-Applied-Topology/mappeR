@@ -16,6 +16,7 @@
 #' @param clusterer A function which accepts a list of distance matrices as input, and returns the results of clustering done on each distance matrix;
 #' that is, it should return a list of named vectors, whose names are the names of data points and whose values are cluster assignments (integers).
 #' If this value is omitted, then trivial clustering will be done.
+#' @param names The names of the data points. If omitted, the row.names of the `data` parameter will be used.
 #' @return A `list` of two data frames, one with node data and one with edge data. The node data includes:
 #'
 #' - `id`: vertex ID
@@ -69,7 +70,8 @@ create_mapper_object <- function(data,
                                  dists,
                                  lens,
                                  cover_element_tests,
-                                 clusterer = NULL) {
+                                 clusterer = NULL,
+                                 names = row.names(data)) {
 
   if (!is.data.frame(data)) {
     stop("Input data needs to be a data frame.")
@@ -103,11 +105,6 @@ create_mapper_object <- function(data,
     stop("Your cover is missing!")
   }
 
-  if (length(setdiff(union(row.names(as.matrix(dists)), row.names(data)), intersect(row.names(as.matrix(dists)), row.names(data)))) != 0) {
-    stop("Names of points in distance matrix need to match names in data frame!")
-  }
-
-
   if ((is.matrix(lens))) {
     if (dim(lens)[1] != nrow(data)) {
       stop("There should be as many filtered data points as there are data points.")
@@ -129,6 +126,10 @@ create_mapper_object <- function(data,
   } else if (any(!is.numeric(dists))) {
     stop("Your distance matrix has non-numeric entries!")
   }
+
+  row.names(data) = names
+  dists = as.matrix(dists, dimnames = list(names))
+  dists = as.dist(dist) # for posterity
 
   bins = create_bins(data, lens, cover_element_tests)
 
